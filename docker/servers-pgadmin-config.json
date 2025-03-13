@@ -1,0 +1,13 @@
+{
+    "Servers": {
+        "1": {
+            "Name": "Platform DB Server",
+            "Group": "Servers",
+            "Port": 5432,
+            "Username": "sail",
+            "Host": "pgsql",
+            "SSLMode": "prefer",
+            "MaintenanceDB": "platform"
+        }
+    }
+}

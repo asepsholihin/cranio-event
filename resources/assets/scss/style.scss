@@ -1,0 +1,185 @@
+/*================================================================================
+
+NOTE:
+------
+PLACE HERE YOUR OWN SCSS CODES AND IF NEEDED, OVERRIDE THE STYLES FROM THE OTHER STYLESHEETS.
+WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BETTER LIKE THIS.  */
+
+@font-face {
+    font-family: 'Gotham';
+    src: url('../../../storage/private_assets/fonts/GothamPro.woff2') format("woff2");
+}
+
+@font-face {
+    font-family: 'Naskh Regular';
+    src:
+        url('../../../storage/private_assets/fonts/KFGQPCUthmanTahaNaskhRegular.woff2') format("woff2"),
+        url('../../../storage/private_assets/fonts/KFGQPCUthmanTahaNaskhRegular.woff') format("woff"),
+        url('../../../storage/private_assets/fonts/KFGQPCUthmanTahaNaskhRegular.ttf') format("truetype");
+}
+
+
+.form-text {
+    font-size: 0.875rem;
+}
+
+.tooltip .tooltip-inner {
+    font-size: 1rem;
+    max-width: 400px !important;
+    width: 300px !important;
+}
+
+.button-position-center {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    right: 0;
+    height: 30px;
+}
+
+.image-card {
+    position: relative;
+
+    img {
+        width: 100%;
+    }
+
+    .btn-delete {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+    }
+}
+
+.vs__dropdown-option--selected,
+.vs__selected-options {
+    .b-avatar.badge-light-primary {
+        background: #fff;
+    }
+}
+
+.b-avatar .b-avatar-img img {
+    object-fit: scale-down;
+    background: #fff;
+}
+
+.dropdown-menu.show {
+    z-index: 9999;
+}
+
+.my-class {
+    max-width: 100px;
+}
+
+.header-navbar.floating-nav {
+    z-index: 999;
+}
+.sticky-top {
+    z-index: 900;
+}
+.sticky-bottom {
+    position: sticky;
+    bottom: 0;
+}
+
+.ck-content.ck-editor__editable {
+    min-height: 450px;
+}
+
+.semi-dark-layout .main-menu-content .navigation-main .nav-item .menu-content li:not(.active) a {
+    background-color: unset;
+}
+
+.table-responsive {
+    min-height: 200px;
+}
+
+.custom-checkbox .custom-control-input:indeterminate~.custom-control-label::before {
+    background-color: unset;
+}
+
+.checklistbox {
+    padding: 4px;
+    color: #fff;
+}
+
+.flatpickr-monthSelect-months {
+margin: 10px 1px 3px 1px;
+flex-wrap: wrap;
+}
+
+.flatpickr-monthSelect-month {
+background: none;
+border: 0;
+border-radius: 2px;
+-webkit-box-sizing: border-box;
+box-sizing: border-box;
+color: #393939;
+cursor: pointer;
+display: inline-block;
+font-weight: 400;
+margin: 0.5px;
+justify-content: center;
+padding: 10px;
+position: relative;
+-webkit-box-pack: center;
+-webkit-justify-content: center;
+-ms-flex-pack: center;
+text-align: center;
+width: 33%;
+}
+
+.flatpickr-monthSelect-month.disabled {
+    color: #eee;
+}
+
+.flatpickr-monthSelect-month.disabled:hover,
+.flatpickr-monthSelect-month.disabled:focus {
+    cursor: not-allowed;
+    background: none !important;
+}
+
+.flatpickr-monthSelect-theme-dark {
+    background: #3f4458;
+}
+
+.flatpickr-monthSelect-theme-dark .flatpickr-current-month input.cur-year {
+    color: #fff;
+}
+
+.flatpickr-monthSelect-theme-dark .flatpickr-months .flatpickr-prev-month,
+.flatpickr-monthSelect-theme-dark .flatpickr-months .flatpickr-next-month {
+    color: #fff;
+    fill: #fff;
+}
+
+.flatpickr-monthSelect-theme-dark .flatpickr-monthSelect-month {
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.flatpickr-monthSelect-month:hover,
+.flatpickr-monthSelect-month:focus {
+    background: #e6e6e6;
+    cursor: pointer;
+    outline: 0;
+}
+
+.flatpickr-monthSelect-theme-dark .flatpickr-monthSelect-month:hover,
+.flatpickr-monthSelect-theme-dark .flatpickr-monthSelect-month:focus {
+    background: #646c8c;
+    border-color: #646c8c;
+}
+
+.flatpickr-monthSelect-month.selected {
+    background-color: #569ff7;
+    color: #fff;
+}
+
+.flatpickr-monthSelect-theme-dark .flatpickr-monthSelect-month.selected {
+    background: #80cbc4;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    color: #fff;
+    border-color: #80cbc4;
+}

@@ -1,0 +1,13 @@
+.git
+.gitignore
+.env.example
+LICENSE
+README.md
+CHANGELOG.md
+docker-compose.yml
+docker/
+vendor/
+node_modules/
+
+# Ignore deploy/build.sh
+deploy/build.sh
