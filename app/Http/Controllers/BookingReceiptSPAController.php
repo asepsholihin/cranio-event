@@ -65,6 +65,9 @@ class BookingReceiptSPAController extends Controller
                 
                 $booking = Booking::find($bookingReceipt->booking_id);
                 $booking->total_unpaid = $booking->total_unpaid - $bookingReceipt->payment_amount;
+                if($booking->total_unpaid == 0) {
+                    $booking->order_status = Booking::STATUS_PAID;
+                }
                 $booking->save();
             });
         }

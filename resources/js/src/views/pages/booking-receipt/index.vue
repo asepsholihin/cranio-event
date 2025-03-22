@@ -46,8 +46,8 @@
           <span class="text-nowrap">{{ data.item.account_wa }}</span>
         </template>
 
-        <template #cell(total_amount)="data">
-          <span class="text-nowrap">Rp {{ parseInt(data.item.total_amount).toLocaleString() }}</span>
+        <template #cell(payment_amount)="data">
+          <span class="text-nowrap">Rp {{ parseInt(data.item.payment_amount).toLocaleString() }}</span>
         </template>
 
         <template #cell(created_at)="data">
