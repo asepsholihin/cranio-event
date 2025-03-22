@@ -175,12 +175,7 @@ class MasterHotelEventSPAController extends Controller
             }
         }
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
     }
 
     public function prefer($id, Request $request){

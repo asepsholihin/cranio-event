@@ -18,7 +18,7 @@ class DocumentPassports
         App::setLocale('id');
         
         $umrohTrip = DB::table('umroh_trips')->select('title')->find($umrohTripId);
-        $queryParticipantIds = ParticipantUmrohTrip::join('participant', 'participant_umroh_trips.participant_id', '=', 'participant.id')
+        $queryParticipantIds = ParticipantUmrohTrip::join('participants', 'participant_umroh_trips.participant_id', '=', 'participant.id')
         ->select('participant_id','participant.name', 'participant.name_in_passport','participant_umroh_trips.no_urut')
         ->where('participant_umroh_trips.umroh_trip_id', $umrohTripId);
         if(!empty($request['packageUmrohTripId'])) {
@@ -36,7 +36,7 @@ class DocumentPassports
         $participants = $queryParticipantIds->orderBy('participant_umroh_trips.no_urut', 'ASC')->skip(($page - 1) * $limit)->take($limit)->get();
 
         foreach($participants as $participant) {
-            $files = ParticipantFile::join('participant', 'participant_files.participant_id', '=', 'participant.id')
+            $files = ParticipantFile::join('participants', 'participant_files.participant_id', '=', 'participant.id')
             ->select(['participant.ji_code','participant.name', 'participant_files.file_path', 'participant_files.title'])
             ->join('participant_umroh_trips', 'participant_umroh_trips.participant_id', 'participant.id')
             ->where('participant.id', $participant->participant_id)

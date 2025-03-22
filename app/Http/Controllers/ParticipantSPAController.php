@@ -304,7 +304,7 @@ class ParticipantSPAController extends Controller
     {
         $request->validate([
             'id' => 'required',
-            'email' => ['required', 'email', Rule::unique('participant')->ignore($request->id)],
+            'email' => ['required', 'email', Rule::unique('participants')->ignore($request->id)],
             'password' => 'required',
         ]);
 
@@ -473,7 +473,7 @@ class ParticipantSPAController extends Controller
     {
         $page = $request->has('page') ? $request->get('page') : 1;
         $limit = $request->has('limit') ? $request->get('limit') : 5000;
-        $participant = DB::table('participant')->select('id','ktp_province','home_province','ktp_city','ktp_kecamatan','ktp_kelurahan','home_city','home_kecamatan','home_kelurahan')->skip(($page - 1) * $limit)->take($limit)->get();
+        $participant = DB::table('participants')->select('id','ktp_province','home_province','ktp_city','ktp_kecamatan','ktp_kelurahan','home_city','home_kecamatan','home_kelurahan')->skip(($page - 1) * $limit)->take($limit)->get();
 
         $data = array();
         foreach ($participant as $value) {
@@ -534,7 +534,7 @@ class ParticipantSPAController extends Controller
                 $home_kecamatan = $ktp_kecamatan;
             }
 
-            DB::table('participant')->where('id', $value->id)->update([
+            DB::table('participants')->where('id', $value->id)->update([
                 'ktp_province' => $ktp_province,
                 'home_province' => $home_province,
                 'ktp_city' => $ktp_city,
@@ -794,7 +794,7 @@ class ParticipantSPAController extends Controller
     {
         $page = $request->has('page') ? $request->get('page') : 1;
         $limit = $request->has('limit') ? $request->get('limit') : 10000;
-        $participants = DB::table('participant')->select(['nik', DB::raw('count(id) as count')])
+        $participants = DB::table('participants')->select(['nik', DB::raw('count(id) as count')])
         ->whereNull('deleted_at')
         ->groupByRaw('nik')
         ->havingRaw('COUNT(id) > 1')
@@ -803,7 +803,7 @@ class ParticipantSPAController extends Controller
 
         $data = array();
         foreach ($participants as $value) {
-            $participantDuplicates = DB::table('participant')->select(['id','name','nik'])->where('nik', $value->nik)->get();
+            $participantDuplicates = DB::table('participants')->select(['id','name','nik'])->where('nik', $value->nik)->get();
             $key = 1;
             foreach ($participantDuplicates as $row) {
                 $participantUmrohTrip = DB::table('participant_umroh_trips')->select(['umroh_trips.title'])
@@ -812,7 +812,7 @@ class ParticipantSPAController extends Controller
 
                 if($participantUmrohTrip == null) {
                     $row->delete = true;
-                    DB::table('participant')->where('id', $row->id)->delete();
+                    DB::table('participants')->where('id', $row->id)->delete();
                 }
                 $row->participant_umroh_trip = $participantUmrohTrip;
                 $row->key = $key++;
@@ -860,7 +860,7 @@ class ParticipantSPAController extends Controller
 
             $jiCode = Participant::PREFIX_JI_CODE . $yearShort . str_pad($recordNumber, 5, 0, STR_PAD_LEFT);
             
-            // DB::table('participant')->where('id', $value->id)->update([
+            // DB::table('participants')->where('id', $value->id)->update([
             //     'ji_code' => $jiCode
             // ]); 
             $value->ji_code = $jiCode;

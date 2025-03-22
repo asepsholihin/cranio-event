@@ -154,7 +154,7 @@ class EventAttendeeController extends Controller
     public function logAttendances()
     {
         $participant = LogAttendance::query()
-        ->join('participant', 'log_attendances.participant_id', '=', 'participant.id')
+        ->join('participants', 'log_attendances.participant_id', '=', 'participant.id')
         ->select('participant.name','log_attendances.*')
         ->where('summary_attendance_id', request()->query('summaryAttendanceId', 0))->get();
 

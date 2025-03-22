@@ -42,7 +42,7 @@ return [
         ],
         'participant-app' => [
             'driver' => 'sanctum',
-            'provider' => 'participant',
+            'provider' => 'participants',
         ],
         'crew-app' => [
             'driver' => 'sanctum',
@@ -72,7 +72,7 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
-        'participant' => [
+        'participants' => [
             'driver' => 'eloquent',
             'model' => App\Models\Participant::class,
         ],

@@ -13,11 +13,11 @@ export default function useUsersList() {
 
   // Table Handlers
   const tableColumns = [
-    { key: 'ji_code', sortable: true },
     { key: 'name', sortable: true },
-    { key: 'birth_date', sortable: false },
-    { key: 'no_hp', sortable: false },
-    { key: 'nik', label: 'NIK / No. Passport', sortable: false },
+    { key: 'email', sortable: false },
+    { key: 'whatsapp', sortable: false },
+    { key: 'nik', sortable: false },
+    { key: 'polo_size', sortable: false },
 
     { key: 'actions' },
   ]

@@ -52,7 +52,7 @@ class NotificationSPAController extends Controller
             $data = OrderUmrohTrip::select('order_umroh_trips.*','order_item_umroh_trips.package_umroh_trip_id')
             ->join('order_item_umroh_trips', 'order_umroh_trips.id', '=', 'order_item_umroh_trips.order_umroh_trip_id')->where('order_umroh_trips.id', $notif->order_umroh_trip_id)->first();
             return response()->json([
-                'redirect' => 'participant',
+                'redirect' => 'participants',
                 'umroh_trip_id' => $data->umroh_trip_id,
                 'package_umroh_trip_id' => $data->package_umroh_trip_id,
                 'booking_id' => $data->id,

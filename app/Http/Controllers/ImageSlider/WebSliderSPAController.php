@@ -7,8 +7,7 @@ use App\Http\Requests\ImageSlider\StoreWebSliderRequest;
 use App\Models\WebSlider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Meema\CloudFront\Facades\CloudFront;
-use Meema\CloudFront\Jobs\InvalidateCache;
+
 
 class WebSliderSPAController extends Controller
 {
@@ -57,12 +56,7 @@ class WebSliderSPAController extends Controller
 
         WebSlider::updateOrCreate(['id' => $request->get('id')], $request->except(['image']));
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
     }
 
     /**

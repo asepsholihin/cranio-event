@@ -18,18 +18,18 @@ class Certificate
     private $pdf;
     private $data;
 
-    public function __construct($umrohTripId, $roleType='participant')
+    public function __construct($umrohTripId, $roleType='participants')
     {
         App::setLocale('id');
 
         $umrohTrip = UmrohTrip::findOrFail($umrohTripId);
         $this->umrohTrip = $umrohTrip;
         $query = ParticipantUmrohTrip::
-        join('participant', 'participant_umroh_trips.participant_id', '=', 'participant.id')
+        join('participants', 'participant_umroh_trips.participant_id', '=', 'participant.id')
         ->join('package_umroh_trips', 'participant_umroh_trips.package_umroh_trip_id', '=', 'package_umroh_trips.id')
         ->join('umroh_trips', 'umroh_trips.id', '=', 'participant_umroh_trips.umroh_trip_id')
         ->where('participant_umroh_trips.umroh_trip_id', $umrohTripId);
-        if($roleType == 'participant') {
+        if($roleType == 'participants') {
             $query->whereIn('participant_umroh_trips.role_type', array(1,4));
         }
         if($roleType == 'crew') {

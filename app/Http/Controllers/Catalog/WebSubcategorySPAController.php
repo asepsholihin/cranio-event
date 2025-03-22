@@ -85,12 +85,7 @@ class WebSubcategorySPAController extends Controller
             ])
         );
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
 
         return response()->json($sub_category);
     }

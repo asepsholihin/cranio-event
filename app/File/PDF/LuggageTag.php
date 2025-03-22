@@ -29,7 +29,7 @@ class LuggageTag
         $package = Package::find($packageUmrohTrip->package_id);
         
         $query = ParticipantUmrohTrip::
-        join('participant', 'participant_umroh_trips.participant_id', '=', 'participant.id')
+        join('participants', 'participant_umroh_trips.participant_id', '=', 'participant.id')
         ->join('package_umroh_trips', 'participant_umroh_trips.package_umroh_trip_id', '=', 'package_umroh_trips.id')
         ->join('umroh_trips', 'umroh_trips.id', '=', 'participant_umroh_trips.umroh_trip_id')
         ->leftJoin('participant as crew', 'umroh_trips.tour_leader', '=', 'crew.id')

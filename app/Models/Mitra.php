@@ -55,7 +55,7 @@ class Mitra extends Authenticatable
 
     public function scopeTableSearch($query)
     {
-        $query->join('participant', 'mitra.participant_id', 'participant.id');
+        $query->join('participants', 'mitra.participant_id', 'participant.id');
         $query->select(['participant.name', 'mitra.id', 'participant.no_hp', 'participant.gender', 'participant.profile_photo_path', 'join_date', 'total_sales_pax', 'total_sales_transaction', 'total_fee', 'total_fee_paid']);
         if (empty(request()->query('q', ''))) {
             return $query;

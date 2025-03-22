@@ -29,9 +29,7 @@ class WebHomepageController extends Controller
         $result['slider']['data'] = WebSlider::where('status', 1)->orderBy('id')->get() ?? null;
         $result['whyus']['data'] = WebWhyus::where('status', 1)->orderBy('order')->orderBy('updated_at', 'desc')->get();
         $result['program']['data'] = WebProgram::where('status', 1)->orderBy('id')->get();
-        $result['tourPackage']['data'] = WebTourPackage::where('status', 1)->orderBy('order')->orderBy('updated_at', 'desc')->get();
         $result['partner']['data'] = WebPartner::where('status', 1)->orderBy('order')->orderBy('updated_at', 'desc')->get();
-        // $result['article']['data'] = Article::limit(9)->orderBy('id', 'desc')->get();
 
         return response()->json($result);
     }

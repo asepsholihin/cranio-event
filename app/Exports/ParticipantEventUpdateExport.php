@@ -77,7 +77,7 @@ class ParticipantEventUpdateExport implements FromQuery, ShouldAutoSize, WithHea
     public function query()
     {
         $query = Attendance::select('attendances.id', 'participant.name', 'participant.no_hp', 'attendances.departure_from', 'attendances.departure_from_update', 'participant_umroh_trips.no_urut', 'participant_umroh_trips.group_bus', 'participant_umroh_trips.package_umroh_trip_id', 'package_umroh_trips.name as package_name')
-            ->join('participant', 'participant.id', '=', 'attendances.participant_id')
+            ->join('participants', 'participant.id', '=', 'attendances.participant_id')
             ->join('event_attendances', 'event_attendances.id', 'attendances.event_id')
             ->leftjoin('participant_umroh_trips', function ($join) {
                 $join->on('participant_umroh_trips.participant_id', 'attendances.participant_id');

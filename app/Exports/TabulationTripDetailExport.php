@@ -175,7 +175,7 @@ class TabulationTripDetailExport implements FromQuery, ShouldAutoSize, WithEvent
                 ) AS package_type'
             )
         ])
-        ->join('participant', 'participant.id', 'participant_umroh_trips.participant_id')
+        ->join('participants', 'participant.id', 'participant_umroh_trips.participant_id')
         ->join('package_umroh_trips', 'package_umroh_trips.id', 'participant_umroh_trips.package_umroh_trip_id')
         ->where('participant_umroh_trips.umroh_trip_id', $this->umrohTripId)
         ->whereIn('role_type', [1,4])

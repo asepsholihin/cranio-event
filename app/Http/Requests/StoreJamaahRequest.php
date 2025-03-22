@@ -33,9 +33,9 @@ class StoreParticipantRequest extends FormRequest
         $nikUniqueRules = 'required_if:nationality,WNI|numeric|unique:participant,nik,NULL,id,deleted_at,NULL|digits_between:14,16';
         $kitasUniqueRules = 'required_if:nationality,WNA|unique:participant,kitas_number,NULL,id,deleted_at,NULL';
         if (! empty($this->id)) {
-            $emailUniqueRules = [ 'nullable', 'email' ];//Rule::unique('participant')->ignore($this->id) ];
-            $nikUniqueRules = [ 'numeric', Rule::unique('participant')->ignore($this->id) ];
-            $kitasUniqueRules = [ 'numeric', Rule::unique('participant')->ignore($this->id) ];
+            $emailUniqueRules = [ 'nullable', 'email' ];//Rule::unique('participants')->ignore($this->id) ];
+            $nikUniqueRules = [ 'numeric', Rule::unique('participants')->ignore($this->id) ];
+            $kitasUniqueRules = [ 'numeric', Rule::unique('participants')->ignore($this->id) ];
         }
         
         return [

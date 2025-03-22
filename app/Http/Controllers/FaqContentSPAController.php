@@ -7,8 +7,7 @@ use App\Models\FaqCategory;
 use Illuminate\Http\Request;
 use App\Exceptions\ErrorMessageException;
 use Illuminate\Support\Str;
-use Meema\CloudFront\Facades\CloudFront;
-use Meema\CloudFront\Jobs\InvalidateCache;
+
 
 class FaqContentSPAController extends Controller
 {
@@ -55,12 +54,7 @@ class FaqContentSPAController extends Controller
             'status' => $status_value
         ]);
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
 
         FaqContent::updateOrCreate(['id' => $request->get('id')], $request->all());
     }

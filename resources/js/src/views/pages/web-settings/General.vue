@@ -295,33 +295,6 @@
                     <!--/ wa number 2 -->
                 </b-row>
 
-                <h3 class="mt-3">Shaum Information Alert</h3>
-                <hr />
-
-                <b-row>
-                    <!-- shaum_information -->
-                    <b-col md="12">
-                        <validation-provider #default="{ errors }" name="Shaum Information" vid="shaum_information">
-                            <b-form-group label="Shaum Information">
-                                <ckeditor :editor="editor" v-model="form.shaum_information" :config="editorConfig"></ckeditor>
-                                <b-form-invalid-feedback>
-                                    {{ errors[0] }}
-                                </b-form-invalid-feedback>
-                            </b-form-group>
-                        </validation-provider>
-                        
-                        <!--/ shaum_information -->
-                        <validation-provider #default="{ errors }" name="Show in Alert" vid="show">
-                            <b-form-group label="Show in Alert">
-                                <b-form-checkbox v-model="form.shaum_information_alert" name="check-button" switch />
-                                <b-form-invalid-feedback>
-                                    {{ errors[0] }}
-                                </b-form-invalid-feedback>
-                            </b-form-group>
-                        </validation-provider>
-                    </b-col>
-                </b-row>
-
                 <h3 class="mt-3">Footer Info</h3>
                 <hr />
 

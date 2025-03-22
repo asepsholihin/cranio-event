@@ -480,17 +480,17 @@ class ParticipantController extends Controller
             $orderUmrohTrip = OrderUmrohTrip::firstWhere('id', $orderUmrohTripId);
             $groupRooms = ParticipantUmrohTrip::
             select('participant_umroh_trips.group_hotel_room')
-            ->join('participant', 'participant.id', 'participant_umroh_trips.participant_id')
+            ->join('participants', 'participant.id', 'participant_umroh_trips.participant_id')
             ->where('booking_order_no', $orderUmrohTrip->order_no)
             ->where('participant.name', 'like', '%' . request('keyword') . '%')
             ->groupBy('participant_umroh_trips.group_hotel_room')
             ->get();
 
             foreach($groupRooms as $row) {
-                $row['participant'] = ParticipantUmrohTrip::
+                $row['participants'] = ParticipantUmrohTrip::
                 select(['participant.id','participant.name','participant.gender','participant.no_passport', 'participant_umroh_trips.room_type','package_umroh_trips.name as package_name'])
                 ->join('package_umroh_trips', 'participant_umroh_trips.package_umroh_trip_id', 'package_umroh_trips.id')
-                ->join('participant', 'participant.id', 'participant_umroh_trips.participant_id')
+                ->join('participants', 'participant.id', 'participant_umroh_trips.participant_id')
                 ->where('booking_order_no', $orderUmrohTrip->order_no)->get();
             }
 
@@ -574,7 +574,7 @@ class ParticipantController extends Controller
 
     public function equipmentDeliveryDetail(Request $request, $umrohTripId, $participantId)
     {
-        $equipment =  EquipmentDelivery::join('participant', 'participant.id', 'equipment_deliveries.participant_id')
+        $equipment =  EquipmentDelivery::join('participants', 'participant.id', 'equipment_deliveries.participant_id')
         ->join('package_umroh_trips', 'package_umroh_trips.id', 'equipment_deliveries.package_umroh_trip_id')
         ->where('equipment_deliveries.umroh_trip_id', $umrohTripId)->where('equipment_deliveries.participant_id', $participantId)
         ->select('participant.name','participant.gender','package_umroh_trips.name as package_name','participant.body_size','participant.chest_size','participant.body_height','equipment_deliveries.*')
@@ -686,12 +686,12 @@ class ParticipantController extends Controller
                 $row->crew_total_bags = $baggageByCrew->total_bags??0;
                 $row->crew_total_cabin = $baggageByCrew->total_cabin??0;
 
-                $jumlahMutawwif = ParticipantUmrohTrip::select('participant.name','participant.no_hp')->join('participant', 'participant_umroh_trips.participant_id', '=', 'participant.id')->where('role_type', 3)->where('umroh_trip_id', $row->umroh_trip_id)->get();
+                $jumlahMutawwif = ParticipantUmrohTrip::select('participant.name','participant.no_hp')->join('participants', 'participant_umroh_trips.participant_id', '=', 'participant.id')->where('role_type', 3)->where('umroh_trip_id', $row->umroh_trip_id)->get();
                 if(count($jumlahMutawwif) == 1) {
                     $mutawwif = $jumlahMutawwif[0];
                     $row->mutawwif = $mutawwif->name ?? '';
                 } else {
-                    $mutawwif = ParticipantUmrohTrip::select('participant.name','participant.no_hp')->join('participant', 'participant_umroh_trips.participant_id', '=', 'participant.id')->where('role_type', 3)->where('umroh_trip_id', $row->umroh_trip_id)->where('group_bus', $row->group_bus)->first();
+                    $mutawwif = ParticipantUmrohTrip::select('participant.name','participant.no_hp')->join('participants', 'participant_umroh_trips.participant_id', '=', 'participant.id')->where('role_type', 3)->where('umroh_trip_id', $row->umroh_trip_id)->where('group_bus', $row->group_bus)->first();
                     $row->mutawwif = $mutawwif->name ?? '';
                 }
             }

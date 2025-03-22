@@ -194,7 +194,7 @@ class XenditController extends Controller
         
                 $fileName = Str::slug($participant->name, '_') . "_barcode_" .Carbon::now()->timestamp. ".jpg";
         
-                $img = SnappyImage::setOption('width', 100)->loadView('barcode.participant', compact('participant'));
+                $img = SnappyImage::setOption('width', 100)->loadView('barcode.participant', compact('participants'));
                 $img->save(storage_path('app/'.$fileName));
                 $storageKey = AttendanceOpenRegistration::S3_PATH_BARCODE . "/{$fileName}";
                 Storage::put($storageKey, fopen(storage_path('app/'.$fileName), 'r'));
@@ -301,7 +301,7 @@ class XenditController extends Controller
     public function hotelBookingCallback($request)
     {
         $externalId = strtoupper(str_replace("_","/",$request->external_id));
-        $bookingHotel = BookingHotelEvent::select('booking_hotel_events.*','participant.name','participant.no_hp')->join('participant','participant.id', 'booking_hotel_events.participant_id')->where('invoice_no', $externalId)->first();
+        $bookingHotel = BookingHotelEvent::select('booking_hotel_events.*','participant.name','participant.no_hp')->join('participants','participant.id', 'booking_hotel_events.participant_id')->where('invoice_no', $externalId)->first();
         if(!$bookingHotel) {
             return response()->json([
                 'success' => false,

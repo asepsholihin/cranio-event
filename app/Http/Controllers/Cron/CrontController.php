@@ -33,7 +33,7 @@ class CrontController extends Controller
         $arr = [];
         foreach ($eventAttendances as $event) {
             $participants = Attendance::select('participant.id','participant.name','participant.no_hp')
-            ->join('participant', 'participant.id', 'attendances.participant_id')
+            ->join('participants', 'participant.id', 'attendances.participant_id')
             ->where('event_id', $event->id)->groupBy('participant.id')->get();
             foreach ($participants as $key => $participant) {
                 $logQontakBroadcast = LogQontakBroadcast::where('participant_id', $participant->id)

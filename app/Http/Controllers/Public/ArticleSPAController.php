@@ -9,8 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use DB;
-use Meema\CloudFront\Facades\CloudFront;
-use Meema\CloudFront\Jobs\InvalidateCache;
+
 
 class ArticleSPAController extends Controller
 {
@@ -182,12 +181,7 @@ class ArticleSPAController extends Controller
             DB::table('web_blogs')->where('id', $request->id)->update($request->all());
         }
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
     }
 
     public function asatidzArticles(Request $request)

@@ -152,7 +152,7 @@ class EventOpenRegistration extends Controller
         $participant = AttendanceOpenRegistration::create($request->all());
         $fileName = $barcode . ".jpg";
 
-        $img = SnappyImage::setOption('width', 100)->loadView('barcode.participant', compact('participant'));
+        $img = SnappyImage::setOption('width', 100)->loadView('barcode.participant', compact('participants'));
         $img->save(storage_path('app/'.$fileName));
         $storageKey = AttendanceOpenRegistration::S3_PATH_BARCODE . "{$fileName}";
         Storage::put($storageKey, fopen(storage_path('app/'.$fileName), 'r'));
@@ -460,7 +460,7 @@ class EventOpenRegistration extends Controller
         
                 $fileName = Str::slug($participant->name, '_') . "_barcode_" .Carbon::now()->timestamp. ".jpg";
         
-                $img = SnappyImage::setOption('width', 100)->loadView('barcode.participant', compact('participant'));
+                $img = SnappyImage::setOption('width', 100)->loadView('barcode.participant', compact('participants'));
                 $img->save(storage_path('app/'.$fileName));
                 $storageKey = AttendanceOpenRegistration::S3_PATH_BARCODE . "/{$fileName}";
                 Storage::put($storageKey, fopen(storage_path('app/'.$fileName), 'r'));

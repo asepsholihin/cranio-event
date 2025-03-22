@@ -50,7 +50,7 @@ class Attendance extends Model
 
     public function scopeTableSearch($query)
     {
-        $query->join('participant', 'participant.id', '=', 'attendances.participant_id')
+        $query->join('participants', 'participant.id', '=', 'attendances.participant_id')
             ->join('event_attendances', 'event_attendances.id', 'attendances.event_id')
             ->leftjoin('participant_umroh_trips', function ($join) {
                 $join->on('participant_umroh_trips.participant_id', 'attendances.participant_id');

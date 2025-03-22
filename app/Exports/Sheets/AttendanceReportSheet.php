@@ -96,7 +96,7 @@ class AttendanceReportSheet implements FromQuery, ShouldAutoSize, WithEvents, Wi
     public function query()
     {
         $query = Attendance::select(['participant.id', 'participant.title', 'participant.name', 'participant.name_in_passport', 'participant.no_hp', 'participant.no_passport', 'participant_umroh_trips.manasik_table', 'participant_umroh_trips.no_urut'])
-        ->join('participant', 'participant.id', 'attendances.participant_id')
+        ->join('participants', 'participant.id', 'attendances.participant_id')
         ->join('event_attendances', 'event_attendances.id', 'attendances.event_id')
         ->leftjoin('participant_umroh_trips', function ($join) {
             $join->on('participant_umroh_trips.participant_id', 'attendances.participant_id');

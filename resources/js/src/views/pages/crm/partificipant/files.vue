@@ -609,7 +609,7 @@ export default {
     directives: {
         Ripple,
     },
-    props: ['participant'],
+    props: ['participants'],
     watch: { 
         participant: function(_participant) { 
             this.showVerification(_participant)

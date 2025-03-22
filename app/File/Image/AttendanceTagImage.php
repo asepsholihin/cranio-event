@@ -20,7 +20,7 @@ class AttendanceTagImage
         $this->participant = $participant;
         $umrohTripId = UmrohTrip::findOrFail($umrohTripId);
         $this->data = [
-            'participant' => $participant,
+            'participants' => $participant,
             'umrohTrip' => $umrohTripId
         ];
     }

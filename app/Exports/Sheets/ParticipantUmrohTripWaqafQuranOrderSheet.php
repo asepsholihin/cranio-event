@@ -82,7 +82,7 @@ class ParticipantUmrohTripWaqafQuranOrderSheet implements FromQuery, ShouldAutoS
     public function query()
     {
         return ParticipantUmrohTrip::query()
-            ->join('participant', 'participant_umroh_trips.participant_id', '=', 'participant.id')
+            ->join('participants', 'participant_umroh_trips.participant_id', '=', 'participant.id')
             ->join('package_umroh_trips', 'participant_umroh_trips.package_umroh_trip_id', '=', 'package_umroh_trips.id')
             ->join('umroh_trips', 'participant_umroh_trips.umroh_trip_id', '=', 'umroh_trips.id')
             ->select([

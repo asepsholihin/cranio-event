@@ -8,6 +8,7 @@ use App\Http\Controllers\UserPlatformSPAController;
 use App\Http\Controllers\MasterAddressController;
 use App\Http\Controllers\EventOpenRegistrationController;
 use App\Http\Controllers\AttendeeOpenRegistrationController;
+use App\Http\Controllers\WebSettings\GeneralSPAController;
 use App\Http\Controllers\WebSettings\IndexPageSPAController;
 use App\Http\Controllers\Catalog\WebCategorySPAController;
 use App\Http\Controllers\Catalog\WebSubcategorySPAController;
@@ -43,9 +44,12 @@ use App\Http\Controllers\SurveySPAController;
 use App\Http\Controllers\FormSectionSPAController;
 use App\Http\Controllers\DepartmentSPAController;
 use App\Http\Controllers\BookingHotelEventSPAController;
+use App\Http\Controllers\BookingSPAController;
 use App\Http\Controllers\MasterHotelEventSPAController;
 use App\Http\Controllers\EventTimelineSPAController;
 use App\Http\Controllers\EventManasikOnlineSPAController;
+use App\Http\Controllers\BookingTemporarySPAController;
+use App\Http\Controllers\BookingReceiptSPAController;
 use App\Models\Participant;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
@@ -427,7 +431,7 @@ Route::prefix('spa')->middleware(['auth'])->group(function () {
     Route::delete('badal-prices/{id}', [UmrohTripSPAController::class, 'deleteBadalPrice']);
     Route::get('additional-delivery', [AdditionalDeliveryParticipantSPAController::class, 'index']);
     Route::get('additional-delivery/participants', [AdditionalDeliveryParticipantSPAController::class, 'participants']);
-    Route::get('additional-delivery/participant', [AdditionalDeliveryParticipantSPAController::class, 'participant']);
+    Route::get('additional-delivery/participant', [AdditionalDeliveryParticipantSPAController::class, 'participants']);
     Route::post('additional-delivery/process', [AdditionalDeliveryParticipantSPAController::class, 'additionalProcessEquipment']);
     Route::post('additional-delivery/delivery', [AdditionalDeliveryParticipantSPAController::class, 'additionalDeliveryEquipment']);
     Route::get('additional-delivery/shipment-labels/{umrohTripId}', [AdditionalDeliveryParticipantSPAController::class, 'shipmentLabels']);
@@ -874,6 +878,15 @@ Route::prefix('spa')->middleware(['auth'])->group(function () {
     // Refund Notes
     Route::resource('refund-notes', RefundNotesSPAController::class)->only(['show', 'store', 'index', 'destroy']);
     Route::get('refund-notes-list', [RefundNotesSPAController::class, 'getList']);
+
+    Route::resource('booking', BookingSPAController::class)->only(['show', 'store', 'index', 'destroy']);
+    Route::get('booking-export', [BookingSPAController::class, 'exportData']);
+    Route::get('booking/download-receipt/{id}', [BookingSPAController::class, 'downloadReceiptPDF']);
+
+    
+    Route::resource('booking-temporary', BookingTemporarySPAController::class)->only(['show', 'store', 'index', 'destroy']);
+    Route::resource('booking-receipt', BookingReceiptSPAController::class)->only(['show', 'store', 'index', 'destroy']);
+    Route::post('booking-receipt/action', [BookingReceiptSPAController::class, 'action']);
 });
 
 Route::prefix('public')->group(function () {

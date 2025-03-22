@@ -38,7 +38,7 @@ class MerchandiseConfirmationController extends Controller
             ], 422);
         }
 
-        $participant = ParticipantMerchandise::select('participant_merchandises.*')->join('participant', 'participant_merchandises.participant_id', 'participant.id')->where('participant.no_hp', $phoneNumber)->first();
+        $participant = ParticipantMerchandise::select('participant_merchandises.*')->join('participants', 'participant_merchandises.participant_id', 'participant.id')->where('participant.no_hp', $phoneNumber)->first();
 
         return response()->json($participant);
     }

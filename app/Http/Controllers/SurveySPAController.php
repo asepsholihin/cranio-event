@@ -7,8 +7,7 @@ use App\Models\FormQuestion;
 use App\Models\FormAnswer;
 use App\Http\Requests\StoreSurveyRequest;
 use Illuminate\Http\Request;
-use Meema\CloudFront\Facades\CloudFront;
-use Meema\CloudFront\Jobs\InvalidateCache;
+
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\SummarySurveyQuestionExport;
 use App\Exports\SummarySurveyExport;
@@ -106,12 +105,7 @@ class SurveySPAController extends Controller
                 FormQuestion::whereIn('id', json_decode($request->question_deleted_ids))->delete();
         });
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
 
         return response()->json($request->all());
     }

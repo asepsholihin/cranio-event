@@ -6,8 +6,7 @@ use App\Exceptions\ErrorMessageException;
 use App\Http\Requests\StoreTestimonialRequest;
 use App\Models\Testimonial;
 use Illuminate\Http\Request;
-use Meema\CloudFront\Facades\CloudFront;
-use Meema\CloudFront\Jobs\InvalidateCache;
+
 use Image;
 use Illuminate\Support\Facades\Storage;
 
@@ -79,12 +78,7 @@ class TestimonialSPAController extends Controller
     {
         Testimonial::updateOrCreate(['id' => $request->get('id')], $request->except(['image']));
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
     }
 
     /**
@@ -102,12 +96,7 @@ class TestimonialSPAController extends Controller
     {
         $testimonial->delete();
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
     }
 
     public function queryTestimonials(Request $request)
@@ -157,12 +146,7 @@ class TestimonialSPAController extends Controller
         $testimonial->category = $request->get('category');
         $testimonial->save();
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
     }
 
     public function deleteTestiomnial($id){
@@ -170,12 +154,7 @@ class TestimonialSPAController extends Controller
         $testimonial->deleted_at = date('Y-m-d H:i:s');
         $testimonial->save();
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
         return response()->json($testimonial);
     }
 }

@@ -9,8 +9,7 @@ use App\Exceptions\ErrorMessageException;
 use Illuminate\Support\Str;
 use Image;
 use Illuminate\Support\Facades\Storage;
-use Meema\CloudFront\Facades\CloudFront;
-use Meema\CloudFront\Jobs\InvalidateCache;
+
 
 
 class GalleryContentSPAController extends Controller
@@ -107,12 +106,7 @@ class GalleryContentSPAController extends Controller
             GalleryContent::updateOrCreate(['id' => $request->get('id')], $request->all());
         }
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
     }
 
     /**
@@ -130,12 +124,7 @@ class GalleryContentSPAController extends Controller
     {
         $galleryContent->delete();
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
     }
 
     public function queryContents(Request $request)

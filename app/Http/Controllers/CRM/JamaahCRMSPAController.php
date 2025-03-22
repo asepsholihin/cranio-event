@@ -101,7 +101,7 @@ class ParticipantCRMSPAController extends Controller
     {
         $participantCrm = ParticipantCRM::
         select(['participant.*', 'participant_crm.*', 'participant.education as j_education'])
-        ->join('participant', 'participant_crm.participant_id', 'participant.id')->where('participant_crm.participant_id', $participantId)->first();
+        ->join('participants', 'participant_crm.participant_id', 'participant.id')->where('participant_crm.participant_id', $participantId)->first();
 
         return response()->json($participantCrm);
     }
@@ -357,7 +357,7 @@ class ParticipantCRMSPAController extends Controller
         $transactions = ParticipantUmrohTrip::select(['participant_umroh_trips.id','participant_id', 'booking_order_no',
             'umroh_trips.title','umroh_trips.departure_at','umroh_trips.return_at','package_umroh_trips.name', 'umroh_trips.currency',
             'participant_umroh_trips.price_per_pax', 'participant_umroh_trips.discount', 'order_umroh_trip_id', 'order_umroh_trips.sales_name','participant_umroh_trips.role_type'])
-        ->join('participant', 'participant.id' , 'participant_umroh_trips.participant_id')
+        ->join('participants', 'participant.id' , 'participant_umroh_trips.participant_id')
         ->join('umroh_trips', 'umroh_trips.id' , 'participant_umroh_trips.umroh_trip_id')
         ->leftJoin('order_umroh_trips', 'order_umroh_trips.id' , 'participant_umroh_trips.order_umroh_trip_id')
         ->join('package_umroh_trips', 'package_umroh_trips.id' , 'participant_umroh_trips.package_umroh_trip_id')

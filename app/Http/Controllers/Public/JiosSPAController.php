@@ -86,7 +86,7 @@ class JiosSPAController extends Controller
 
         $jiosSales = DB::transaction(function () use($request,$participant) {
             $umrohTrip = UmrohTrip::find($participant->umroh_trip_id);
-            $mutawwif = ParticipantUmrohTrip::select('participant.id','participant.name')->join('participant', 'participant.id', 'participant_umroh_trips.participant_id')->where('role_type', ParticipantUmrohTrip::ROLE_TYPE_MUTAWWIF)->where('group_bus', $participant->group_bus)->where('umroh_trip_id', $umrohTrip->id)->first();
+            $mutawwif = ParticipantUmrohTrip::select('participant.id','participant.name')->join('participants', 'participant.id', 'participant_umroh_trips.participant_id')->where('role_type', ParticipantUmrohTrip::ROLE_TYPE_MUTAWWIF)->where('group_bus', $participant->group_bus)->where('umroh_trip_id', $umrohTrip->id)->first();
             if($mutawwif) {
                 $mutawwifId = $mutawwif->id;
             } else {

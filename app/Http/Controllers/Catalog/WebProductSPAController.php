@@ -154,12 +154,7 @@ class WebProductSPAController extends Controller
             }
         }
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
 
         return response()->json(WebProduct::latest()->first());
     }
@@ -200,12 +195,7 @@ class WebProductSPAController extends Controller
     {
         $product->delete();
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
     }
 
     /**
@@ -346,24 +336,14 @@ class WebProductSPAController extends Controller
             return;
         }
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
     }
 
     public function deleteImage(Request $request)
     {
         WebProductImage::find($request->id)->delete();
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
 
         return;
     }

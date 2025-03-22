@@ -8,8 +8,7 @@ use App\Models\WebProgram;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
-use Meema\CloudFront\Facades\CloudFront;
-use Meema\CloudFront\Jobs\InvalidateCache;
+
 
 class WebProgramSPAController extends Controller
 {
@@ -57,12 +56,7 @@ class WebProgramSPAController extends Controller
         ]);
 
         WebProgram::updateOrCreate(['id' => $request->get('id')], $request->except(['image']));
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
     }
 
     /**

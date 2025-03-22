@@ -23,7 +23,7 @@ class InvoiceBookingSeatParticipantPDF
     {
         App::setLocale('id');
         $this->invoice = $invoice;
-        $participantUmrohTrip = ParticipantUmrohTrip::select('participant.name','participant_umroh_trips.infants')->where('participant_umroh_trips.id', $participantId)->join('participant', 'participant.id', 'participant_umroh_trips.participant_id')->first();
+        $participantUmrohTrip = ParticipantUmrohTrip::select('participant.name','participant_umroh_trips.infants')->where('participant_umroh_trips.id', $participantId)->join('participants', 'participant.id', 'participant_umroh_trips.participant_id')->first();
         if($participantUmrohTrip->infants == 2) {
             $orderItems = OrderItemUmrohTrip::select('order_item_umroh_trips.*')->join('participant_umroh_trips', 'order_item_umroh_trips.id', 'participant_umroh_trips.order_item_umroh_trip_id')->where('participant_umroh_trips.id', $participantId)->where('order_item_umroh_trips.order_umroh_trip_id', $order->id)->where('pax_infants', 0)->whereNotNull('order_item_umroh_trips.room_type')->orderByRaw('order_item_umroh_trips.package_umroh_trip_id ASC, order_item_umroh_trips.id ASC')->get();
         } else {

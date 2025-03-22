@@ -88,7 +88,7 @@ class ParticipantUmrohImportSiskopatuhExport implements FromQuery, ShouldAutoSiz
     */
     public function query()
     {
-        return ParticipantUmrohTrip::join('participant', 'participant_umroh_trips.participant_id', '=', 'participant.id')
+        return ParticipantUmrohTrip::join('participants', 'participant_umroh_trips.participant_id', '=', 'participant.id')
             ->join('package_umroh_trips', 'participant_umroh_trips.package_umroh_trip_id', '=', 'package_umroh_trips.id')
             ->join('umroh_trips', 'participant_umroh_trips.umroh_trip_id', '=', 'umroh_trips.id')
             ->select([

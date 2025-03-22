@@ -66,8 +66,8 @@ class TabulationTripExport implements FromQuery, ShouldAutoSize, WithEvents, Wit
     public function map($umrohTrip): array
     {
         $this->rowNumber += 1;
-        $mr = ParticipantUmrohTrip::join('participant', 'participant.id', 'participant_umroh_trips.participant_id')->where('umroh_trip_id', $umrohTrip->id)->where('participant.gender', 1)->count();
-        $ms = ParticipantUmrohTrip::join('participant', 'participant.id', 'participant_umroh_trips.participant_id')->where('umroh_trip_id', $umrohTrip->id)->where('participant.gender', 2)->count();
+        $mr = ParticipantUmrohTrip::join('participants', 'participant.id', 'participant_umroh_trips.participant_id')->where('umroh_trip_id', $umrohTrip->id)->where('participant.gender', 1)->count();
+        $ms = ParticipantUmrohTrip::join('participants', 'participant.id', 'participant_umroh_trips.participant_id')->where('umroh_trip_id', $umrohTrip->id)->where('participant.gender', 2)->count();
         $total_infants = ParticipantUmrohTrip::where('umroh_trip_id', $umrohTrip->id)->where('infants', 1)->count();
         $tour_leader = (Participant::find($umrohTrip->tour_leader))? Participant::find($umrohTrip->tour_leader)->name : "";
         

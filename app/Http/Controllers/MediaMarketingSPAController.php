@@ -140,7 +140,7 @@ class MediaMarketingSPAController extends Controller
     public function mitraMediaDownload($id)
     {
         $media = MediaMarketing::find($id);
-        $mitra = Mitra::select('participant.id','name','no_hp','instagram','email')->join('participant', 'participant.id','mitra.participant_id')->where('user_id', auth()->user()->id)->first();
+        $mitra = Mitra::select('participant.id','name','no_hp','instagram','email')->join('participants', 'participant.id','mitra.participant_id')->where('user_id', auth()->user()->id)->first();
         // return view('image.mitra-media', compact(['media','mitra']))->render();
         return SnappyImage::setOption('width', 100)
         ->setOption('enable-local-file-access', true)

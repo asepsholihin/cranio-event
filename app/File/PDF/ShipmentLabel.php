@@ -22,7 +22,7 @@ class ShipmentLabel
         ->where('participant_id', $participantUmrohTrip->participant_id)
         ->where('umroh_trip_id', $participantUmrohTrip->umroh_trip_id)->first();
 
-        $participantInAccount = DB::table('participant')
+        $participantInAccount = DB::table('participants')
         ->select(['participant_umroh_trips.participant_id', 'participant.home_postalcode', 'participant.name'])
         ->join('participant_umroh_trips', 'participant_umroh_trips.participant_id', 'participant.id')
         ->where('participant_umroh_trips.order_umroh_trip_id', $getOrder->order_umroh_trip_id)
@@ -47,7 +47,7 @@ class ShipmentLabel
         $data = [
             'umrohTrip' => $umrohTrip,
             'index' => $indexOf,
-            'participant' => $participantUmrohTrip
+            'participants' => $participantUmrohTrip
         ];
         $this->data = $data;
 

@@ -23,7 +23,7 @@ class LabelName
         $umrohTrip = UmrohTrip::findOrFail($umrohTripId);
         $this->umrohTrip = $umrohTrip;
         $participants = ParticipantUmrohTrip::where('participant_umroh_trips.umroh_trip_id', $umrohTripId)
-        ->join('participant', 'participant_umroh_trips.participant_id', '=', 'participant.id')
+        ->join('participants', 'participant_umroh_trips.participant_id', '=', 'participant.id')
         ->select(['participant.name','participant.name_in_passport','participant_umroh_trips.no_urut', 'participant.gender'])
         ->orderBy('no_urut', 'asc')
         ->get();

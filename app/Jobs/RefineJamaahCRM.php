@@ -52,7 +52,7 @@ class RefineParticipantCRM implements ShouldQueue
     public function handle()
     {
         $participantUmrohTrips = ParticipantUmrohTrip::select(['participant_umroh_trips.*'])
-        ->join('participant', 'participant.id', 'participant_umroh_trips.participant_id')
+        ->join('participants', 'participant.id', 'participant_umroh_trips.participant_id')
         ->join('umroh_trips', 'umroh_trips.id', 'participant_umroh_trips.umroh_trip_id')
         ->whereNull('umroh_trips.deleted_at')
         ->whereNull('participant.deleted_at')

@@ -248,7 +248,7 @@ class ParticipantUmrohTrip extends Model implements Auditable
     public function scopeTableSearch($query)
     {
         $query
-            ->join('participant', 'participant.id', '=', 'participant_umroh_trips.participant_id')
+            ->join('participants', 'participant.id', '=', 'participant_umroh_trips.participant_id')
             ->join('package_umroh_trips', 'package_umroh_trips.id', '=', 'participant_umroh_trips.package_umroh_trip_id')
             ->join('umroh_trips', 'umroh_trips.id', '=', 'participant_umroh_trips.umroh_trip_id')
             ->where('participant_umroh_trips.umroh_trip_id', request()->query('umrohTripId', 0))
@@ -429,7 +429,7 @@ class ParticipantUmrohTrip extends Model implements Auditable
         $participantUmrohTrips = DB::table('participant_umroh_trips')
         ->select('participant_umroh_trips.id','participant_umroh_trips.umroh_trip_id','participant_umroh_trips.package_umroh_trip_id','package_umroh_trips.name as package_name')
         ->join('package_umroh_trips', 'package_umroh_trips.id', 'participant_umroh_trips.package_umroh_trip_id')
-        ->join('participant', 'participant.id', 'participant_umroh_trips.participant_id')
+        ->join('participants', 'participant.id', 'participant_umroh_trips.participant_id')
         ->where('participant_umroh_trips.umroh_trip_id', $umrohTripId)->get();
         foreach ($participantUmrohTrips as $value) {
             $list_hotels = UmrohTrip::getHotels($value->umroh_trip_id, $value->package_umroh_trip_id);

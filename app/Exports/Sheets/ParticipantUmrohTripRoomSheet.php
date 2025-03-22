@@ -196,7 +196,7 @@ class ParticipantUmrohTripRoomSheet implements FromQuery, ShouldAutoSize, WithHe
     public function query()
     {
         $query = ParticipantUmrohTrip::query()
-            ->join('participant', 'participant_umroh_trips.participant_id', '=', 'participant.id')
+            ->join('participants', 'participant_umroh_trips.participant_id', '=', 'participant.id')
             ->join('package_umroh_trips', 'participant_umroh_trips.package_umroh_trip_id', '=', 'package_umroh_trips.id')
             ->join('umroh_trips', 'participant_umroh_trips.umroh_trip_id', '=', 'umroh_trips.id')
             ->join('room_umroh_trips', 'room_umroh_trips.participant_umroh_trip_id', '=', 'participant_umroh_trips.id')

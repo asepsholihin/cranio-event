@@ -16,7 +16,7 @@ class DocumentController extends Controller
 {
     public function detailDocument($slug)
     {
-        $checkLetter = LogLetter::select('log_letters.*','participant.name')->join('participant', 'participant.id', 'log_letters.participant_id')
+        $checkLetter = LogLetter::select('log_letters.*','participant.name')->join('participants', 'participant.id', 'log_letters.participant_id')
         ->where('slug', $slug)
         ->first();
         if (!$checkLetter) {

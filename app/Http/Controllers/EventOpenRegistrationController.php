@@ -142,7 +142,7 @@ class EventOpenRegistrationController extends Controller
         $data = array();
         $data['categories'] = array('Total Checkin', 'Total Belum Checkin');
         $data['data'] = array($attendance->total_checkin, $attendance->total_uncheckin);
-        $data['participant'] = $participant;
+        $data['participants'] = $participant;
            
         return response()->json($data);
     }

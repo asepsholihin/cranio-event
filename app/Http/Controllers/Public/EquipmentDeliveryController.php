@@ -19,7 +19,7 @@ class EquipmentDeliveryController extends Controller
     {
         $equipmentDeliveries = DB::table('equipment_deliveries')
         ->select(['equipment_deliveries.id','equipment_deliveries.delivery_code','participant.name'])
-        ->join('participant', 'participant.id', 'equipment_deliveries.participant_id')
+        ->join('participants', 'participant.id', 'equipment_deliveries.participant_id')
         ->where('delivery_code', $deliveryCode)->get();
 
         foreach ($equipmentDeliveries as $key => $value) {

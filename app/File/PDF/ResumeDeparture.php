@@ -36,7 +36,7 @@ class ResumeDeparture
             ) AS package_type'),
         ])
         ->orderBy('package_type', 'ASC')->get();
-        $participant = ParticipantUmrohTrip::join('participant', 'participant.id', 'participant_umroh_trips.participant_id')
+        $participant = ParticipantUmrohTrip::join('participants', 'participant.id', 'participant_umroh_trips.participant_id')
         ->select([
             DB::raw('COUNT(*) as total_participant'),
             DB::raw('SUM(CASE WHEN gender = 1 THEN 1 ELSE 0 END) as total_male'),
@@ -50,7 +50,7 @@ class ResumeDeparture
         ->where('umroh_trip_id', $umrohTripId)->first();
 
         // Participant Nakes
-        $participantNakes = ParticipantUmrohTrip::join('participant', 'participant.id', 'participant_umroh_trips.participant_id')
+        $participantNakes = ParticipantUmrohTrip::join('participants', 'participant.id', 'participant_umroh_trips.participant_id')
         ->select(['front_title','name','back_title'])
         ->where('umroh_trip_id', $umrohTripId)
         ->whereNot('participant_umroh_trips.role_type', 3)
@@ -62,7 +62,7 @@ class ResumeDeparture
         ->get();
 
         // Participant TNI/Polri
-        $participantTniPolri = ParticipantUmrohTrip::join('participant', 'participant.id', 'participant_umroh_trips.participant_id')
+        $participantTniPolri = ParticipantUmrohTrip::join('participants', 'participant.id', 'participant_umroh_trips.participant_id')
         ->select(['front_title','name','back_title'])
         ->where('umroh_trip_id', $umrohTripId)
         ->whereNot('participant_umroh_trips.role_type', 3)
@@ -73,7 +73,7 @@ class ResumeDeparture
         ->get();
 
         // Participant Province
-        $participantProvince = ParticipantUmrohTrip::join('participant', 'participant.id', 'participant_umroh_trips.participant_id')
+        $participantProvince = ParticipantUmrohTrip::join('participants', 'participant.id', 'participant_umroh_trips.participant_id')
         ->select(['ktp_province', DB::raw('count(ktp_province) as total')])
         ->where('umroh_trip_id', $umrohTripId)
         ->whereNot('participant_umroh_trips.role_type', 3)
@@ -99,7 +99,7 @@ class ResumeDeparture
             'umrohTrip' => $umrohTrip,
             'destinations' => $destinations,
             'packages' => $packages,
-            'participant' => $participant,
+            'participants' => $participant,
             'participantNakes' => $participantNakes,
             'participantTniPolri' => $participantTniPolri,
             'participantProvince' => $participantProvince

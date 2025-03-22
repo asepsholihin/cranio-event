@@ -62,12 +62,7 @@ class WebRedirectSPAController extends Controller
             $request->all()
         );
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
 
         return response()->json($web_redirect);
     }

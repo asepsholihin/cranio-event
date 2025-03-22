@@ -120,7 +120,7 @@ class ParticipantUmrohManifestSheet implements FromQuery, ShouldAutoSize, WithEv
     public function query()
     {
         $query = ParticipantUmrohTrip::query()
-            ->join('participant', 'participant_umroh_trips.participant_id', '=', 'participant.id')
+            ->join('participants', 'participant_umroh_trips.participant_id', '=', 'participant.id')
             ->join('package_umroh_trips', 'participant_umroh_trips.package_umroh_trip_id', '=', 'package_umroh_trips.id')
             ->join('umroh_trips', 'participant_umroh_trips.umroh_trip_id', '=', 'umroh_trips.id')
             ->leftjoin('order_umroh_trips', 'participant_umroh_trips.order_umroh_trip_id', '=', 'order_umroh_trips.id')

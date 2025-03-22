@@ -25,7 +25,7 @@ class KoperTag
         $umrohTrip = UmrohTrip::findOrFail($umrohTripId);
         $this->umrohTrip = $umrohTrip;
         $participant = ParticipantUmrohTrip::
-        join('participant', 'participant_umroh_trips.participant_id', '=', 'participant.id')
+        join('participants', 'participant_umroh_trips.participant_id', '=', 'participant.id')
         ->join('package_umroh_trips', 'participant_umroh_trips.package_umroh_trip_id', '=', 'package_umroh_trips.id')
         ->join('umroh_trips', 'umroh_trips.id', '=', 'participant_umroh_trips.umroh_trip_id')
         ->leftJoin('participant as tour_leader', 'umroh_trips.tour_leader', '=', 'tour_leader.id')
@@ -57,12 +57,12 @@ class KoperTag
         ->get();
 
         foreach ($participant as $row) {
-            $jumlahMutawwif = ParticipantUmrohTrip::select('participant.name','participant.no_hp')->join('participant', 'participant_umroh_trips.participant_id', '=', 'participant.id')->where('role_type', 3)->where('umroh_trip_id', $umrohTripId)->get();
+            $jumlahMutawwif = ParticipantUmrohTrip::select('participant.name','participant.no_hp')->join('participants', 'participant_umroh_trips.participant_id', '=', 'participant.id')->where('role_type', 3)->where('umroh_trip_id', $umrohTripId)->get();
             if(count($jumlahMutawwif) == 1) {
                 $mutawwif = $jumlahMutawwif[0];
                 $row->mutawwif = $mutawwif->name ?? '';
             } else {
-                $mutawwif = ParticipantUmrohTrip::select('participant.name','participant.no_hp')->join('participant', 'participant_umroh_trips.participant_id', '=', 'participant.id')->where('role_type', 3)->where('umroh_trip_id', $umrohTripId)->where('group_bus', $row->group_bus)->first();
+                $mutawwif = ParticipantUmrohTrip::select('participant.name','participant.no_hp')->join('participants', 'participant_umroh_trips.participant_id', '=', 'participant.id')->where('role_type', 3)->where('umroh_trip_id', $umrohTripId)->where('group_bus', $row->group_bus)->first();
                 $row->mutawwif = $mutawwif->name ?? '';
             }
         }

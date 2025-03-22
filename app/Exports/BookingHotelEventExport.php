@@ -97,7 +97,7 @@ class BookingHotelEventExport implements FromQuery, ShouldAutoSize, WithHeadings
     public function query()
     {
         $query = BookingHotelEvent::select('booking_hotel_events.*', 'participant.name', 'participant.no_hp', 'package_umroh_trips.name as package_name', 'umroh_trips.title as umroh_trip_title');
-        $query->join('participant', 'participant.id', 'booking_hotel_events.participant_id');
+        $query->join('participants', 'participant.id', 'booking_hotel_events.participant_id');
         $query->join('package_umroh_trips', 'package_umroh_trips.id', 'booking_hotel_events.package_umroh_trip_id');
         $query->join('umroh_trips', 'umroh_trips.id', 'booking_hotel_events.umroh_trip_id');
         if (!empty($this->request['checkinDate'])) {

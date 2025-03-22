@@ -12,20 +12,15 @@
     <b-card no-body class="mb-0">
 
       <div class="m-2">
-          <b-row>
-              <b-col cols="12" md="3" class="mb-md-1 mb-2">
-                  <label>Gender</label>
-                  <v-select v-model="genderFilter" :options="genderOptions" class="w-100" :reduce="val => val.value"
-                      />
-              </b-col>
-          </b-row>
-      </div>
-
-      <div class="m-2">
 
         <!-- Table Top -->
+        <b-row class="justify-content-end">
+            <b-col cols="12" md="3" class="mb-1">
+                <label>Gender</label>
+                <v-select v-model="genderFilter" :options="genderOptions" class="w-100" :reduce="val => val.value" />
+            </b-col>
+        </b-row>
         <b-row>
-
           <!-- Per Page -->
           <b-col cols="12" md="4" class="d-flex align-items-center justify-content-start mb-1 mb-md-0">
             <label>Show</label>
@@ -79,27 +74,8 @@
               class="font-weight-bold d-block text-nowrap">
               {{ data.item.name.toUpperCase() }}
             </b-link>
-            <small class="text-nowrap">Age: {{ data.item.age }} Tahun</small><br />
             <small class="text-nowrap">Gender: {{ resolveGender(data.item.gender) }}</small>
           </b-media>
-        </template>
-
-        <!-- Column: birth_date -->
-        <template #cell(birth_date)="data">
-          <span>{{ formatDateShort(data.item.birth_date) }}</span>
-        </template>
-
-        <!-- Column: NIK -->
-        <template #cell(nik)="data">
-          <span>{{ data.item.nik }}</span><br>
-          <span class="font-weight-bold">NO. PASSPORT:</span> {{ (data.item.no_passport) ? data.item.no_passport : "-" }}
-        </template>
-
-        <!-- Column: Status -->
-        <template #cell(status)="data">
-          <b-badge pill :variant="`light-${resolveUserStatusVariant(data.item.status)}`" class="text-capitalize">
-            {{ data.item.status }}
-          </b-badge>
         </template>
 
         <!-- Column: Actions -->
@@ -225,32 +201,10 @@
                       <p class="font-weight-bold">{{ selectedParticipant.name }}</p>
                     </b-col>
                     <b-col cols="12">
-                        <validation-provider #default="{ errors }" name="Front Title" vid="front_title">
-                            <b-form-group label="Front Title">
-                                <b-form-input type="text" v-model="formNameInCerificate.front_title"
-                                    :state="errors.length > 0 ? false : null" trim />
-                                <b-form-invalid-feedback>
-                                    {{ errors[0] }}
-                                </b-form-invalid-feedback>
-                            </b-form-group>
-                        </validation-provider>
-                    </b-col>
-                    <b-col cols="12">
                         <validation-provider #default="{ errors }" name="Name in Certificate" vid="name_in_certificate"
                             rules="required">
                             <b-form-group label="Name in Certificate">
-                                <b-form-input type="text" v-model="formNameInCerificate.name_in_certificate" placeholder="Please Set Name in Passport First"
-                                    :state="errors.length > 0 ? false : null" trim />
-                                <b-form-invalid-feedback>
-                                    {{ errors[0] }}
-                                </b-form-invalid-feedback>
-                            </b-form-group>
-                        </validation-provider>
-                    </b-col>
-                    <b-col cols="12">
-                        <validation-provider #default="{ errors }" name="Back Title" vid="back_title">
-                            <b-form-group label="Back Title">
-                                <b-form-input type="text" v-model="formNameInCerificate.back_title"
+                                <b-form-input type="text" v-model="formNameInCerificate.name_in_certificate" placeholder="Please Set Name in Certificate"
                                     :state="errors.length > 0 ? false : null" trim />
                                 <b-form-invalid-feedback>
                                     {{ errors[0] }}

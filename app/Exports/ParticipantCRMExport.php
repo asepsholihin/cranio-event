@@ -216,7 +216,7 @@ class ParticipantCRMExport implements FromQuery, ShouldAutoSize, WithHeadings, W
                     ELSE \'z\' END
                 ) AS pemilik_akun'
             ), 'participant.front_title', 'participant.back_title', 'participant.profile_photo_path', 'umroh_trips.title as trip_name', 'package_umroh_trips.name as trip_package']);
-            $query->join('participant', 'participant.id', 'participant_crm.participant_id');
+            $query->join('participants', 'participant.id', 'participant_crm.participant_id');
             $query->leftjoin('participant_umroh_trips', 'participant_umroh_trips.participant_id', 'participant.id');
             $query->leftjoin('umroh_trips', 'participant_umroh_trips.umroh_trip_id', 'umroh_trips.id');
             $query->leftjoin('package_umroh_trips', 'participant_umroh_trips.package_umroh_trip_id', 'package_umroh_trips.id');
@@ -231,7 +231,7 @@ class ParticipantCRMExport implements FromQuery, ShouldAutoSize, WithHeadings, W
                     ELSE \'z\' END
                 ) AS pemilik_akun'
             ), 'participant.front_title', 'participant.back_title', 'participant_crm.latest_trip_name as trip_name', 'latest_trip_package as trip_package']);
-            $query->join('participant', 'participant.id', 'participant_crm.participant_id');
+            $query->join('participants', 'participant.id', 'participant_crm.participant_id');
         }
         if (! empty($this->request['city'])) {
             $query->where('city', 'like', '%' . $this->request['city'] . '%');
@@ -359,7 +359,7 @@ class ParticipantCRMExport implements FromQuery, ShouldAutoSize, WithHeadings, W
                 $start = date('Y-m-d', strtotime($dateXplode[0]));
                 $end = date('Y-m-d', strtotime($dateXplode[1]??$dateXplode[0]));
             }
-            // $query->rightjoin('participant', 'participant.id', 'participant_crm.participant_id');
+            // $query->rightjoin('participants', 'participant.id', 'participant_crm.participant_id');
             $query->join('participant_umroh_trips', 'participant_umroh_trips.participant_id', 'participant.id');
             $query->join('umroh_trips', 'participant_umroh_trips.umroh_trip_id', 'umroh_trips.id');
             $query->whereBetween('umroh_trips.departure_at', [$start, $end]);

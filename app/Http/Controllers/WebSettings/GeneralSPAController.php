@@ -16,8 +16,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Image;
 use DB;
-use Meema\CloudFront\Facades\CloudFront;
-use Meema\CloudFront\Jobs\InvalidateCache;
+
 use App\Support\NumberFormat;
 
 class GeneralSPAController extends Controller
@@ -73,13 +72,6 @@ class GeneralSPAController extends Controller
 
         $this->storeFile($request, $setting, ['web_logo', 'web_favicon']);
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
-
         return $this->responseLatestSetting();
     }
 
@@ -100,7 +92,7 @@ class GeneralSPAController extends Controller
                 $imageMake = Image::make($request->file($key));
 
                 $img = (string) $imageMake->encode('webp');
-                $imagePath =  WebGeneralSetting::DIR_FILE . 'web-logo.webp';
+                $imagePath =  WebGeneralSetting::DIR_FILE . '/web-logo.webp';
                 Storage::put($imagePath, $img);
                 $files = array_merge($files, [$key => $imagePath]);
                 continue;
@@ -161,33 +153,20 @@ class GeneralSPAController extends Controller
 
     public function footerContent()
     {
-        $setting = WebGeneralSetting::latest()->select('footer_location', 'footer_consultation', 'web_email', 'copyright_text', 'partnership_contact', 'head_office_address', 'footer_menu_links', 'siskopatuhimg')->first();
-        $offices = DB::table('master_office')->select('id', 'office_name', 'office_phone', 'office_address')->where('show_footer', 1)->orderBy('order')->get();
+        $setting = WebGeneralSetting::latest()->select('footer_location', 'footer_consultation', 'web_email', 'copyright_text', 'partnership_contact', 'head_office_address', 'footer_menu_links')->first();
         $socialMedia = DB::table('social_media')->select('id', 'social_media_name', 'social_media_link', 'icon')->where('status', 1)->get();
 
         $content = $setting;
-        $content['offices'] = $offices;
         $content['social_media'] = $socialMedia;
         return response()->json($content);
     }
 
     public function postFooterContent(Request $request)
     {
-        if ($request->hasFile('logo_siskopatuh')) {
-            $imageMake = Image::make($request->file('logo_siskopatuh'));
-
-            $img =  (string) $imageMake->encode('webp');
-
-            $profilePhotoPath =  WebGeneralSetting::DIR_FILE . pathinfo($request->file('logo_siskopatuh')->hashName(), PATHINFO_FILENAME) . '.webp';
-
-            Storage::put($profilePhotoPath, $img);
-            $request->merge(['logo_siskopatuh' => $profilePhotoPath]);
-        }
         $setting = WebGeneralSetting::latest();
         $setting->update($request->except('social_media_name', 'social_media_link', 'social_id', 'icon_social_media'));
 
-        if(count($request->get('social_id')) > 0)
-        {
+        if($request->get('social_id') && count($request->get('social_id')) > 0) {
             $array = array_diff($request->get('social_id'), ['undefined']);
             DB::table('social_media')->whereNotIn('id', $array)->update(['status'=>2]);
             foreach($request->get('social_media_name') as $key=>$value){
@@ -225,12 +204,7 @@ class GeneralSPAController extends Controller
             }
         }
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        WebGeneralSetting::flushQueryCache();
     }
 
     public function seoPage(Request $request)
@@ -264,12 +238,6 @@ class GeneralSPAController extends Controller
             $seoTag->twitter_image = 'web/og_image/trLlDsYEDpEVDSS1aBpzrsGU4bm6kUokRyql27oN.jpg';
             $seoTag->save();
         }
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
 
         return response()->json($seoTag);
     }
@@ -281,13 +249,6 @@ class GeneralSPAController extends Controller
             $product->update($request->except('id'));
         }
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
-
         return response()->json($product);
     }
 
@@ -296,13 +257,6 @@ class GeneralSPAController extends Controller
         $asatidz = Asatidz::find($request->id);
         if ($asatidz) {
             $asatidz->update($request->except('id'));
-        }
-
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
         }
 
         return response()->json($asatidz);
@@ -348,33 +302,18 @@ class GeneralSPAController extends Controller
         $offices->longitude = $request->get('longitude');
         $offices->save();
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
     }
 
     public function postMaps(Request $request){
         $setting = WebGeneralSetting::latest()->first();
         $setting->update(['latitude'=>$request->get('latitude'), 'longitude'=>$request->get('longitude'), 'title_maps'=>$request->get('title_maps')]);
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
     }
 
     public function deleteOffice($id){
         MasterOffice::where('id', $id)->delete();
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
     }
 }

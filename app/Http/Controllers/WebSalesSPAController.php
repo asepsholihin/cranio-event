@@ -11,8 +11,7 @@ use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\WebLinkText;
 use Illuminate\Support\Facades\DB;
-use Meema\CloudFront\Facades\CloudFront;
-use Meema\CloudFront\Jobs\InvalidateCache;
+
 
 class WebSalesSPAController extends Controller
 {
@@ -53,12 +52,7 @@ class WebSalesSPAController extends Controller
     public function store(StoreWebSalesRequest $request)
     {
         WebSale::updateOrCreate(['id' => $request->get('id')], $request->except(['icon']));
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
     }
 
     /**

@@ -96,7 +96,7 @@ class ChecklistEquipmentDeliveryExport implements FromQuery, ShouldAutoSize, Wit
         $query = EquipmentDelivery::rightJoin('participant_umroh_trips', 'equipment_deliveries.participant_id', 'participant_umroh_trips.participant_id')
             ->leftJoin('delivery_log', 'equipment_deliveries.id', 'delivery_log.equipment_delivery_id')
             ->leftJoin('order_umroh_trips', 'participant_umroh_trips.booking_order_no', 'order_umroh_trips.order_no')
-            ->join('participant', 'participant.id', '=', 'participant_umroh_trips.participant_id')
+            ->join('participants', 'participant.id', '=', 'participant_umroh_trips.participant_id')
             ->join('package_umroh_trips', 'package_umroh_trips.id', '=', 'participant_umroh_trips.package_umroh_trip_id')
             ->join('umroh_trips', 'umroh_trips.id', '=', 'participant_umroh_trips.umroh_trip_id')
             // ->whereDate('umroh_trips.departure_at', '>', Carbon::now())

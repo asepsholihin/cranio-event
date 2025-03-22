@@ -8,8 +8,7 @@ use App\Models\WebItinerary;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
-use Meema\CloudFront\Facades\CloudFront;
-use Meema\CloudFront\Jobs\InvalidateCache;
+
 
 class WebItinerarySPAController extends Controller
 {
@@ -59,12 +58,7 @@ class WebItinerarySPAController extends Controller
 
         WebItinerary::updateOrCreate(['id' => $request->get('id')], $request->except(['image']));
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
     }
 
     /**

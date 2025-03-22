@@ -47,7 +47,7 @@ class JiosController extends Controller
            'participant.name', 'package_umroh_trips.name as package_name', 'participant_umroh_trips.room_type', 'participant_umroh_trips.group_hotel_room'  
         ])
         ->join('package_umroh_trips', 'participant_umroh_trips.umroh_trip_id', 'package_umroh_trips.umroh_trip_id')
-        ->join('participant', 'participant.id', 'participant_umroh_trips.participant_id')->where('participant_umroh_trips.umroh_trip_id',$jiosSales->umroh_trip_id)->where('participant_id',$jiosSales->participant_id)->first();
+        ->join('participants', 'participant.id', 'participant_umroh_trips.participant_id')->where('participant_umroh_trips.umroh_trip_id',$jiosSales->umroh_trip_id)->where('participant_id',$jiosSales->participant_id)->first();
         $jiosSales['notes'] = $jiosSales->notes??'Tidak ada catatan';
         $jiosSales['participant_name'] = $participant->name??'';
         $jiosSales['package_name'] = $participant->package_name??'';

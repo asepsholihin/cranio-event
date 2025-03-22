@@ -24,7 +24,7 @@ class AttendanceTag
         $umrohTrip = UmrohTrip::findOrFail($umrohTripId);
         $this->umrohTrip = $umrohTrip;
         $query = ParticipantUmrohTrip::join('event_attendances', 'event_attendances.umroh_trip_id', '=', 'participant_umroh_trips.umroh_trip_id')
-        ->join('participant', 'participant_umroh_trips.participant_id', '=', 'participant.id')
+        ->join('participants', 'participant_umroh_trips.participant_id', '=', 'participant.id')
         ->join('package_umroh_trips', 'participant_umroh_trips.package_umroh_trip_id', '=', 'package_umroh_trips.id')
         ->join('umroh_trips', 'umroh_trips.id', '=', 'participant_umroh_trips.umroh_trip_id')
         ->where('participant_umroh_trips.umroh_trip_id', $umrohTripId)

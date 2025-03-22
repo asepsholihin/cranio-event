@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('latitude')->nullable();
             $table->string('longitude')->nullable();
             $table->string('title_maps')->nullable();
-            $table->string('siskopatuhimg')->nullable();
         });
     }
 
@@ -32,7 +31,6 @@ return new class extends Migration
             $table->dropColumn('latitude');
             $table->dropColumn('longitude');
             $table->dropColumn('title_maps');
-            $table->dropColumn('siskopatuhimg');
         });
     }
 };

@@ -30,7 +30,7 @@ class ShipmentLabelCalendarRequest
         }
 
         $data = [
-            'participant' => $participant,
+            'participants' => $participant,
             'calenderYear' => date('Y', strtotime('+1 year')),
             'departureYear' => $departureYear,
             'typeParticipant' => $typeParticipant

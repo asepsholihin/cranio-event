@@ -129,7 +129,7 @@ class ViewLetter
         }
         
         $data = [
-            'participant' => $participant,
+            'participants' => $participant,
             'participantUmrohTrip' => $participantUmrohTrip,
             'packageUmrohTrip' => $packageUmrohTrip,
             'umrohTrip' => $umrohTrip,

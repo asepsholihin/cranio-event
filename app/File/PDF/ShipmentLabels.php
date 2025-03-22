@@ -22,7 +22,7 @@ class ShipmentLabels
             ->where('participant_id', $participant->participant_id)
             ->where('umroh_trip_id', $participant->umroh_trip_id)->first();
 
-            $participantInAccount = DB::table('participant')
+            $participantInAccount = DB::table('participants')
             ->select(['participant_umroh_trips.participant_id', 'participant.home_address', 'participant.name'])
             ->join('participant_umroh_trips', 'participant_umroh_trips.participant_id', 'participant.id')
             ->leftjoin('equipment_deliveries', 'equipment_deliveries.participant_id', 'participant.id')

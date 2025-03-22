@@ -28,11 +28,7 @@ class StorageAttributes
         }
 
         $expiredAt = now('UTC')->addMinutes(self::CACHE_PRESIGNED_URL_IN_MINUTES);
-        $params = [
-            'ResponseCacheControl' => 'private',
-            'ResponseExpires' => $expiredAt->format('D, d M Y H:i:s \G\M\T')
-        ];
-        $presignedUrl = Storage::temporaryUrl($key, $expiredAt, $params);
+        $presignedUrl = Storage::url($key);
         Cache::store(self::CACHE_STORE)->put($key, $presignedUrl, $expiredAt->subMinute());
 
         return $presignedUrl;
@@ -65,11 +61,7 @@ class StorageAttributes
         }
 
         $expiredAt = now('UTC')->addMinutes(self::CACHE_PRESIGNED_URL_IN_MINUTES);
-        $params = [
-            'ResponseCacheControl' => 'private',
-            'ResponseExpires' => $expiredAt->format('D, d M Y H:i:s \G\M\T')
-        ];
-        $presignedUrl = Storage::temporaryUrl($key, $expiredAt, $params);
+        $presignedUrl = Storage::url($key);
         Cache::store(self::CACHE_STORE)->put($key, $presignedUrl, $expiredAt->subMinute());
 
         return $presignedUrl;

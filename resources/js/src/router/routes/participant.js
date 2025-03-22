@@ -1,7 +1,7 @@
 export default [
     {
       path: '/participant',
-      name: 'participant',
+      name: 'participants',
       component: () => import('@/views/pages/participant/index.vue'),
       meta: {
           pageTitle: '',

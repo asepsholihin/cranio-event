@@ -9,8 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
-use Meema\CloudFront\Facades\CloudFront;
-use Meema\CloudFront\Jobs\InvalidateCache;
+
 use MadeITBelgium\SeoAnalyzer\SeoFacade as SEO;
 use Qmas\KeywordAnalytics\Facade as Analytic;
 use DB;

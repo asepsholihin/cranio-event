@@ -13,10 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('participant', function (Blueprint $table) {
-            $table->string('jacket_size')->nullable();
-            $table->string('name_in_sandal_bag')->nullable();
+
+        Schema::table('participants', function (Blueprint $table) {
+            $table->uuid('barcode')->nullable();
         });
+
     }
 
     /**
@@ -26,9 +27,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('participant', function (Blueprint $table) {
-            $table->dropColumn('jacket_size');
-            $table->dropColumn('name_in_sandal_bag');
+        Schema::table('participants', function (Blueprint $table) {
+            $table->dropColumn('barcode');
         });
     }
 };

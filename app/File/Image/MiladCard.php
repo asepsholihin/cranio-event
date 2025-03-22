@@ -51,11 +51,11 @@ class MiladCard
         $withPhoto = $this->withPhoto;
         $editing = $this->editing;
 
-        //return view('crm.milad_card', compact(['participant','title','photo']))->render();
+        //return view('crm.milad_card', compact(['participants','title','photo']))->render();
         $img = SnappyImage::
         setOption('width', 100)
         ->setOption('enable-local-file-access', true)
-        ->loadView('crm.milad_card', compact(['participant','title','photo','withPhoto', 'editing']));
+        ->loadView('crm.milad_card', compact(['participants','title','photo','withPhoto', 'editing']));
         return $img->download("{$participant->name} Milad Card.jpg");
     }
 
@@ -72,7 +72,7 @@ class MiladCard
         $img = SnappyImage::
         setOption('width', 100)
         ->setOption('enable-local-file-access', true)
-        ->loadView('crm.milad_card', compact(['participant','title','photo','withPhoto', 'editing']));
+        ->loadView('crm.milad_card', compact(['participants','title','photo','withPhoto', 'editing']));
         return $img->stream();
     }
 
@@ -90,7 +90,7 @@ class MiladCard
             $img = SnappyImage::
             setOption('width', 100)
             ->setOption('enable-local-file-access', true)
-            ->loadView('crm.milad_card', compact(['participant','title','photo','withPhoto', 'editing']));
+            ->loadView('crm.milad_card', compact(['participants','title','photo','withPhoto', 'editing']));
             $img->save(storage_path('app/'.$fileName));
             $storageKey = "web/Milad_Card/{$fileName}";
             Storage::put($storageKey, fopen(storage_path('app/'.$fileName), 'r'));
@@ -107,6 +107,6 @@ class MiladCard
         $title = $this->title;
         $photo = $this->photo;
         $editing = $this->editing;
-        return view('crm.milad_card', compact(['participant', 'title', 'photo', 'editing']))->render();
+        return view('crm.milad_card', compact(['participants', 'title', 'photo', 'editing']))->render();
     }
 }

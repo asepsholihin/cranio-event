@@ -13,7 +13,7 @@ Vue.component('CountBadge', {
         }
     },
     created () {
-        this.timer = setInterval(this.fetchEventsList, 60000);
+        // this.timer = setInterval(this.fetchEventsList, 60000);
     },
     destroyed() {
         this.cancelAutoUpdate()

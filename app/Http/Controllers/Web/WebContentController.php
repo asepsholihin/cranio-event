@@ -20,8 +20,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
 use Image;
-use Meema\CloudFront\Facades\CloudFront;
-use Meema\CloudFront\Jobs\InvalidateCache;
+
 use Carbon\Carbon;
 use DB;
 
@@ -125,12 +124,7 @@ class WebContentController extends Controller
 
         WebContentSetting::updateOrCreate(['id' => $request->get('id')], $request->except(['image']));
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
 
         return response()->json(['success' => true]);
     }

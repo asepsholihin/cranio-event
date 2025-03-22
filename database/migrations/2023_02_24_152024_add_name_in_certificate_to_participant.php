@@ -13,9 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('participant', function (Blueprint $table) {
-            $table->string('kitas_number')->nullable();
-            $table->string('full_name_vaccine')->nullable();
+        Schema::table('participants', function (Blueprint $table) {
+            $table->string('name_in_certificate')->nullable();
         });
     }
 
@@ -26,9 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('participant', function (Blueprint $table) {
-            $table->dropColumn('kitas_number');
-            $table->dropColumn('full_name_vaccine');
+        Schema::table('participants', function (Blueprint $table) {
+            $table->dropColumn('name_in_certificate');
         });
     }
 };

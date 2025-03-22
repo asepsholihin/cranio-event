@@ -10,9 +10,9 @@ use Rennokki\QueryCache\Traits\QueryCacheable;
 
 class WebGeneralSetting extends Model
 {
-    // use QueryCacheable;
+    use QueryCacheable;
 
-    const DIR_FILE = 'web/settings/files/';
+    const DIR_FILE = 'web/settings/files';
 
     protected $table = 'web_settings';
 
@@ -44,12 +44,9 @@ class WebGeneralSetting extends Model
         'deleted',
         'created_by',
         'updated_by',
-        'shaum_information',
-        'shaum_information_alert',
         'partnership_contact',
         'head_office_address',
         'footer_menu_links',
-        'siskopatuhimg',
         'latitude',
         'longitude',
         'title_maps'
@@ -95,22 +92,6 @@ class WebGeneralSetting extends Model
         return Attribute::make(
             get: fn ($value, $attributes) => StorageAttributes::getTempUrl(
                 $attributes['web_favicon'] ?? null
-            ),
-        );
-    }
-
-    public function siskopatuhImg(): Attribute
-    {
-        if (App::environment('production') && request()->is('api/public/**')) {
-            return Attribute::make(
-                get: fn ($value, $attributes) =>
-                    StorageAttributes::getSmallScreenPath($attributes['logo_siskopatuh']),
-            );
-        }
-
-        return Attribute::make(
-            get: fn ($value, $attributes) => StorageAttributes::getTempUrl(
-                $attributes['logo_siskopatuh'] ?? null
             ),
         );
     }

@@ -10,8 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
-use Meema\CloudFront\Facades\CloudFront;
-use Meema\CloudFront\Jobs\InvalidateCache;
+
 
 class ArticleCategorySPAController extends Controller
 {
@@ -78,12 +77,7 @@ class ArticleCategorySPAController extends Controller
     {
         $article = ArticleCategory::updateOrCreate(['id' => $request->get('id')], $request->all());
         
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
         
         return response()->json(
             $article

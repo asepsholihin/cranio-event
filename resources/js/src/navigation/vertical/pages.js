@@ -21,16 +21,22 @@ export default [
     permission: 'event-attendance-view',
   },
   {
-    title: 'Ticket Transaction',
-    icon: 'TagIcon',
-    route: 'event-ticket-transactions',
-    permission: 'event-ticket-transaction-view',
+    title: 'Booking',
+    icon: 'BookIcon',
+    route: 'booking',
+    permission: 'booking-view',
   },
   {
-    title: 'Booking Hotel Event',
+    title: 'Pembayaran',
+    icon: 'FileIcon',
+    route: 'booking-receipt',
+    permission: 'booking-view',
+  },
+  {
+    title: 'Temp. Booking',
     icon: 'BookIcon',
-    route: 'booking-hotel-event',
-    permission: 'booking-hotel-event-view',
+    route: 'booking-temporary',
+    permission: 'booking-view',
   },
   {
     title: 'City',
@@ -45,29 +51,13 @@ export default [
     permission: 'land-arrangement-view',
   },
   {
-    header: 'CRM',
-    permissions: ['participant-crm-view', 'milad-view', 'greeting-management-view', 'qontak-view', 'crm-report-view'],
-  },
-  {
-    title: 'Survey',
-    icon: 'ListIcon',
-    route: 'survey',
-    permission: 'survey-view',
-  },
-  {
-    title: 'Form Section',
-    icon: 'LayersIcon',
-    route: 'form-section',
-    permission: 'survey-add-or-edit',
-  },
-  {
     header: 'Data & Access',
     permissions: ['participant-view', 'tour-crew-view', 'user-platform-view'],
   },
   {
     title: "Participant",
     icon: 'UsersIcon',
-    route: 'participant',
+    route: 'participants',
     permission: 'participant-view',
   },
   {
@@ -75,22 +65,6 @@ export default [
     icon: 'UserPlusIcon',
     route: 'user-platform',
     permission: 'user-platform-view',
-  },
-  {
-    header: 'Media & Promotion',
-    permissions: ['mitra-media-view'],
-  },
-  {
-    title: "Media",
-    icon: 'ImageIcon',
-    route: 'mitra-media',
-    permission: 'mitra-media-view',
-  },
-  {
-    title: "Media Marketing",
-    icon: 'ImageIcon',
-    route: 'media-marketing',
-    permission: 'media-marketing-view',
   },
   {
     header: 'CMS Website',
@@ -200,12 +174,6 @@ export default [
     icon: 'AtSignIcon',
     route: 'web-link-text',
     permission: 'web-link-text-view',
-  },
-  {
-    title: 'Testimonial',
-    icon: 'MessageCircleIcon',
-    route: 'testimonials',
-    permission: 'testimonial-view',
   },
   {
     title: 'FAQ',

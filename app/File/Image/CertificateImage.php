@@ -26,10 +26,10 @@ class CertificateImage
     {
         $participant = $this->participant;
         $umrohTrip = UmrohTrip::findOrFail($this->umrohTripId);
-        //return view('crm.milad_card_2', compact(['participant','title','photo']))->render();
+        //return view('crm.milad_card_2', compact(['participants','title','photo']))->render();
         $img = SnappyImage::setOption('width', 100)
             ->setOption('enable-local-file-access', true)
-            ->loadView('crm.certificates', compact(['participant','umrohTrip']));
+            ->loadView('crm.certificates', compact(['participants','umrohTrip']));
         return $img->download("{$participant->name} Certificate.jpg");
     }
 
@@ -41,7 +41,7 @@ class CertificateImage
 
         $img = SnappyImage::setOption('width', 100)
             ->setOption('enable-local-file-access', true)
-            ->loadView('crm.certificates', compact(['participant', 'umrohTrip']));
+            ->loadView('crm.certificates', compact(['participants', 'umrohTrip']));
         $img->save(storage_path('app/' . $fileName));
         $storageKey = "/Certificate/{$fileName}";
         Storage::put($storageKey, fopen(storage_path('app/' . $fileName), 'r'));
@@ -62,6 +62,6 @@ class CertificateImage
         $participant = $this->participant;
         $umrohTrip = UmrohTrip::findOrFail($this->umrohTripId);
 
-        return view('crm.certificates', compact(['participant', 'umrohTrip']))->render();
+        return view('crm.certificates', compact(['participants', 'umrohTrip']))->render();
     }
 }

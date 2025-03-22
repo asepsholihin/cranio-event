@@ -6,8 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\WebNavbarSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Meema\CloudFront\Facades\CloudFront;
-use Meema\CloudFront\Jobs\InvalidateCache;
+
 
 class WebNavbarSPAController extends Controller
 {
@@ -64,12 +63,7 @@ class WebNavbarSPAController extends Controller
             $request->all()
         );
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
 
         return response()->json($web_navbar);
     }

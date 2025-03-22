@@ -19,8 +19,7 @@ use App\Models\PriceSimulation;
 use App\Support\StorageAttributes;
 use Illuminate\Support\Facades\Storage;
 use Image;
-use Meema\CloudFront\Facades\CloudFront;
-use Meema\CloudFront\Jobs\InvalidateCache;
+
 
 class CMSEditorController extends Controller
 {
@@ -41,12 +40,7 @@ class CMSEditorController extends Controller
 
         WebSlider::updateOrCreate(['id' => $request->get('id')], $request->except(['image']));
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
 
         return response()->json(['success' => true]);
     }
@@ -95,12 +89,7 @@ class CMSEditorController extends Controller
             WebSlider::create($request->except(['image']));
         }
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
     }
 
     public function editorWhyUsSlider(StoreWebWhyusRequest $request)
@@ -124,12 +113,7 @@ class CMSEditorController extends Controller
         
         WebWhyus::updateOrCreate(['id' => $request->get('id')], $request->except(['image']));
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
     }
 
     public function editorAddWhyUsSlider(Request $request)
@@ -172,12 +156,7 @@ class CMSEditorController extends Controller
             WebWhyus::create($request->except(['image']));
         }
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
     }
 
     public function editorTourPackageSlider(StoreWebTourPackageRequest $request)
@@ -190,12 +169,7 @@ class CMSEditorController extends Controller
 
         WebTourPackage::updateOrCreate(['id' => $request->get('id')], $request->except(['image']));
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
     }
 
     public function editorAddTourPackageSlider(Request $request)
@@ -241,12 +215,7 @@ class CMSEditorController extends Controller
             WebTourPackage::create($request->except(['image']));
         }
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
     }
 
 
@@ -327,12 +296,7 @@ class CMSEditorController extends Controller
             WebPartner::updateOrCreate(['id' => $request->id[$key]], $updateForm);
         }
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
     }
 
     public function editorPartnerSliderUploadImage(Request $request)
@@ -360,12 +324,7 @@ class CMSEditorController extends Controller
             WebPartner::updateOrCreate(['id' => $request->get('id')], $request->except(['image']));
         }
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
     }
 
     public function editorAddPartnerSlider(Request $request)
@@ -394,12 +353,7 @@ class CMSEditorController extends Controller
             WebPartner::create($request->except(['image']));
         }
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
     }
 
     public function imageSliderDelete(Request $request)
@@ -435,12 +389,7 @@ class CMSEditorController extends Controller
             }
         }
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
 
         return response()->json(['success' => true]);
     }
@@ -455,11 +404,6 @@ class CMSEditorController extends Controller
 
         PriceSimulation::updateOrCreate(['id' => $request->get('id')], $request->all());
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
     }
 }

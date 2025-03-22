@@ -41,6 +41,9 @@ import survey from './routes/survey'
 import formSection from './routes/form-section'
 import bookingHotelEvent from './routes/booking-hotel-event'
 import masterHotelEvent from './routes/master-hotel-event'
+import booking from './routes/booking'
+import bookingTemporary from './routes/booking-temporary'
+import bookingReceipt from './routes/booking-receipt'
 
 Vue.use(VueRouter)
 
@@ -89,6 +92,9 @@ const router = new VueRouter({
     ...formSection,
     ...bookingHotelEvent,
     ...masterHotelEvent,
+    ...booking,
+    ...bookingTemporary,
+    ...bookingReceipt,
     {
       path: '*',
       redirect: 'not-found',
@@ -111,7 +117,7 @@ router.beforeEach((to, _, next) => {
     next(getHomeRouteForLoggedInUser())
   }
 
-  refetchCountBadgeNav()
+  // refetchCountBadgeNav()
   return next()
 })
 

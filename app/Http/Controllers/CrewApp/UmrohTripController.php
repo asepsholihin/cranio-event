@@ -101,7 +101,7 @@ class UmrohTripController extends Controller
             $row['last_location'] = $lastLocation;
             $row['departure_from'] = Attendance::join('event_attendances', 'event_attendances.id', 'attendances.event_id')->where('participant_id', $row->participant_id)->where('event_attendances.umroh_trip_id', $row->umroh_trip_id)->first()->departure_from_update ?? null;
 
-            $logAttendance = LogAttendance::join('participant', 'log_attendances.participant_id', '=', 'participant.id')
+            $logAttendance = LogAttendance::join('participants', 'log_attendances.participant_id', '=', 'participant.id')
             ->select('log_attendances.created_at')
             ->where('summary_attendance_id', request()->query('summaryAttendanceId', 0))
             ->where('participant_id', $row->participant_id)->first();
@@ -137,7 +137,7 @@ class UmrohTripController extends Controller
     public function receiveBagSummary(Request $request)
     {
         $query = DB::table('baggages')->select(DB::raw('COALESCE(SUM(total_bags), 0) as total_bags'), DB::raw('COALESCE(SUM(total_cabin), 0) as total_cabin'))
-        ->join('participant', 'participant.id','baggages.participant_id');
+        ->join('participants', 'participant.id','baggages.participant_id');
         if (!empty($request->umrohTripId)) {
             $query->where('umroh_trip_id', $request->umrohTripId);
         }
@@ -336,7 +336,7 @@ class UmrohTripController extends Controller
         ->select([
             'participant_umroh_trips.group_hotel_room',
         ])
-        ->join('participant', 'participant_umroh_trips.participant_id', '=', 'participant.id')
+        ->join('participants', 'participant_umroh_trips.participant_id', '=', 'participant.id')
         ->where('participant_umroh_trips.umroh_trip_id', $umrohTrip->id)
         ->groupBy('group_hotel_room');
         if($package) {
@@ -355,7 +355,7 @@ class UmrohTripController extends Controller
 
         foreach($groupHotelRooms as $group) {
             $participant = ParticipantUmrohTrip::query()
-            ->join('participant', 'participant_umroh_trips.participant_id', '=', 'participant.id')
+            ->join('participants', 'participant_umroh_trips.participant_id', '=', 'participant.id')
             ->join('package_umroh_trips', 'participant_umroh_trips.package_umroh_trip_id', '=', 'package_umroh_trips.id')
             ->join('umroh_trips', 'participant_umroh_trips.umroh_trip_id', '=', 'umroh_trips.id')
             ->select([
@@ -386,7 +386,7 @@ class UmrohTripController extends Controller
             $group['room_notes'] = ($participant) ? $participant[0]->room_notes : null;
             $group['departure_seat'] = ($participant) ? $participant[0]->departure_seat : null;
             $group['return_seat'] = ($participant) ? $participant[0]->return_seat : null;
-            $group['participant'] = ($participant) ? $participant : null;
+            $group['participants'] = ($participant) ? $participant : null;
             $roomList[] = $group;
         }
 
@@ -495,7 +495,7 @@ class UmrohTripController extends Controller
         }
         $has_decode = Crypt::decrypt($request->token);
         $participantUmrohTrip = ParticipantUmrohTrip::where('umroh_trip_id', $has_decode)
-                ->join('participant', 'participant.id', '=', 'participant_umroh_trips.participant_id')
+                ->join('participants', 'participant.id', '=', 'participant_umroh_trips.participant_id')
                 ->select('participant_umroh_trips.umroh_trip_id', 'participant_umroh_trips.participant_id',
                     'participant.name',
                     'participant.no_hp',

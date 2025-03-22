@@ -92,7 +92,7 @@ class EventAttendanceController extends Controller
             }
 
             if ($request->has('umroh_trip_id')) {
-                $participantUmrohTrip = ParticipantUmrohTrip::join('participant', 'participant.id', '=', 'participant_umroh_trips.participant_id')
+                $participantUmrohTrip = ParticipantUmrohTrip::join('participants', 'participant.id', '=', 'participant_umroh_trips.participant_id')
                     ->join('package_umroh_trips', 'package_umroh_trips.id', '=', 'participant_umroh_trips.package_umroh_trip_id')
                     ->join('umroh_trips', 'umroh_trips.id', '=', 'participant_umroh_trips.umroh_trip_id')
                     ->where('participant_umroh_trips.umroh_trip_id', $request->umroh_trip_id)->whereIn('participant_umroh_trips.role_type', [1,2,4])->get();
@@ -205,7 +205,7 @@ class EventAttendanceController extends Controller
         }
 
         DB::transaction(function() use($request) {
-            $participants = DB::table('participant')->select('participant.id', 'participant.no_hp')
+            $participants = DB::table('participants')->select('participant.id', 'participant.no_hp')
             ->join('attendances', 'participant.id', 'attendances.participant_id')
             ->whereNull('participant.deleted_at')
             ->whereIn('participant.id', request()->participantIds)
@@ -289,14 +289,14 @@ class EventAttendanceController extends Controller
     public function participantDetail($id)
     {
         $attendance = Attendance::where('participant_id', $id)->first();
-        $participant = ParticipantUmrohTrip::select('participant.name', 'participant_umroh_trips.manasik_table', 'participant.id')->join('participant', 'participant_umroh_trips.participant_id', 'participant.id')->where('participant.id', $attendance->participant_id)->first();
+        $participant = ParticipantUmrohTrip::select('participant.name', 'participant_umroh_trips.manasik_table', 'participant.id')->join('participants', 'participant_umroh_trips.participant_id', 'participant.id')->where('participant.id', $attendance->participant_id)->first();
         return response()->json($participant);
     }
 
     public function participantUnattendeeList($eventId)
     {
         $participant = Attendance::select('participant.id', 'participant.name', 'check_in_at')
-            ->join('participant', 'participant.id', 'attendances.participant_id')
+            ->join('participants', 'participant.id', 'attendances.participant_id')
             ->where('event_id', $eventId)
             ->get();
 
@@ -384,7 +384,7 @@ class EventAttendanceController extends Controller
     public function chartAttendance(Request $request)
     {
         $query = Attendance::
-        join('participant', 'participant.id', 'attendances.participant_id')
+        join('participants', 'participant.id', 'attendances.participant_id')
         ->join('event_attendances', 'event_attendances.id', 'attendances.event_id')
         ->leftjoin('participant_umroh_trips', function ($join) {
             $join->on('participant_umroh_trips.participant_id', 'attendances.participant_id');
@@ -430,7 +430,7 @@ class EventAttendanceController extends Controller
 
         foreach ($packageCategory as $key => $value) {
             $queryParticipant = Attendance::select('participant.id', 'participant.name', 'check_in_at', 'check_in_at_online', 'confirm', 'confirm_at')
-            ->join('participant', 'participant.id', 'attendances.participant_id')
+            ->join('participants', 'participant.id', 'attendances.participant_id')
             ->join('event_attendances', 'event_attendances.id', 'attendances.event_id')
             ->leftjoin('participant_umroh_trips', function ($join) {
                 $join->on('participant_umroh_trips.participant_id', 'attendances.participant_id');
@@ -456,7 +456,7 @@ class EventAttendanceController extends Controller
 
             if ($request->online == 'online') {
                 $participantUnAttended = Attendance::select('participant.id', 'participant.name', 'check_in_at', 'check_in_at_online', 'confirm', 'confirm_at')
-                ->join('participant', 'participant.id', 'attendances.participant_id')
+                ->join('participants', 'participant.id', 'attendances.participant_id')
                 ->join('event_attendances', 'event_attendances.id', 'attendances.event_id')
                 ->leftjoin('participant_umroh_trips', function ($join) {
                     $join->on('participant_umroh_trips.participant_id', 'attendances.participant_id');
@@ -470,11 +470,11 @@ class EventAttendanceController extends Controller
                 ->get()->toArray();   
                 $participant = array_merge($participant, $participantUnAttended);
             }
-            $data['packages'][$key]['participant'] = $participant;
+            $data['packages'][$key]['participants'] = $participant;
         }
 
         $participantIds = Attendance::select('attendances.participant_id')
-        ->join('participant', 'participant.id', 'attendances.participant_id')
+        ->join('participants', 'participant.id', 'attendances.participant_id')
         ->join('event_attendances', 'event_attendances.id', 'attendances.event_id')
         ->join('participant_umroh_trips', function ($join) {
             $join->on('participant_umroh_trips.participant_id', 'attendances.participant_id');
@@ -484,7 +484,7 @@ class EventAttendanceController extends Controller
         ->get()->pluck('participant_id');
         
         $participant_others = Attendance::select('participant.id', 'participant.name', 'check_in_at', 'check_in_at_online', 'confirm', 'confirm_at')
-        ->join('participant', 'participant.id', 'attendances.participant_id')
+        ->join('participants', 'participant.id', 'attendances.participant_id')
         ->where('event_id', $request->eventId)
         ->whereNotIn('participant_id', $participantIds)->get();
         $otherPackages = array(
@@ -506,7 +506,7 @@ class EventAttendanceController extends Controller
             "COALESCE(SUM(CASE WHEN confirm_at IS NOT NULL  THEN 1 ELSE 0 END), 0) AS total_confirm,
              COALESCE(SUM(CASE WHEN confirm_at IS NULL THEN 1 ELSE 0 END), 0) AS total_unconfirm"
         )
-        ->join('participant', 'participant.id', 'attendances.participant_id')
+        ->join('participants', 'participant.id', 'attendances.participant_id')
         ->join('event_attendances', 'event_attendances.id', 'attendances.event_id')
         ->leftJoin('participant_umroh_trips', function ($join) {
             $join->on('participant_umroh_trips.participant_id', 'attendances.participant_id');
@@ -537,7 +537,7 @@ class EventAttendanceController extends Controller
 
         foreach ($packageCategory as $key => $value) {
             $participant = Attendance::select('participant.id', 'participant.name', 'check_in_at', 'confirm', 'confirm_at')
-                ->join('participant', 'participant.id', 'attendances.participant_id')
+                ->join('participants', 'participant.id', 'attendances.participant_id')
                 ->join('event_attendances', 'event_attendances.id', 'attendances.event_id')
                 ->leftjoin('participant_umroh_trips', function ($join) {
                     $join->on('participant_umroh_trips.participant_id', 'attendances.participant_id');
@@ -547,11 +547,11 @@ class EventAttendanceController extends Controller
                 ->where('event_id', $request->eventId)
                 ->where('package_umroh_trips.name', 'LIKE', '%' . $value['package_name'] . '%')
                 ->get();
-            $data['packages'][$key]['participant'] = $participant;
+            $data['packages'][$key]['participants'] = $participant;
         }
 
         $participantIds = Attendance::select('attendances.participant_id')
-        ->join('participant', 'participant.id', 'attendances.participant_id')
+        ->join('participants', 'participant.id', 'attendances.participant_id')
         ->join('event_attendances', 'event_attendances.id', 'attendances.event_id')
         ->join('participant_umroh_trips', function ($join) {
             $join->on('participant_umroh_trips.participant_id', 'attendances.participant_id');
@@ -561,7 +561,7 @@ class EventAttendanceController extends Controller
         ->get()->pluck('participant_id');
 
         $participant_others = Attendance::select('participant.id', 'participant.name', 'check_in_at', 'confirm', 'confirm_at')
-        ->join('participant', 'participant.id', 'attendances.participant_id')
+        ->join('participants', 'participant.id', 'attendances.participant_id')
         ->where('event_id', $request->eventId)
         ->whereNotIn('participant_id', $participantIds)->get();
         $otherPackages = array(
@@ -658,7 +658,7 @@ class EventAttendanceController extends Controller
         }
 
         $participantIds = Attendance::select('attendances.participant_id')
-        ->join('participant', 'participant.id', 'attendances.participant_id')
+        ->join('participants', 'participant.id', 'attendances.participant_id')
         ->join('event_attendances', 'event_attendances.id', 'attendances.event_id')
         ->join('participant_umroh_trips', function ($join) {
             $join->on('participant_umroh_trips.participant_id', 'attendances.participant_id');
@@ -769,7 +769,7 @@ class EventAttendanceController extends Controller
             ], 422);
         }
         $participant = Attendance::select('participant.id', 'participant.no_hp')
-            ->join('participant', 'participant.id', 'attendances.participant_id')
+            ->join('participants', 'participant.id', 'attendances.participant_id')
             ->where('event_id', $event->id)
             ->where('no_hp', 'like', '%' . $originPhone . '%')->first();
 
@@ -838,7 +838,7 @@ class EventAttendanceController extends Controller
                 'message'  => 'Event sudah berakhir',
             ], 422);
         }
-        $participant = Attendance::select('participant.id')->join('participant', 'participant.id', 'attendances.participant_id')->where('event_id', $event->id)->where('participant.id', $request->participant_id)->first();
+        $participant = Attendance::select('participant.id')->join('participants', 'participant.id', 'attendances.participant_id')->where('event_id', $event->id)->where('participant.id', $request->participant_id)->first();
         if (empty($participant)) {
             return response()->json([
                 'success' => false,
@@ -855,7 +855,7 @@ class EventAttendanceController extends Controller
         if (Str::startsWith($phoneNumber, '62')) {
             $originPhone = substr($phoneNumber, 2);
         }
-        $participantParent = Attendance::select('participant.id')->join('participant', 'participant.id', 'attendances.participant_id')->where('event_id', $event->id)->where('participant.no_hp', 'like', '%' . $originPhone . '%')->first();
+        $participantParent = Attendance::select('participant.id')->join('participants', 'participant.id', 'attendances.participant_id')->where('event_id', $event->id)->where('participant.no_hp', 'like', '%' . $originPhone . '%')->first();
         if (empty($participantParent)) {
             return response()->json([
                 'success' => false,
@@ -893,7 +893,7 @@ class EventAttendanceController extends Controller
                 'message'  => 'Event sudah berakhir',
             ], 422);
         }
-        $participant = Attendance::select('participant.id')->join('participant', 'participant.id', 'attendances.participant_id')->where('event_id', $event->id)->where('participant.id', $request->participant_id)->first();
+        $participant = Attendance::select('participant.id')->join('participants', 'participant.id', 'attendances.participant_id')->where('event_id', $event->id)->where('participant.id', $request->participant_id)->first();
         if (empty($participant)) {
             return response()->json([
                 'success' => false,
@@ -910,7 +910,7 @@ class EventAttendanceController extends Controller
         if (Str::startsWith($phoneNumber, '62')) {
             $originPhone = substr($phoneNumber, 2);
         }
-        $participantParent = Attendance::select('participant.id')->join('participant', 'participant.id', 'attendances.participant_id')->where('event_id', $event->id)->where('participant.no_hp', 'like', '%' . $originPhone . '%')->first();
+        $participantParent = Attendance::select('participant.id')->join('participants', 'participant.id', 'attendances.participant_id')->where('event_id', $event->id)->where('participant.no_hp', 'like', '%' . $originPhone . '%')->first();
         if (empty($participantParent)) {
             return response()->json([
                 'success' => false,
@@ -1038,7 +1038,7 @@ class EventAttendanceController extends Controller
 
     public function checkBarcodeEvent(Request $request)
     {
-        $participant = DB::table('participant')->select(['participant.id','participant.id as participant_id', 'barcode'])->where('id', $request->participantId)->first();
+        $participant = DB::table('participants')->select(['participant.id','participant.id as participant_id', 'barcode'])->where('id', $request->participantId)->first();
         $event = DB::table('event_attendances')->where('slug', $request->slug)->first();
         
         $barcode = (new BarcodeEventParticipant($participant, $event))->streamPublic();

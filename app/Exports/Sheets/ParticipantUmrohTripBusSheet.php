@@ -93,7 +93,7 @@ class ParticipantUmrohTripBusSheet implements FromQuery, ShouldAutoSize, WithHea
     public function query()
     {
         return ParticipantUmrohTrip::query()
-            ->join('participant', 'participant.id', '=', 'participant_umroh_trips.participant_id')
+            ->join('participants', 'participant.id', '=', 'participant_umroh_trips.participant_id')
             ->leftjoin('package_umroh_trips', 'package_umroh_trips.id', '=', 'participant_umroh_trips.package_umroh_trip_id')
             ->leftjoin('order_umroh_trips', 'participant_umroh_trips.booking_order_no', '=', 'order_umroh_trips.order_no')
             ->join('umroh_trips', 'umroh_trips.id', '=', 'participant_umroh_trips.umroh_trip_id')

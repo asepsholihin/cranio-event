@@ -55,6 +55,7 @@ use App\Http\Controllers\Public\SurveyController;
 use App\Http\Controllers\Public\CampaignController;
 use App\Http\Controllers\Public\CalendarRequestController;
 use App\Http\Controllers\Public\MerchandiseConfirmationController;
+use App\Http\Controllers\Public\RegistrationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -69,7 +70,7 @@ use App\Http\Controllers\Public\MerchandiseConfirmationController;
 
 // Register prefix throttle on RouteServiceProvider
 
-Route::prefix('participant')->group(function () {
+Route::prefix('participants')->group(function () {
     Route::controller(AuthController::class)->group(function () {
         Route::post('/login', 'login');
         Route::post('/register', 'register');
@@ -401,7 +402,7 @@ Route::prefix('public')->group(function () {
     Route::get('live-streaming', [LiveStreamSPAController::class, 'liveStream']);
 
     Route::post('booking/callback', [XenditController::class, 'callback']);
-    Route::get('booking/detail', [BookingOrderController::class, 'bookingDetail']);
+    // Route::get('booking/detail', [BookingOrderController::class, 'bookingDetail']);
     Route::get('booking/invoice/detail/{transactionId}', [BookingOrderController::class, 'invoiceDetail']);
     Route::post('booking/generate-invoice', [BookingOrderController::class, 'generateInvoice']);
     Route::post('booking/assign-participant', [BookingOrderController::class, 'assignParticipant']);
@@ -422,6 +423,13 @@ Route::prefix('public')->group(function () {
 
 
     Route::get('download-itinerary/{file}', [WebProductSPAController::class, 'downloadItinerary']);
+
+    Route::post('registration', [RegistrationController::class, 'postData']);
+    Route::post('registration/participant', [RegistrationController::class, 'postDataParticipant']);
+    Route::get('registration/check-participant', [RegistrationController::class, 'checkParticipant']);
+    Route::get('registration/{uuid}', [RegistrationController::class, 'registeredAccount']);
+    Route::get('booking/detail', [RegistrationController::class, 'bookingDetail']);
+    Route::post('booking/payment-confirmation', [RegistrationController::class, 'postDataPaymentConfirmation']);
 });
 
 

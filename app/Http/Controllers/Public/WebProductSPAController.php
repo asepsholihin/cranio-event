@@ -788,12 +788,7 @@ class WebProductSPAController extends Controller
         $otherPackages->marketing_description = $request->get('marketing_description');
         $otherPackages->save();
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
         return response()->json($otherPackages);
     }
 
@@ -845,12 +840,7 @@ class WebProductSPAController extends Controller
             WebContentProduct::create($request->all());
         }
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
 
         return response()->json($product);
     }
@@ -862,12 +852,7 @@ class WebProductSPAController extends Controller
             $product->delete();
         }
 
-        try {
-            $paths = ['/*'];
-            $result = CloudFront::invalidate($paths, \config('cloudfront.distribution_id'));
-        } catch (\Throwable $th) {
-            //
-        }
+        
 
         return response()->json($product);
     }

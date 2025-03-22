@@ -65,7 +65,7 @@ class SendWhatsappLinkEventConfirmation implements ShouldQueue
 
         $umrohTrip = UmrohTrip::find($this->event->umroh_trip_id);
         $queryParticipants = ParticipantUmrohTrip::select(['participant.id','participant.name','participant.no_hp', 'participant_umroh_trips.booking_order_no', 'participant_umroh_trips.package_umroh_trip_id', 'package_umroh_trips.name as package_name'])
-        ->join('participant', 'participant.id', 'participant_umroh_trips.participant_id')
+        ->join('participants', 'participant.id', 'participant_umroh_trips.participant_id')
         ->join('package_umroh_trips', 'package_umroh_trips.id', 'participant_umroh_trips.package_umroh_trip_id');
         if($this->partialParticipantId) {
             $queryParticipants->where('participant_umroh_trips.participant_id', $this->partialParticipantId);

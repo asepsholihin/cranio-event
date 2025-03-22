@@ -165,7 +165,7 @@ class LetterParticipant
         $signed = LogLetter::select('sign_evidence')->where('participant_umroh_trip_id', $participantUmrohTrip->id)->where('letter_type', $letterType)->whereNotNull('sign_evidence')->first()->sign_evidence ?? null;
 
         $data = [
-            'participant' => $participant,
+            'participants' => $participant,
             'participantUmrohTrip' => $participantUmrohTrip,
             'packageUmrohTrip' => $packageUmrohTrip,
             'umrohTrip' => $umrohTrip,

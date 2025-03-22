@@ -27,7 +27,7 @@ class AbsensiKepulangan
         $this->umrohTrip = $umrohTrip;
         $packages = PackageUmrohTrip::where('umroh_trip_id', $umrohTripId)->get();
         $query = ParticipantUmrohTrip::
-        join('participant', 'participant.id', 'participant_umroh_trips.participant_id')
+        join('participants', 'participant.id', 'participant_umroh_trips.participant_id')
         ->join('package_umroh_trips', 'package_umroh_trips.id', 'participant_umroh_trips.package_umroh_trip_id')
         ->select([
             'participant.name',

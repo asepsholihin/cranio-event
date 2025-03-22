@@ -21,8 +21,6 @@ class Participant extends Authenticatable implements Auditable
     use HasApiTokens, HasFactory, Notifiable;
     use \OwenIt\Auditing\Auditable;
 
-    protected $table = 'participant';
-
     const ACCESS_STATUS_ACTIVE = 1;
     const ACCESS_STATUS_DISABLED = 2;
 
@@ -45,7 +43,7 @@ class Participant extends Authenticatable implements Auditable
         'name',
         'email',
         'password',
-        'no_hp',
+        'whatsapp',
         'nik',
         'no_passport',
         'birth_place',
@@ -53,69 +51,11 @@ class Participant extends Authenticatable implements Auditable
         'email_verified_at',
         'gender',
         'profile_photo_path',
-        'created_from',
-        'title',
-        'front_title',
-        'back_title',
-        'fathers_name',
-        'married_status',
-        'nationality',
-        'instagram',
-        'ktp_province',
-        'ktp_city',
-        'ktp_kecamatan',
-        'ktp_kelurahan',
-        'ktp_address',
-        'ktp_postalcode',
-        'home_province',
-        'home_city',
-        'home_kecamatan',
-        'home_kelurahan',
-        'home_address',
-        'home_postalcode',
-        'education',
-        'is_doctor',
-        'doctor_specialist',
-        'doctor_evidence',
-        'job',
-        'company_name',
-        'blood_type',
-        'medical_record',
-        'emergency_contact',
-        'emergency_contact_name',
-        'emergency_relation',
-        'emergency_address',
-        'have_passport',
-        'name_in_passport',
-        'passport_issued_at',
-        'passport_published_date',
-        'passport_expired_date',
-        'passport_held_by',
-        'suggest_booking_order',
-        'suggest_package',
-        'suggest_room',
-        'refer_by',
-        'body_size',
-        'infants',
-        'kitas_number',
-        'full_name_vaccine',
-        'participant_status',
-        'wedding_book_required',
-        'chest_size',
-        'body_height',
+        'polo_size',
         'name_in_certificate',
-        'remind_milad',
-        'access_status',
-        'linkedin_url',
-        'barcode_thumbnail',
+        'request',
         'created_by',
         'created_by',
-        'jacket_size',
-        'name_in_sandal_bag',
-        'milad_card_url',
-        'is_nakes',
-        'is_tni_polri',
-        'medical_description'
     ];
 
     /**
@@ -125,7 +65,6 @@ class Participant extends Authenticatable implements Auditable
      */
     protected $hidden = [
         'password',
-        'pin',
         'remember_token',
         'created_from',
         'email_verified_at',
@@ -165,7 +104,7 @@ class Participant extends Authenticatable implements Auditable
         });
 
         static::created(function (Participant $item) {
-            $item->generateJiCode();
+            
         });
     }
 
@@ -250,13 +189,13 @@ class Participant extends Authenticatable implements Auditable
 
     public function scopeTableSearch($query)
     {
-        $query->select('participant.*');
+        $query->select('participants.*');
         if(in_array(3, auth()->user()->department_ids)) {
-            $query->where('participant.created_by', auth()->user()->id);
+            $query->where('participants.created_by', auth()->user()->id);
         }
 
         if (!empty(request()->query('gender'))) {
-            $query->where('participant.gender', request()->query('gender'));
+            $query->where('participants.gender', request()->query('gender'));
         }
 
         if (empty(request()->query('q', ''))) {
@@ -266,19 +205,12 @@ class Participant extends Authenticatable implements Auditable
         $search = '%' . request()->query('q') . '%';
         return $query->where(function ($query) use ($search) {
             $query
-                ->where('participant.email',  request()->query('q'))
-                ->orWhere('participant.name', 'like', $search)
-                ->orWhere('participant.no_hp', 'like', $search)
-                ->orWhere('participant.nik', 'like', $search)
-                ->orWhere('participant.no_passport', 'like', $search);
+                ->where('participants.email',  request()->query('q'))
+                ->orWhere('participants.name', 'like', $search)
+                ->orWhere('participants.no_hp', 'like', $search)
+                ->orWhere('participants.nik', 'like', $search)
+                ->orWhere('participants.no_passport', 'like', $search);
         });
-    }
-
-    public function generateJiCode()
-    {
-        $jiCode = self::PREFIX_JI_CODE . date('y') . str_pad($this->getIdInThisMonth(), 5, 0, STR_PAD_LEFT);
-        $this->ji_code = $jiCode;
-        $this->save();
     }
 
     private function getIdInThisMonth()
@@ -290,64 +222,31 @@ class Participant extends Authenticatable implements Auditable
         return $recordNumber + 1;
     }
 
-    public static function createJiCodeForParticipant()
-    {
-        $participant = Participant::whereNull('ji_code')->whereNull('ji_code')->orderBy('created_at', 'asc')->withTrashed()->get();
-        $year = null;
-        foreach ($participant as $key => $value) {
-            $dbCount = SELF::where('ji_code', 'LIKE', '%' . self::PREFIX_JI_CODE . Carbon::parse($value->created_at)->format('y') . '%')->withTrashed()->count();
-            $number = (int) $dbCount + 1;
-            $jiCode = self::PREFIX_JI_CODE . Carbon::parse($value->created_at)->format('y') . str_pad($number, 5, 0, STR_PAD_LEFT);
-            $value->ji_code = $jiCode;
-            $value->save();
-        }
-    }
-
-    public function activationReminderMilad()
-    {
-        if($this->remind_milad == 1) {
-            $this->remind_milad = 2;
-        } else {
-            $this->remind_milad = 1;
-        }
-        $this->save();
-    }
-
-    public static function getLastTrip($id)
-    {
-        $last_trip = '';
-        $orderUmrohTrip = ParticipantUmrohTrip::where('participant_id', $id)->orderBy('created_at', 'desc')->first();
-        if($orderUmrohTrip) {
-            $last_trip = UmrohTrip::find($orderUmrohTrip->umroh_trip_id)->title ?? '';
-        }
-        return $last_trip;
-    }
-
     public function scopeTableRawSearch($query)
     {
-        $query->select('participant.*');
+        $query->select('participants.*');
         if(in_array(3, auth()->user()->department_ids)) {
-            $query->where('participant.created_by', auth()->user()->id);
+            $query->where('participants.created_by', auth()->user()->id);
         }
         if (!empty(request()->query('gender'))) {
-            $query->where('participant.gender', request()->query('gender'));
+            $query->where('participants.gender', request()->query('gender'));
         }
         if (!empty(request()->query('duplicate'))) {
             $query->join(
                 \DB::raw('(SELECT name, nik FROM participant GROUP BY name, nik HAVING COUNT(*) > 1) AS redundant'),
-                'redundant.nik', '=', 'participant.nik'
+                'redundant.nik', '=', 'participants.nik'
             );
-            $query->orderByRaw('participant.name ASC, participant.nik ASC, participant.id ASC');
+            $query->orderByRaw('participants.name ASC, participants.nik ASC, participants.id ASC');
         }
         if (!empty(request()->query('q', ''))) {
             $search = '%' . request()->query('q') . '%';
             $query->where(function ($query) use ($search) {
                 $query
-                    ->where('participant.email',  request()->query('q'))
-                    ->orWhere('participant.name', 'like', $search)
-                    ->orWhere('participant.no_hp', 'like', $search)
-                    ->orWhere('participant.nik', 'like', $search)
-                    ->orWhere('participant.no_passport', 'like', $search);
+                    ->where('participants.email',  request()->query('q'))
+                    ->orWhere('participants.name', 'like', $search)
+                    ->orWhere('participants.no_hp', 'like', $search)
+                    ->orWhere('participants.nik', 'like', $search)
+                    ->orWhere('participants.no_passport', 'like', $search);
             });
         }
 

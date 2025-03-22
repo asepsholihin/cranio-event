@@ -22,6 +22,8 @@ return new class extends Migration
             $table->string('whatsapp_api')->nullable();
             $table->integer('total_visit')->default(0);
             $table->tinyInteger('status')->default(1);
+            $table->tinyInteger('show_in_footer')->default(1);
+            $table->tinyInteger('whatsapp_service')->default(1);
             $table->timestamps();
             $table->softDeletes();
         });
