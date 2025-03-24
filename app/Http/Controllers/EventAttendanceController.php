@@ -127,7 +127,6 @@ class EventAttendanceController extends Controller
         }
         $attendee = $query->where('event_id', $event_attendance->id)->first()->toArray();
         $event = $event_attendance->toArray();
-        $event['hotel_name'] = MasterHotelEvent::select('hotel_name')->find($event['transit_hotel_id'])->hotel_name ?? null;
         return response()->json(array_merge($attendee, $event));
     }
 

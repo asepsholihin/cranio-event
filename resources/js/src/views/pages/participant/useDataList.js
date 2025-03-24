@@ -13,11 +13,12 @@ export default function useUsersList() {
 
   // Table Handlers
   const tableColumns = [
+    { key: 'booking' },
     { key: 'name', sortable: true },
-    { key: 'email', sortable: false },
-    { key: 'whatsapp', sortable: false },
-    { key: 'nik', sortable: false },
-    { key: 'polo_size', sortable: false },
+    { key: 'email' },
+    { key: 'whatsapp' },
+    { key: 'nik' },
+    { key: 'polo_size' },
 
     { key: 'actions' },
   ]

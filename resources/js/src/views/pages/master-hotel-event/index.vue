@@ -585,7 +585,7 @@ export default {
 </style>
 <style scoped>
 /* .modalls .modal-header {
-  background-color: #8c0095 !important;
+  background-color: #d641e1 !important;
   color:white !important;
 } */
 </style>

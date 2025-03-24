@@ -8,6 +8,7 @@ use App\Exceptions\ErrorMessageException;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\BookingExport;
 use App\File\PDF\ReceiptGeneralPDF;
+use Carbon\Carbon;
 
 class BookingSPAController extends Controller
 {
@@ -42,14 +43,33 @@ class BookingSPAController extends Controller
     public function store(Request $request)
     {
         $request->validate(['name' => 'required']);
+        $booking = Booking::updateOrCreate(['id' => $request->get('id')], $request->all());
+    }
 
-        $uid = auth()->user()->id;
-        $request->merge([
-            'created_by' => $uid,
-            'updated_by' => $uid
-        ]);
+    public function action(Request $request)
+    {
+        $request->validate(['id' => 'required']);
+        $booking = Booking::find($request->get('id'));
 
-        Booking::updateOrCreate(['id' => $request->get('id')], $request->all());
+        if ($request->hasFile('file_evidence')) {
+            $profilePhotoPath = $request->file('file_evidence')->store(Booking::DIR_EVIDENCE);
+            $request->merge(['room_key_evidence' => $profilePhotoPath]);
+        }
+
+        if($request->set_room) {
+            $request->merge([
+                'received_at' => Carbon::now(),
+                'given_by' => auth()->user()->id
+            ]);
+        }
+
+        if($request->update_booking) {
+            if($request->total_pax < $booking->pax_assign) {
+                throw new ErrorMessageException("Total Pax tidak boleh kurang dari peserta yang terdaftar");
+            } 
+        }
+
+        $booking->update($request->except('file_evidence'));
     }
 
     /**

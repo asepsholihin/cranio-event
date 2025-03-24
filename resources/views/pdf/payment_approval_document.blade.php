@@ -243,7 +243,7 @@ use Carbon\Carbon;
             font-weight:bold !important;
         }
         .coret-kuning{
-            background-color:#8c0095;
+            background-color:#d641e1;
         }
         .header{
             width: 100%;

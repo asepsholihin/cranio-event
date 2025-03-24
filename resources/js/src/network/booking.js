@@ -18,6 +18,10 @@ export const postData = (...args) => {
     return httpService.getHttp().post(resourcePath, ...args)
 }
 
+export const postAction = (...args) => {
+    return httpService.getHttp().post(resourcePath + '/action', ...args)
+}
+
 export const exportData = (args) => {
     return httpService.getHttp().get(resourcePath + '-export', { responseType: 'blob', params: args })
 }

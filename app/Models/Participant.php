@@ -102,10 +102,6 @@ class Participant extends Authenticatable implements Auditable
                 }
             }
         });
-
-        static::created(function (Participant $item) {
-            
-        });
     }
 
     public function files()
@@ -139,22 +135,6 @@ class Participant extends Authenticatable implements Auditable
         'age'
     ];
 
-    public function barcodeThumbnail(): Attribute
-    {
-        // if (App::environment('production') && request()->is('api/public/**')) {
-            return Attribute::make(
-                get: fn ($value, $attributes) => 
-                    "https://www.jejakimani.com/".$attributes['barcode_thumbnail'],
-            );
-        // }
-
-        // return Attribute::make(
-        //     get: fn ($value, $attributes) => StorageAttributes::getTempUrl(
-        //         $attributes['barcode_thumbnail'] ?? null
-        //     ),
-        // );
-    }
-
     public function profilePhoto(): Attribute
     {
         return Attribute::make(
@@ -174,14 +154,6 @@ class Participant extends Authenticatable implements Auditable
         );
     }
 
-    public function miladCardUrl(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value, $attributes) => 
-                "https://www.jejakimani.com/".$attributes['milad_card_url'],
-        );
-    }
-
     public function getAgeAttribute()
     {
         return $this->birth_date ? \Carbon\Carbon::createFromFormat('Y-m-d', $this->birth_date)->age : '';
@@ -189,7 +161,12 @@ class Participant extends Authenticatable implements Auditable
 
     public function scopeTableSearch($query)
     {
-        $query->select('participants.*');
+        $query->select(['participants.*',
+        DB::raw("(SELECT booking_no FROM bookings JOIN participant_bookings ON bookings.id = participant_bookings.booking_id WHERE participant_bookings.participant_id = participants.id ORDER BY bookings.id DESC) as booking_no"),
+        DB::raw("(SELECT account_name FROM bookings JOIN participant_bookings ON bookings.id = participant_bookings.booking_id WHERE participant_bookings.participant_id = participants.id ORDER BY bookings.id DESC) as booking_account_name"),
+        DB::raw("(SELECT account_hospital FROM bookings JOIN participant_bookings ON bookings.id = participant_bookings.booking_id WHERE participant_bookings.participant_id = participants.id ORDER BY bookings.id DESC) as booking_account_hospital"),
+        DB::raw("(SELECT order_status FROM bookings JOIN participant_bookings ON bookings.id = participant_bookings.booking_id WHERE participant_bookings.participant_id = participants.id ORDER BY bookings.id DESC) as booking_order_status")
+        ]);
         if(in_array(3, auth()->user()->department_ids)) {
             $query->where('participants.created_by', auth()->user()->id);
         }

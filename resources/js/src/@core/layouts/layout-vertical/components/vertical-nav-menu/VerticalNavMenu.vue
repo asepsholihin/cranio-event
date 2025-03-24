@@ -249,7 +249,7 @@ export default {
     cursor: pointer;
 }
 .dropdown-search li:hover{
-    background-color: linear-gradient(118deg, #8c0095, rgba(228, 176, 34, 0.7));
+    background-color: linear-gradient(118deg, #d641e1, rgba(228, 176, 34, 0.7));
     color: white;
 }
 .text-link-route{

@@ -463,7 +463,7 @@
                     chart: {
                         id: 'chart-city',
                     },
-                    colors: ["#8c0095"],
+                    colors: ["#d641e1"],
                     plotOptions: {
                         bar: {
                             borderRadius: 4,
@@ -488,7 +488,7 @@
                     chart: {
                         id: 'chart-province',
                     },
-                    colors: ["#8c0095"],
+                    colors: ["#d641e1"],
                     plotOptions: {
                         bar: {
                             borderRadius: 4,
@@ -536,7 +536,7 @@
                             show: true
                         }
                     },
-                    colors: ["#8c0095","#000000"],
+                    colors: ["#d641e1","#000000"],
                     dataLabels: {
                         formatter: function (val, opts) {
                             return opts.w.config.series[opts.seriesIndex]
@@ -557,7 +557,7 @@
                             show: true
                         }
                     },
-                    colors: ["#8c0095","#000000"],
+                    colors: ["#d641e1","#000000"],
                     dataLabels: {
                         formatter: function (val, opts) {
                             return opts.w.config.series[opts.seriesIndex]
@@ -578,7 +578,7 @@
                             show: true
                         }
                     },
-                    colors: ["#8c0095","#000000"],
+                    colors: ["#d641e1","#000000"],
                     dataLabels: {
                         formatter: function (val, opts) {
                             return opts.w.config.series[opts.seriesIndex]
@@ -599,7 +599,7 @@
                             show: true
                         }
                     },
-                    colors: ["#8c0095","#000000"],
+                    colors: ["#d641e1","#000000"],
                     dataLabels: {
                         formatter: function (val, opts) {
                             return opts.w.config.series[opts.seriesIndex]
@@ -743,7 +743,7 @@
                         stroke: {
                             curve: 'smooth'
                         },
-                        colors: ['#8c0095'],
+                        colors: ['#d641e1'],
                         labels: labels,
                     }
                     this.chartParticipantGrowthSeries = [{
@@ -789,7 +789,7 @@
                         chart: {
                             id: 'chart-package',
                         },
-                        colors: ["#8c0095"],
+                        colors: ["#d641e1"],
                         labels: response.data.categories,
                         plotOptions: {
                             bar: {
@@ -821,7 +821,7 @@
                         chart: {
                             id: 'chart-trip',
                         },
-                        colors: ["#8c0095"],
+                        colors: ["#d641e1"],
                         plotOptions: {
                             bar: {
                                 borderRadius: 4,
@@ -942,7 +942,7 @@
                         legend: {
                             position: 'top'
                         },
-                        colors: ["#344CB7", "#8c0095"],
+                        colors: ["#344CB7", "#d641e1"],
                         labels: response.data.categories,
                         plotOptions: {
                             bar: {
@@ -1005,7 +1005,7 @@
                         tooltip: {
                             enabled: false,
                         },
-                        colors: ["#8c0095", "#344CB7"],
+                        colors: ["#d641e1", "#344CB7"],
                         labels: response.data.categories,
                         plotOptions: {
                             bar: {
@@ -1091,7 +1091,7 @@
                         tooltip: {
                             enabled: false,
                         },
-                        colors: ["#344CB7", "#8c0095", "#BE3144", "#80C4E9"],
+                        colors: ["#344CB7", "#d641e1", "#BE3144", "#80C4E9"],
                         labels: response.data.categories,
                         plotOptions: {
                             bar: {
@@ -1134,7 +1134,7 @@
                         tooltip: {
                             enabled: false,
                         },
-                        colors: ["#344CB7", "#8c0095", "#BE3144", "#80C4E9", "#6bb042", "#f5954f"],
+                        colors: ["#344CB7", "#d641e1", "#BE3144", "#80C4E9", "#6bb042", "#f5954f"],
                         labels: response.data.categories,
                         plotOptions: {
                             bar: {

@@ -880,6 +880,7 @@ Route::prefix('spa')->middleware(['auth'])->group(function () {
     Route::get('refund-notes-list', [RefundNotesSPAController::class, 'getList']);
 
     Route::resource('booking', BookingSPAController::class)->only(['show', 'store', 'index', 'destroy']);
+    Route::post('booking/action', [BookingSPAController::class, 'action']);
     Route::get('booking-export', [BookingSPAController::class, 'exportData']);
     Route::get('booking/download-receipt/{id}', [BookingSPAController::class, 'downloadReceiptPDF']);
 

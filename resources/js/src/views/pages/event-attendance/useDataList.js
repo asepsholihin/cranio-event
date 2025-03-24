@@ -17,6 +17,7 @@ export default function useUsersList() {
     { key: 'name', sortable: true },
     { key: 'event' },
     { key: 'event_date', sortable: true },
+    { key: 'report' },
     { key: 'actions' },
   ]
   const perPage = ref(10)

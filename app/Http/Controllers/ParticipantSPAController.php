@@ -771,23 +771,7 @@ class ParticipantSPAController extends Controller
     public function updateData(Request $request)
     {
         $participant = Participant::find($request->id);
-
-        if($request->updateGender) {
-            $participant->update([
-                'gender' => $request->gender
-            ]);
-        }
-
-        if($request->updateDomisili) {
-            $participant->update([
-                'home_province' => $request->home_province,
-                'home_city' => $request->home_city,
-                'home_kecamatan' => $request->home_kecamatan,
-                'home_kelurahan' => $request->home_kelurahan,
-                'home_postalcode' => $request->home_postalcode,
-                'home_address' => $request->home_address
-            ]);
-        }
+        $participant->update($request->all());
     }
 
     public function refineParticipantDuplicate(Request $request)

@@ -5,13 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use App\Support\StorageAttributes;
+use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Support\Str;
 
-class Booking extends Model
+class Booking extends Model implements Auditable
 {
-    use SoftDeletes;
+    use SoftDeletes, \OwenIt\Auditing\Auditable;
 
-    const DIR_RECEIPT = 'web/receipts';
+    const DIR_EVIDENCE = 'web/evidences';
     const PREFIX_ORDER_NUMBER = 'ORD/';
     const MONTH_ROMAWI = [1=>"I","II","III", "IV", "V","VI","VII","VIII","IX","X", "XI","XII"];
 
@@ -40,7 +42,39 @@ class Booking extends Model
         'created_by',
         'updated_by',
         'deleted_by',
+        'tax_amount',
+        'total_price_with_tax',
+        'room_number',
+        'received_by',
+        'given_by',
+        'received_at',
+        'room_key_evidence',
     ];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if(auth()->user()) {
+                if (!$model->isDirty('created_by')) {
+                    $model->created_by = auth()->user()->id;
+                }
+                if (!$model->isDirty('updated_by')) {
+                    $model->updated_by = auth()->user()->id;
+                }
+            }
+        });
+
+        static::updating(function ($model) {
+            if(auth()->user()) {
+                if (!$model->isDirty('updated_by')) {
+                    if(auth()->user())
+                        $model->updated_by = auth()->user()->id;
+                }
+            }
+        });
+    }
 
     public function setOrderNumber($date = null)
     {
@@ -66,7 +100,8 @@ class Booking extends Model
 
     public function scopeTableSearch($query)
     {
-        $query->select('bookings.*');
+        $query->select('bookings.*', 'users.name as given_by_name');
+        $query->leftjoin('users', 'users.id', 'bookings.given_by');
         $search = '%' . request()->query('q') .'%';
         $query->where(function($q) use($search) {
             $q->where('bookings.account_name', 'like', $search)
@@ -85,5 +120,14 @@ class Booking extends Model
         }
 
         return $query;
+    }
+
+    public function roomKeyEvidence(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, $attributes) => StorageAttributes::getTempUrl(
+                $attributes['room_key_evidence'] ?? null
+            ),
+        );
     }
 }

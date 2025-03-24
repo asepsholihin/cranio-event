@@ -667,7 +667,7 @@ export default {
     padding:0 !important;
     border:0 !important;
     background-color: transparent !important;
-    color:#8c0095 !important;
+    color:#d641e1 !important;
 }
 .bg-transparent:active{
     background-color: transparent !important;

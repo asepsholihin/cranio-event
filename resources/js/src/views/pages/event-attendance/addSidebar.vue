@@ -52,10 +52,10 @@
             </b-form-group>
           </validation-provider>
 
-            <!-- Hotel Hotel -->
-          <validation-provider #default="{ errors }" name="Transit Hotel Name" vid="transit_hotel_id">
-            <b-form-group label="Transit Hotel Name">
-              <v-select v-model="formData.transit_hotel_id" :options="transitOptions" :filterable="false" :reduce="hotel => hotel.id" :clearable="true" label="name" />
+          <!-- Hotel Name -->
+          <validation-provider #default="{ errors }" name="Hotel Name" vid="hotel_name">
+            <b-form-group label="Hotel Name">
+              <b-form-input v-model="formData.hotel_name" name="hotel_name" :state="errors.length > 0 ? false : null" trim />
               <b-form-invalid-feedback>
                 {{ errors[0] }}
               </b-form-invalid-feedback>
@@ -87,16 +87,6 @@
             <b-form-group label="Event End At" :state="errors.length > 0 ? false : null">
               <flat-pickr :config="{ enableTime: true,noCalendar: true,dateFormat: 'H:i'}" v-model="formData.event_end_at" class="form-control" />
               <b-form-invalid-feedback :state="errors.length > 0 ? false : null">
-                {{ errors[0] }}
-              </b-form-invalid-feedback>
-            </b-form-group>
-          </validation-provider>
-
-          <!-- Event Akbar -->
-          <validation-provider #default="{ errors }" name="Event Akbar" vid="event_akbar">
-            <b-form-group label="Apakah Event Akbar?">
-              <b-form-checkbox v-model="formData.event_akbar" name="check-button" switch />
-              <b-form-invalid-feedback>
                 {{ errors[0] }}
               </b-form-invalid-feedback>
             </b-form-group>

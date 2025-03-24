@@ -78,7 +78,7 @@
                         <b-col cols="12" md="4">
                              <validation-provider #default="{ errors }" name="Location" vid="location" rules="required">
                                 <b-form-group label="Location">
-                                    <b-form-input v-model="formData.location" name="name" :state="errors.length > 0 ? false : null" trim />
+                                    <b-form-input v-model="formData.location" name="location" :state="errors.length > 0 ? false : null" trim />
                                     <b-form-invalid-feedback>
                                         {{ errors[0] }}
                                     </b-form-invalid-feedback>
@@ -87,22 +87,15 @@
                         </b-col>
 
                         <b-col cols="12" md="4">
-                            <!-- Hotel Hotel -->
-                            <validation-provider #default="{ errors }" name="Transit Hotel Name" vid="transit_hotel_id">
-                                <b-form-group label="Transit Hotel Name">
-                                    <v-select v-model="formData.transit_hotel_id" :options="transitOptions" :filterable="false" :reduce="hotel => hotel.id" :clearable="true" label="hotel_name" />
+                            <!-- Hotel Name -->
+                            <validation-provider #default="{ errors }" name="Hotel Name" vid="hotel_name">
+                                <b-form-group label="Hotel Name">
+                                    <b-form-input v-model="formData.hotel_name" name="hotel_name" :state="errors.length > 0 ? false : null" trim />
                                     <b-form-invalid-feedback>
                                         {{ errors[0] }}
                                     </b-form-invalid-feedback>
                                 </b-form-group>
                             </validation-provider>
-                        </b-col>
-
-                        <!-- Event Akbar -->
-                        <b-col cols="12" md="4">
-                            <b-form-group label="Apakah Event Akbar?">
-                                <b-form-checkbox v-model="formData.event_akbar" name="check-button" switch/>
-                            </b-form-group>
                         </b-col>
                     </b-row>
 

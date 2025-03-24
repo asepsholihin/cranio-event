@@ -6,11 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use App\Support\StorageAttributes;
+use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Support\Str;
 
-class BookingReceipt extends Model
+class BookingReceipt extends Model implements Auditable
 {
-    use SoftDeletes;
+    use SoftDeletes, \OwenIt\Auditing\Auditable;
 
     const DIR_FILE = 'web/receipts/';
     const PREFIX_ORDER_NUMBER = 'ORD/';

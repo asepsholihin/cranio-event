@@ -56,8 +56,8 @@
         <template #cell(total_check_in)="data">
             <div class="text-nowrap">
               <feather-icon @click="detailAttendance(data.item.id)" icon="UserCheckIcon" size="18" class="mr-50" :class="`text-info`" />
-              <span class="align-text-top">{{ data.item.total_checkin }} of {{ data.item.total_attendance }}</span> |
-              <span class="align-text-top font-weight-bold">{{ ((data.item.total_checkin / data.item.total_attendance) * 100).toFixed(0) }}%</span>
+              <span class="align-text-top">{{ data.item.total_checkin }} of {{ data.item.total_attendance }}</span>
+              <span class="align-text-top font-weight-bold" v-if="data.item.total_checkin > 0 && data.item.total_attendance > 0">| {{ ((parseInt(data.item.total_checkin) / parseInt(data.item.total_attendance)) * 100).toFixed(0) || 0 }}%</span>
           </div>
         </template>
 
@@ -67,6 +67,12 @@
             {{formatDate(data.item.event_date)}}
         </template>
 
+        <!-- Column: Report -->
+        <template #cell(report)="data">
+            <b-button class="mr-1" variant="warning" size="sm" :to="{ name: 'manasik-report', params: { id: data.item.id, online: 'offline' } }"><feather-icon icon="PieChartIcon" /><span class="align-middle ml-50">Offline</span></b-button>
+            <b-button variant="danger" size="sm" :to="{ name: 'manasik-report', params: { id: data.item.id, online: 'online' } }"><feather-icon icon="PieChartIcon" /><span class="align-middle ml-50">Online</span></b-button>
+        </template>
+
         <!-- Column: Actions -->
         <template #cell(actions)="data">
           <b-dropdown variant="link" no-caret>
@@ -74,31 +80,23 @@
             <template #button-content>
               <feather-icon icon="MoreVerticalIcon" size="16" class="align-middle text-body" />
             </template>
-            <b-dropdown-item :to="{ name: 'manasik-report', params: { id: data.item.id, online: 'offline' } }">
-              <feather-icon icon="PieChartIcon" />
-              <span class="align-middle ml-50">Manasik Offline Report</span>
-            </b-dropdown-item>
-            <b-dropdown-item :to="{ name: 'manasik-report', params: { id: data.item.id, online: 'online' } }">
-              <feather-icon icon="PieChartIcon" />
-              <span class="align-middle ml-50">Manasik Online Report</span>
-            </b-dropdown-item>
             <b-dropdown-item variant="success" :to="{ name: 'event-attendance-confirmation', params: { id: data.item.id, name: data.item.name } }">
               <feather-icon icon="CheckIcon" />
               <span class="align-middle ml-50">Attendance Confirmation Report</span>
             </b-dropdown-item>
-            <b-dropdown-item variant="info" :to="{ name: 'event-attendance-detail', params: { id: data.item.id, name: data.item.name } }">
-              <feather-icon icon="SearchIcon" />
-              <span class="align-middle ml-50">Details</span>
-            </b-dropdown-item>
-            <b-dropdown-item variant="warning" @click="isAddSidebarActive = true; addCopyEventId = data.item.id">
+            <b-dropdown-item variant="warning" @click="isAddSidebarActive = true; addCopyEventId = data.item.id" v-if="hasPermission('event-attendance-add-or-edit')">
               <feather-icon icon="CopyIcon" />
               <span class="align-middle ml-50">Copy Attendee Into New Event</span>
             </b-dropdown-item>
-            <b-dropdown-item variant="danger" @click="deleteEvent(data.item)">
+            <b-dropdown-item variant="danger" @click="deleteEvent(data.item)" v-if="hasPermission('event-attendance-add-or-edit')">
               <feather-icon icon="Trash2Icon" />
               <span class="align-middle ml-50">Delete Event</span>
             </b-dropdown-item>
           </b-dropdown>
+          <b-button variant="info" size="sm" :to="{ name: 'event-attendance-detail', params: { id: data.item.id, name: data.item.name } }">
+            <feather-icon icon="SearchIcon" />
+            <span class="align-middle ml-50">Details</span>
+          </b-button>
         </template>
 
       </b-table>

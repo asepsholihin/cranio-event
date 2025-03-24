@@ -1,12 +1,5 @@
 <template>
   <div>
-    <add-sidebar :is-add-sidebar-active.sync="isAddSidebarActive" :gender-options="genderOptions"
-      :title-options="titleOptions" :married-options="marriedOptions" :education-options="educationOptions"
-      :yes-no-options="yesNoOptions" :job-options="jobOptions" :blood-options="bloodOptions" :body-size-options="bodySizeOptions"
-      :data-status-options="dataStatusOptions" @refetch-data="refetchData" v-if="hasPermission('participant-add-or-edit')" />
-
-    <import-sidebar :umroh-trip-id="umrohTripId" :is-import-sidebar-active.sync="isImportSidebarActive"
-      @refetch-data="refetchData" v-if="hasPermission('participant-add-or-edit')" />
 
     <!-- Table Container Card -->
     <b-card no-body class="mb-0">
@@ -62,6 +55,12 @@
         :fields="tableColumns" primary-key="id" :sort-by.sync="sortBy" show-empty empty-text="No matching records found"
         :sort-desc.sync="isSortDirDesc">
 
+        <!-- Column: Booking -->
+        <template #cell(booking)="data">
+          <span>{{ data.item.booking_no }}</span><br>
+          <span>{{ data.item.booking_account_name }}</span>
+        </template>
+
         <!-- Column: Name -->
         <template #cell(name)="data">
           <b-media vertical-align="center">
@@ -85,15 +84,11 @@
             <template #button-content>
               <feather-icon icon="MoreVerticalIcon" size="16" class="align-middle text-body" />
             </template>
-            <b-dropdown-item :to="{ name: 'participant-detail', params: { id: data.item.id, name: data.item.name } }">
-              <feather-icon icon="FileTextIcon" />
-              <span class="align-middle ml-50">Details</span>
+            <b-dropdown-item v-if="hasPermission('participant-add-or-edit')" @click="updateInfo(data.item)">
+              <feather-icon icon="UserCheckIcon" />
+              <span class="align-middle ml-50">Update Data</span>
             </b-dropdown-item>
-            <b-dropdown-item v-if="hasPermission('participant-add-or-edit')" @click="showAccessLogin(data.item)">
-              <feather-icon icon="KeyIcon" />
-              <span class="align-middle ml-50">Access Login</span>
-            </b-dropdown-item>
-            <b-dropdown-item v-if="hasPermission('participant-add-or-edit')" @click="showNameInCerificate(data.item)">
+            <b-dropdown-item v-if="hasPermission('participant-add-or-edit')" @click="setNameInCerificate(data.item)">
               <feather-icon icon="UserCheckIcon" />
               <span class="align-middle ml-50">Name in Certificate</span>
             </b-dropdown-item>
@@ -131,92 +126,145 @@
       </div>
     </b-card>
 
-    <b-modal v-model="accessLoginModal" ok-title="Update Access Login" @hidden="resetModal"
-        @ok="handleSubmitAccessLogin" :busy="isSubmitModal" centered no-close-on-backdrop>
-        <template #modal-title>
-            <h3>Access Login Information</h3>
-        </template>
-        <validation-observer ref="refAccessLoginForm">
-            <b-form class="p-2" @submit.prevent="onSubmitAccessLogin">
-                <validation-provider #default="{ errors }" vid="message">
-                    <b-alert variant="danger" show v-if="errors[0]">
-                        <div class="alert-body">
-                            {{ errors[0] }}
-                        </div>
-                    </b-alert>
-                </validation-provider>
+    <b-modal v-model="setNameInCerificateModal" ok-title="Name in Certificate" @hidden="resetModal"
+      @ok="handleSubmitNameInCerificate" :busy="isSubmitModal" centered no-close-on-backdrop>
+      <template #modal-title>
+        <h3>Name In Certificate</h3>
+      </template>
+      <validation-observer ref="refNameInCerificateForm">
+        <b-form class="p-2" @submit.prevent="onSubmitNameInCerificate">
+          <validation-provider #default="{ errors }" vid="message">
+            <b-alert variant="danger" show v-if="errors[0]">
+              <div class="alert-body">
+                {{ errors[0] }}
+              </div>
+            </b-alert>
+          </validation-provider>
 
-                <b-row>
-                  <b-col cols="12">
-                      <label for="">Participant Name</label>
-                      <p class="font-weight-bold">{{ selectedParticipant.name }}</p>
-                    </b-col>
-                    <b-col cols="12">
-                        <validation-provider #default="{ errors }" name="Email" vid="email"
-                            rules="required|email">
-                            <b-form-group label="Email">
-                                <b-form-input type="text" v-model="formAccessLogin.email"
-                                    :state="errors.length > 0 ? false : null" trim />
-                                <b-form-invalid-feedback>
-                                    {{ errors[0] }}
-                                </b-form-invalid-feedback>
-                            </b-form-group>
-                        </validation-provider>
-                    </b-col>
-                    <b-col cols="12">
-                        <validation-provider #default="{ errors }" name="Password" vid="password"
-                            rules="required">
-                            <b-form-group label="Password">
-                                <b-form-input type="password" v-model="formAccessLogin.password"
-                                    :state="errors.length > 0 ? false : null" trim autocomplete="new-password" />
-                                <b-form-invalid-feedback>
-                                    {{ errors[0] }}
-                                </b-form-invalid-feedback>
-                            </b-form-group>
-                        </validation-provider>
-                    </b-col>
-                </b-row>
-            </b-form>
-        </validation-observer>
+          <b-row>
+            <b-col cols="12">
+              <label for="">Participant Name</label>
+              <p class="font-weight-bold">{{ selectedParticipant.name }}</p>
+            </b-col>
+            <b-col cols="12">
+              <validation-provider #default="{ errors }" name="Name in Certificate" vid="name_in_certificate" rules="required">
+                <b-form-group label="Name in Certificate">
+                  <b-form-input type="text" v-model="formNameInCerificate.name_in_certificate" placeholder="Please Set Name in Certificate"
+                    :state="errors.length > 0 ? false : null" trim />
+                  <b-form-invalid-feedback>
+                    {{ errors[0] }}
+                  </b-form-invalid-feedback>
+                </b-form-group>
+              </validation-provider>
+            </b-col>
+          </b-row>
+        </b-form>
+      </validation-observer>
     </b-modal>
+    
+    <b-modal v-model="updateInfoModal" ok-title="Save Changes" @hidden="resetModal" @ok="handleSubmitUpdateInfo" :busy="isSubmitModal" centered no-close-on-backdrop>
+      <template #modal-title>
+        <h3>Update Participant</h3>
+      </template>
+      <validation-observer ref="refObsForm">
+        <b-form class="p-2" @submit.prevent="onSubmitUpdateInfo">
+          <validation-provider #default="{ errors }" vid="message">
+            <b-alert variant="danger" show v-if="errors[0]">
+              <div class="alert-body">
+                {{ errors[0] }}
+              </div>
+            </b-alert>
+          </validation-provider>
 
-    <b-modal v-model="nameInCerificateModal" ok-title="Name in Certificate" @hidden="resetModal"
-        @ok="handleSubmitNameInCerificate" :busy="isSubmitModal" centered no-close-on-backdrop>
-        <template #modal-title>
-            <h3>Name In Certificate</h3>
-        </template>
-        <validation-observer ref="refNameInCerificateForm">
-            <b-form class="p-2" @submit.prevent="onSubmitNameInCerificate">
-                <validation-provider #default="{ errors }" vid="message">
-                    <b-alert variant="danger" show v-if="errors[0]">
-                        <div class="alert-body">
-                            {{ errors[0] }}
-                        </div>
-                    </b-alert>
-                </validation-provider>
+          <b-row>
+            <b-col sm="6">
+              <label for="">Booking Order</label>
+              <p class="font-weight-bold">{{ formData.booking_no }}</p>
+            </b-col>
+            <b-col sm="6">
+              <label for="">Account Name</label>
+              <p class="font-weight-bold">{{ formData.booking_account_name }}</p>
+            </b-col>
+            <b-col sm="6">
+              <label for="">Hospital</label>
+              <p class="font-weight-bold">{{ formData.booking_account_hospital }}</p>
+            </b-col>
+            <b-col sm="6">
+              <label for="">Booking Status</label>
+              <div>
+                <b-badge variant="warning" v-if="formData.booking_order_status == 'unpaid'">Unpaid</b-badge>
+                <b-badge variant="success" v-if="formData.booking_order_status == 'paid'">Paid</b-badge>
+                <b-badge variant="danger" v-if="formData.booking_order_status == 'cancel'">Cancel</b-badge>
+              </div>
+            </b-col>
+          </b-row>
 
-                <b-row>
-                  <b-col cols="12">
-                      <label for="">Participant Name</label>
-                      <p class="font-weight-bold">{{ selectedParticipant.name }}</p>
-                    </b-col>
-                    <b-col cols="12">
-                        <validation-provider #default="{ errors }" name="Name in Certificate" vid="name_in_certificate"
-                            rules="required">
-                            <b-form-group label="Name in Certificate">
-                                <b-form-input type="text" v-model="formNameInCerificate.name_in_certificate" placeholder="Please Set Name in Certificate"
-                                    :state="errors.length > 0 ? false : null" trim />
-                                <b-form-invalid-feedback>
-                                    {{ errors[0] }}
-                                </b-form-invalid-feedback>
-                            </b-form-group>
-                        </validation-provider>
-                    </b-col>
-                </b-row>
-            </b-form>
-        </validation-observer>
+          <validation-provider #default="{ errors }" name="Full Name" vid="name" rules="required">
+            <b-form-group label="Full Name">
+              <b-form-input type="text" v-model="formData.name" placeholder="Full Name"
+                :state="errors.length > 0 ? false : null" trim />
+              <b-form-invalid-feedback>
+                {{ errors[0] }}
+              </b-form-invalid-feedback>
+            </b-form-group>
+          </validation-provider>
+
+          <validation-provider #default="{ errors }" name="Email" vid="email" rules="required|email">
+            <b-form-group label="Email">
+              <b-form-input type="text" v-model="formData.email" placeholder="Email"
+                :state="errors.length > 0 ? false : null" trim />
+              <b-form-invalid-feedback>
+                {{ errors[0] }}
+              </b-form-invalid-feedback>
+            </b-form-group>
+          </validation-provider>
+
+          <validation-provider #default="{ errors }" name="Whatsapp" vid="whatsapp" rules="required|numeric">
+            <b-form-group label="Whatsapp">
+              <b-form-input type="text" v-model="formData.whatsapp" placeholder="Whatsapp"
+                :state="errors.length > 0 ? false : null" trim />
+              <b-form-invalid-feedback>
+                {{ errors[0] }}
+              </b-form-invalid-feedback>
+            </b-form-group>
+          </validation-provider>
+
+          <validation-provider #default="{ errors }" name="NIK" vid="nik" rules="required|numeric">
+            <b-form-group label="NIK">
+              <b-form-input type="text" v-model="formData.nik" placeholder="NIK"
+                :state="errors.length > 0 ? false : null" trim />
+              <b-form-invalid-feedback>
+                {{ errors[0] }}
+              </b-form-invalid-feedback>
+            </b-form-group>
+          </validation-provider>
+
+          <b-row>
+            <b-col sm="6">
+              <validation-provider #default="{ errors }" name="Gender" vid="gender" rules="required">
+                <b-form-group label="Gender">
+                  <v-select id="type" v-model="formData.gender" :options="genderOptions" :clearable="true" :reduce="(label) => label.value" />
+                  <b-form-invalid-feedback>
+                    {{ errors[0] }}
+                  </b-form-invalid-feedback>
+                </b-form-group>
+              </validation-provider>
+            </b-col>
+            <b-col sm="6">
+              <validation-provider #default="{ errors }" name="Ukuran Kaos Polo" vid="polo_size" rules="required">
+                <b-form-group label="Ukuran Kaos Polo">
+                  <v-select id="type" v-model="formData.polo_size" :options="poloSizeOptions" :clearable="true" :reduce="(label) => label.value" />
+                  <b-form-invalid-feedback>
+                    {{ errors[0] }}
+                  </b-form-invalid-feedback>
+                </b-form-group>
+              </validation-provider>
+            </b-col>
+          </b-row>
+
+        </b-form>
+      </validation-observer>
     </b-modal>
-
   </div>
 </template>
 
@@ -243,21 +291,15 @@ import {
 } from 'bootstrap-vue'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import vSelect from 'vue-select'
-import { ref } from '@vue/composition-api'
 import { avatarText, formatDateShort } from '@core/utils/filter'
 import useDataList from './useDataList'
-import { createAccessLogin, createNameInCertificate, deleteData, exportParticipant, getJobSearch } from '@/network/participant'
-import addSidebar from './addSidebar.vue'
-import importSidebar from './importSidebar.vue'
+import { createNameInCertificate, postUpdateData, deleteData, exportParticipant } from '@/network/participant'
 import { hasPermission } from '@/auth/utils'
 import _ from 'lodash'
-import { getTripSearch, getPackages } from '@/network/booking-order'
-import { getBookingSearch } from '@/network/umroh-booking-seat'
+import { required, numeric, email } from '@validations'
 
 export default {
   components: {
-    addSidebar,
-    importSidebar,
     BOverlay,
     BCard,
     BRow,
@@ -282,18 +324,9 @@ export default {
     ValidationObserver
   },
   setup() {
-    const isAddSidebarActive = ref(false)
-    const isImportSidebarActive = ref(false)
-
-    const genderOptions = [{ label: 'Man', value: 1 }, { label: 'Woman', value: 2 }]
-    const titleOptions = [{ label: 'Mr', value: 'Mr' }, { label: 'Ms', value: 'Ms' }, { label: 'Mrs', value: 'Mrs' }, { label: 'Mstr', value: 'Mstr' }, { label: 'Miss', value: 'Miss' }]
-    const marriedOptions = [{ label: 'Menikah', value: 1 }, { label: 'Belum Menikah', value: 2 }, { label: 'Janda/Duda', value: 3 }]
-    const educationOptions = [{ label: 'SD/MI', value: 'SD/MI' }, { label: 'SMP/MTS', value: 'SMP/MTS' }, { label: 'SMA/MA', value: 'SMA/MA' }, { label: 'D1', value: 'D1' }, { label: 'D2', value: 'D2' }, { label: 'D3', value: 'D3' }, { label: 'D4/S1', value: 'D4/S1' }, { label: 'S2', value: 'S2' }, { label: 'S3', value: 'S3' }, { label: 'BELUM SEKOLAH', value: 'BELUM SEKOLAH' }]
-    const yesNoOptions = [{ label: 'Yes', value: 1 }, { label: 'No', value: 2 }]
-    const bloodOptions = [{ label: 'A+', value: 'A+' }, { label: 'A-', value: 'A-' }, { label: 'B+', value: 'B+' }, { label: 'B-', value: 'B-' }, { label: 'AB+', value: 'AB+' }, { label: 'AB-', value: 'AB-' }, { label: 'O+', value: 'O+' }, { label: 'O-', value: 'O-' }, { label: 'Tidak Tahu', value: 'Tidak Tahu' }]
-    const bodySizeOptions = [{ label: 'XS (Balita 0-5 tahun)', value: 'XS' }, { label: 'S (Anak 6-12 tahun)', value: 'S' }, { label: 'L (All Size)', value: 'L' }, { label: 'XL (Jumbo)', value: 'XL' }]
-    const dataStatusOptions = [{ label: 'Lengkap', value: 1 }, { label: 'Belum Ada Passport', value: 2 }, { label: 'Passport Expired', value: 3 }, { label: 'Data Butuh Perbaikan / Penambahan Nama', value: 4 }, { label: 'Data Dikunci', value: 5 }]
-
+    const genderOptions = [{ label: 'Laki-laki', value: 1 }, { label: 'Perempuan', value: 2 }]
+    const poloSizeOptions = [{ label: 'S', value: 'S' }, { label: 'M', value: 'M' }, { label: 'L', value: 'L' }, { label: 'XL', value: 'XL' }, { label: 'XXL', value: 'XXL' }, { label: 'XXXL', value: 'XXXL' }]
+   
     const {
       fetchUsers,
       tableColumns,
@@ -307,7 +340,6 @@ export default {
       isSortDirDesc,
       refUserListTable,
       refetchData,
-      umrohTripId,
 
       // UI
       resolveGender,
@@ -317,10 +349,6 @@ export default {
     } = useDataList()
 
     return {
-      // Sidebar
-      isAddSidebarActive,
-      isImportSidebarActive,
-
       fetchUsers,
       tableColumns,
       perPage,
@@ -334,14 +362,7 @@ export default {
       refUserListTable,
       refetchData,
       genderOptions,
-      titleOptions,
-      marriedOptions,
-      educationOptions,
-      yesNoOptions,
-      bloodOptions,
-      dataStatusOptions,
-      umrohTripId,
-      bodySizeOptions,
+      poloSizeOptions,
 
       // Filter
       avatarText,
@@ -359,53 +380,22 @@ export default {
 
   },
   data() {
-    const jobOptions = []
-
-    getJobSearch().then(response => {
-        this.jobOptions = response.data
-    }).catch(error => {
-        this.$bvToast.toast(`Error: ${error.response.data.message}`, { title: `Error`, variant: 'danger', toaster: 'b-toaster-top-center', solid: true })
-    })
 
     return {
-      jobOptions,
+      required, numeric, email,
       filter: {},
       isLoading: false,
       isSubmitModal: false,
-      accessLoginModal: false,
-      nameInCerificateModal: false,
+      setNameInCerificateModal: false,
+      updateInfoModal: false,
       selectedParticipant: {},
-      formAccessLogin: {email: '', password: '' },
+      formData: {},
       formNameInCerificate: {front_title: '', name_in_certificate: '', back_title: '' }
     }
   },
   methods : {
-    showAccessLogin(item) {
-      this.accessLoginModal = true
-      this.selectedParticipant = item
-      this.formAccessLogin.email = item.email
-    },
-    handleSubmitAccessLogin(bvModalEvent) {
-        bvModalEvent.preventDefault()
-        this.onSubmitAccessLogin()
-    },
-    onSubmitAccessLogin() {
-        this.$refs.refAccessLoginForm.validate().then(success => {
-            if (!success) return
-            this.isSubmitModal = true
-            this.formAccessLogin.id = this.selectedParticipant.id
-            createAccessLogin(this.formAccessLogin).then(response => {
-                this.accessLoginModal = false
-                this.$swal({ icon: 'success', title: 'Success', text: `Access login has been saved successfully`, timer: 2500, customClass: { confirmButton: 'btn btn-primary', }, buttonsStyling: false })
-                this.refetchData()
-            }).catch(error => {
-                this.$swal({ icon: 'error', title: 'Error', text: `${error.response.data.message}`, customClass: { confirmButton: 'btn btn-warning', }, buttonsStyling: false })
-                this.isSubmitModal = false
-            })
-        })
-    },
-    showNameInCerificate(item) {
-      this.nameInCerificateModal = true
+    setNameInCerificate(item) {
+      this.setNameInCerificateModal = true
       this.selectedParticipant = item
       this.formNameInCerificate.front_title = item.front_title
       this.formNameInCerificate.name_in_certificate = (item.name_in_certificate) ? item.name_in_certificate : (item.name_in_passport) ? item.name_in_passport : ""
@@ -421,7 +411,7 @@ export default {
             this.isSubmitModal = true
             this.formNameInCerificate.id = this.selectedParticipant.id
             createNameInCertificate(this.formNameInCerificate).then(response => {
-                this.nameInCerificateModal = false
+                this.setNameInCerificateModal = false
                 this.$swal({ icon: 'success', title: 'Success', text: `Name in Certificate has been saved successfully`, timer: 2500, customClass: { confirmButton: 'btn btn-primary', }, buttonsStyling: false })
                 this.refetchData()
             }).catch(error => {
@@ -429,6 +419,30 @@ export default {
                 this.isSubmitModal = false
             })
         })
+    },
+    handleSubmitUpdateInfo(bvModalEvent) {
+        bvModalEvent.preventDefault()
+        this.onSubmitUpdateInfo()
+    },
+    onSubmitUpdateInfo() {
+        this.$refs.refObsForm.validate().then(success => {
+            if (!success) return
+            this.isSubmitModal = true
+            this.formData.id = this.formData.id
+            postUpdateData(this.formData).then(response => {
+                this.$swal({ icon: 'success', title: 'Success', text: `Name in Certificate has been saved successfully`, timer: 2500, customClass: { confirmButton: 'btn btn-primary', }, buttonsStyling: false })
+                this.updateInfoModal = false
+                this.isSubmitModal = false
+                this.refetchData()
+            }).catch(error => {
+                this.$swal({ icon: 'error', title: 'Error', text: `${error.response.data.message}`, customClass: { confirmButton: 'btn btn-warning', }, buttonsStyling: false })
+                this.isSubmitModal = false
+            })
+        })
+    },
+    updateInfo(item) {
+      this.updateInfoModal = true
+      this.formData = item
     },
     resetModal() {
         this.formAccessLogin = {email: '', password: '' }
@@ -455,12 +469,8 @@ export default {
       })
     },
     exportParticipant() {
-      if(!this.umrohTripId) {
-        this.$swal({ icon: 'error', title: 'Error', text: 'Harap Pilih Umroh Trip', customClass: { confirmButton: 'btn btn-warning', }, buttonsStyling: false })
-        return
-      }
       this.isLoading = true
-      exportParticipant({ umrohTripId: this.umrohTripId }).then(response => {
+      exportParticipant({}).then(response => {
           this.isLoading = false
           window.location = response.data.downloadLink
       }).catch(error => {

@@ -14,12 +14,13 @@ export default function useUsersList() {
   // Table Handlers
   const tableColumns = [
     { key: 'account_name', sortable: true },
-    { key: 'package', sortable: true },
+    { key: 'package' },
     { key: 'account_hospital', label: 'Hospital', sortable: true },
-    { key: 'total_pax', sortable: true },
+    { key: 'total_pax', label: 'Pax', sortable: true },
     { key: 'total_price', sortable: true },
     { key: 'created_at', sortable: true },
-    { key: 'order_status', sortable: true },
+    { key: 'order_status', label: 'Status', sortable: true },
+    { key: 'room_info', thClass: 'text-center', tdClass: 'text-center' },
     { key: 'actions' },
   ]
   const perPage = ref(10)
