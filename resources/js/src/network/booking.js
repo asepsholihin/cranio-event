@@ -25,3 +25,8 @@ export const postAction = (...args) => {
 export const exportData = (args) => {
     return httpService.getHttp().get(resourcePath + '-export', { responseType: 'blob', params: args })
 }
+
+export const getInvoicePDF = (id) => {
+    //return httpService.getHttp().get(resourcePath + '/download-receipt'+ `/${id}`,{ responseType: 'blob' })
+    return resourcePath + '/download-invoice/' + id
+}

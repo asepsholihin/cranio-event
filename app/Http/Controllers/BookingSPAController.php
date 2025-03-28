@@ -8,6 +8,7 @@ use App\Exceptions\ErrorMessageException;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\BookingExport;
 use App\File\PDF\ReceiptGeneralPDF;
+use App\File\PDF\InvoiceBookingPDF;
 use Carbon\Carbon;
 
 class BookingSPAController extends Controller
@@ -94,5 +95,11 @@ class BookingSPAController extends Controller
     {
         $storageKey = "Export-Booking-Hotel-Event-" . hrtime(true) . ".xlsx";
         return Excel::download(new BookingExport($request->all()), $storageKey);
+    }
+
+    public function downloadInvoicePDF($bookingId)
+    {
+        $booking = Booking::find($bookingId);
+        return (new InvoiceBookingPDF($booking))->stream();
     }
 }

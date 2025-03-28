@@ -83,8 +83,14 @@
             <template #button-content>
               <feather-icon icon="MoreVerticalIcon" size="16" class="align-middle text-body" />
             </template>
-            <b-dropdown-item @click="updateInfo(data.item)">
+            <b-dropdown-item @click="updateInfo(data.item)" v-if="hasPermission('booking-add-or-edit')">
               Update Booking Info
+            </b-dropdown-item>
+            <b-dropdown-item @click="setRoom(data.item)" v-if="data.item.room_number == null && hasPermission('booking-add-or-edit')">
+              Set Room Number
+            </b-dropdown-item>
+            <b-dropdown-item @click="downloadInvoice(data.item)">
+              Donwload Invoice
             </b-dropdown-item>
             <b-dropdown-item variant="danger" @click="deleteData(data.item)" v-if="hasPermission('booking-delete')">
               <feather-icon icon="Trash2Icon" />
@@ -316,7 +322,7 @@ import Cleave from 'vue-cleave-component'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import { required, numeric } from '@validations'
 import useDataList from './useDataList'
-import { deleteData, postData, postAction, exportData } from '@/network/booking'
+import { deleteData, postAction, exportData, getInvoicePDF } from '@/network/booking'
 import { hasPermission } from '@/auth/utils'
 import { avatarText, formatDate, formatDateTime } from '@core/utils/filter'
 
@@ -550,6 +556,9 @@ export default {
           this.isSubmitModal = false
         })
       })
+    },
+    downloadInvoice(item) {
+      window.open(getInvoicePDF(item.id), "_blank");
     },
     exportData() {
       this.isSubmitModal = true
