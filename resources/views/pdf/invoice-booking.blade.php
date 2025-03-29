@@ -193,8 +193,8 @@ use Carbon\Carbon;
                     <p>Institusi: {{ $booking->account_hospital }} dalamacaraIndonesian Neurosurgical NursesMeeting Symposium & Workshop Nasional “CRANIO” dengan tema : “An Integrated Perioperative Nursing Care on Neurosurgery with Approach Craniotomy”</p>
                 </td>
                 <td valign="top" class="center">{{ $booking->total_pax }}</td>
-                <td valign="top"><span class="right">{{ $currency }} {{ NumberFormat::separatorAmount($booking->price_per_pax) }}</span></td>
-                <td valign="top"><span class="right">{{ $currency }} {{ NumberFormat::separatorAmount(($booking->price_per_pax * $booking->total_pax)) }}</span></td>
+                <td valign="top"><span class="right text-nowrap">{{ $currency }} {{ NumberFormat::separatorAmount($booking->price_per_pax) }}</span></td>
+                <td valign="top"><span class="right text-nowrap">{{ $currency }} {{ NumberFormat::separatorAmount(($booking->price_per_pax * $booking->total_pax)) }}</span></td>
             </tr>
             
             <tr>
