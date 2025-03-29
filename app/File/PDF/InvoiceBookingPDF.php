@@ -5,7 +5,7 @@ namespace App\File\PDF;
 use App\Models\Booking;
 use App\Models\Participant;
 use Carbon\Carbon;
-use PDF;
+use Pdf;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\App;
 
@@ -30,8 +30,7 @@ class InvoiceBookingPDF
         $this->data = $data;
 
         // return view('pdf.invoice-booking', $data)->render();
-        $this->pdf = PDF::loadView('pdf.invoice-booking', $data);
-        $this->pdf->setOption('enable-local-file-access', true);
+        $this->pdf = Pdf::loadView('pdf.invoice-booking', $data);
     }
 
     public function html()

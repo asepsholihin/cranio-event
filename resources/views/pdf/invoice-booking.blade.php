@@ -14,9 +14,8 @@ use Carbon\Carbon;
             width: 100%;
             height: 100%;
             margin: 0;
-            padding: 0 40px;
+            padding: 0;
             background-color: #ffffff;
-            font: 10pt "Arial";
         }
 
         * {
@@ -26,7 +25,6 @@ use Carbon\Carbon;
 
         .right {
             text-align: right;
-            float: right;
         }
 
         .signature {
@@ -35,14 +33,8 @@ use Carbon\Carbon;
             font-size: 12pt;
         }
 
-        .address {
-            float: right;
-            margin-top: 5px;
-        }
-
         .left {
             text-align: left;
-            float: left;
         }
 
         .center {
@@ -128,7 +120,9 @@ use Carbon\Carbon;
         }
 
         @page {
-            margin: 0px;
+            margin: 30px 40px;
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 12px;
         }
 
         @media print {
@@ -150,13 +144,13 @@ use Carbon\Carbon;
 <body>
     <div class="page">
         <div class="center">
-            <img height="180"
+            <img height="130"
             src="{{ 'data:image/png;base64,' . base64_encode(file_get_contents(storage_path('private_assets/images/kop-surat.jpg'))) }}"
             alt="">
         </div>
-        <br /><br />
+        <br />
         <h2 class="center underline">INVOICE</h2>
-        <br /><br />
+        <br />
         <div>
             <table width="100%">
                 <tr>
@@ -175,7 +169,7 @@ use Carbon\Carbon;
         <table width="100%">
             <tr class="header">
                 <td width="5" valign="top">No</td>
-                <td width="570px">Description</td>
+                <td>Description</td>
                 <td valign="top">Jumlah</td>
                 <td valign="top">Harga / Orang</td>
                 <td valign="top">Total</td>
@@ -193,25 +187,25 @@ use Carbon\Carbon;
                     <p>Institusi: {{ $booking->account_hospital }} dalamacaraIndonesian Neurosurgical NursesMeeting Symposium & Workshop Nasional “CRANIO” dengan tema : “An Integrated Perioperative Nursing Care on Neurosurgery with Approach Craniotomy”</p>
                 </td>
                 <td valign="top" class="center">{{ $booking->total_pax }}</td>
-                <td valign="top"><span class="right text-nowrap">{{ $currency }} {{ NumberFormat::separatorAmount($booking->price_per_pax) }}</span></td>
-                <td valign="top"><span class="right text-nowrap">{{ $currency }} {{ NumberFormat::separatorAmount(($booking->price_per_pax * $booking->total_pax)) }}</span></td>
+                <td valign="top"><div class="right text-nowrap">{{ $currency }} {{ NumberFormat::separatorAmount($booking->price_per_pax) }}</div></td>
+                <td valign="top"><div class="right text-nowrap">{{ $currency }} {{ NumberFormat::separatorAmount(($booking->price_per_pax * $booking->total_pax)) }}</div></td>
             </tr>
             
             <tr>
-                <td colspan="5" class="text-nowrap"><b><span class="right">{{ $currency }} {{ number_format($booking->total_price) }}</span></b>
+                <td colspan="5" class="text-nowrap"><b><div class="right">{{ $currency }} {{ number_format($booking->total_price) }}</div></b>
                 </td>
             </tr>
             <tr class="due-payment">
-                <td colspan="2"><span class="right fw-bold text-nowrap">Terbilang</span>
+                <td colspan="2"><div class="right fw-bold text-nowrap">Terbilang</div>
                 </td>
-                <td colspan="3" class="text-nowrap"><b><span class="right">{{ NumberFormat::terbilang($booking->total_price) }} Rupiah</span></b>
+                <td colspan="3" class="text-nowrap"><b><div class="right">{{ NumberFormat::terbilang($booking->total_price) }} Rupiah</div></b>
                 </td>
             </tr>
         </table>
         
         <br /> <br />
         <div>
-            <p style="padding:0 4px 0 4px;"><b>Pembayaran melalui transfer ke:</b></p>
+            <p style="padding:0 14px 0 14px;margin:0"><b>Pembayaran melalui transfer ke:</b></p>
             <table class="border-0 no-padding">
                 <tr>
                     <td>Bank</td>
@@ -232,10 +226,10 @@ use Carbon\Carbon;
         </div>
 
         <br />
-        <div class="right">
-            <div class="signature">
-                <p style="padding-left: 26px;margin:0;"><b>Bali, {{ Carbon::parse($booking->created_at)->isoFormat('D MMMM Y') }}</b></p>
-                <img width="320"
+        <div>
+            <div class="signature" style="margin-left: auto;">
+                <p style="padding-left: 26px;margin:0;z-index:9"><b>Bali, {{ Carbon::parse($booking->created_at)->isoFormat('D MMMM Y') }}</b></p>
+                <img width="320" style="margin-top:-12px;"
                     src="{{ 'data:image/png;base64,' . base64_encode(file_get_contents(storage_path('private_assets/images/signature_invoice.jpg'))) }}">
             </div>
         </div>
