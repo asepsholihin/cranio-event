@@ -7,15 +7,40 @@
       <div class="m-2">
 
         <!-- Table Top -->
+        <b-row class="mb-1">
+          <b-col cols="12" md="3" class="mb-1">
+            <h5>Persentase By Gender</h5>
+            <apexchart type="pie" height="200" :options="chartGenderOptions" :series="chartGenderSeries"/>
+          </b-col>
+          <b-col cols="12" md="3" class="mb-1">
+            <h5>Persentase By Polo Size</h5>
+            <apexchart type="pie" height="200" :options="chartPoloSizeOptions" :series="chartPoloSizeSeries"/>
+          </b-col>
+        </b-row>
         <b-row class="justify-content-end">
             <b-col cols="12" md="3" class="mb-1">
-                <label>Gender</label>
+                <label>Filter by Gender</label>
                 <v-select v-model="genderFilter" :options="genderOptions" class="w-100" :reduce="val => val.value" />
+            </b-col>
+            <b-col cols="12" md="3" class="mb-1">
+                <label>Filter by Polo Size</label>
+                <v-select v-model="poloSizeFilter" :options="poloSizeOptions" class="w-100" :reduce="val => val.value" />
+            </b-col>
+            <b-col cols="12" md="3" class="mb-1">
+              <label>Filter by Date</label>
+              <div class="input-group">
+                <flat-pickr v-model="dateFilter" :config="{ mode: 'range' }" class="form-control" name="date"/>
+                <div class="input-group-append">
+                  <button class="btn btn-danger btn-sm" type="button" @click="clearDate">
+                    <feather-icon icon="XIcon" />
+                  </button>
+                </div>
+              </div>
             </b-col>
         </b-row>
         <b-row>
           <!-- Per Page -->
-          <b-col cols="12" md="4" class="d-flex align-items-center justify-content-start mb-1 mb-md-0">
+          <b-col cols="12" md="6" class="d-flex align-items-center justify-content-start mb-1 mb-md-0">
             <label>Show</label>
             <v-select v-model="perPage" :options="perPageOptions" :clearable="false"
               class="per-page-selector d-inline-block mx-50" />
@@ -23,32 +48,15 @@
           </b-col>
 
           <!-- Search -->
-          <b-col cols="12" md="8">
+          <b-col cols="12" md="6">
             <div class="d-lg-flex align-items-center justify-content-end">
               <b-form-input v-model="searchQuery" debounce="350" type="search" class="d-inline-block mr-1 mb-lg-0 mb-2" placeholder="Search..." />
-              <b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary" class="d-inline-block">
-                <b-dropdown right class="mr-1" variant="gradient-primary" :disabled="isLoading" v-if="hasPermission('participant-add-or-edit')">
-                  <template #button-content>
-                      Action
-                  </template>
-                  <b-dropdown-item @click="isAddSidebarActive = true">
-                    Add
-                  </b-dropdown-item>
-                  <b-dropdown-item @click="exportParticipant()">
-                    Export
-                  </b-dropdown-item>
-                  <b-dropdown-item @click="isImportSidebarActive = true">
-                    Import
-                  </b-dropdown-item>
-                </b-dropdown>
-              </b-overlay>
-              <b-button variant="primary" :to="{ name: 'participant-raw' }" class="mb-lg-0 mb-2" v-if="hasPermission('participant-add-or-edit')">
-                <span class="text-nowrap">Raw Data</span>
+              <b-button variant="primary" @click="exportParticipant()" class="mb-lg-0 mb-2" v-if="hasPermission('participant-add-or-edit')">
+                <span class="text-nowrap">Export Data</span>
               </b-button>
             </div>
           </b-col>
         </b-row>
-
       </div>
 
       <b-table ref="refUserListTable" class="position-relative" :items="fetchUsers" responsive hover
@@ -85,12 +93,16 @@
               <feather-icon icon="MoreVerticalIcon" size="16" class="align-middle text-body" />
             </template>
             <b-dropdown-item v-if="hasPermission('participant-add-or-edit')" @click="updateInfo(data.item)">
-              <feather-icon icon="UserCheckIcon" />
+              <feather-icon icon="EditIcon" />
               <span class="align-middle ml-50">Update Data</span>
             </b-dropdown-item>
-            <b-dropdown-item v-if="hasPermission('participant-add-or-edit')" @click="setNameInCerificate(data.item)">
-              <feather-icon icon="UserCheckIcon" />
-              <span class="align-middle ml-50">Name in Certificate</span>
+            <b-dropdown-item @click="viewNotes(data.item)">
+              <feather-icon icon="FileTextIcon" />
+              <span class="align-middle ml-50">View Notes</span>
+            </b-dropdown-item>
+            <b-dropdown-item v-if="hasPermission('participant-add-or-edit')">
+              <feather-icon icon="SendIcon" />
+              <span class="align-middle ml-50">Kirim QR Code</span>
             </b-dropdown-item>
             <b-dropdown-item variant="danger" @click="deleteParticipant(data.item)">
               <feather-icon icon="Trash2Icon" />
@@ -265,6 +277,34 @@
         </b-form>
       </validation-observer>
     </b-modal>
+
+    <b-modal v-model="viewNotesModal" ok-only @hidden="resetModal" centered no-close-on-backdrop>
+      <template #modal-title>
+        <h3>Catatan Teman Sekamar</h3>
+      </template>
+      <b-row>
+        <b-col sm="6">
+          <label for="">Booking Order</label>
+          <p class="font-weight-bold">{{ formData.booking_no }}</p>
+        </b-col>
+        <b-col sm="6">
+          <label for="">Participant Name</label>
+          <p class="font-weight-bold">{{ formData.name }}</p>
+        </b-col>
+        <b-col sm="6">
+          <label for="">Hospital</label>
+          <p class="font-weight-bold">{{ formData.booking_account_hospital }}</p>
+        </b-col>
+        <b-col sm="6">
+          <label for="">Whatsapp</label>
+          <p class="font-weight-bold">{{ formData.whatsapp }}</p>
+        </b-col>
+        <b-col sm="12">
+          <label for="">Catatan Teman Sekamar</label>
+          <p class="font-weight-bold">{{ (formData.request) ? formData.request : '-' }}</p>
+        </b-col>
+      </b-row>
+    </b-modal>
   </div>
 </template>
 
@@ -291,9 +331,10 @@ import {
 } from 'bootstrap-vue'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import vSelect from 'vue-select'
+import flatPickr from 'vue-flatpickr-component'
 import { avatarText, formatDateShort } from '@core/utils/filter'
 import useDataList from './useDataList'
-import { createNameInCertificate, postUpdateData, deleteData, exportParticipant } from '@/network/participant'
+import { createNameInCertificate, postUpdateData, deleteData, exportParticipant, getChartGender, getChartPoloSize } from '@/network/participant'
 import { hasPermission } from '@/auth/utils'
 import _ from 'lodash'
 import { required, numeric, email } from '@validations'
@@ -320,6 +361,7 @@ export default {
     BSpinner,
 
     vSelect,
+    flatPickr,
     ValidationProvider,
     ValidationObserver
   },
@@ -346,6 +388,8 @@ export default {
 
       // Extra Filters
       genderFilter,
+      poloSizeFilter,
+      dateFilter
     } = useDataList()
 
     return {
@@ -373,14 +417,30 @@ export default {
 
       // Extra Filters
       genderFilter,
+      poloSizeFilter,
+      dateFilter,
       hasPermission
     }
   },
-  created() {
-
+  watch: {
+    genderFilter: function (value) {
+      this.getChartData()
+    },
+    poloSizeFilter: function (value) {
+      this.getChartData()
+    },
+    dateFilter: function (value) {
+      this.getChartData()
+    },
   },
   data() {
+    const chartGenderOptions = {}
+    const chartGenderSeries = []
+    const chartPoloSizeOptions = {}
+    const chartPoloSizeSeries = []
 
+    this.getChartData()
+    
     return {
       required, numeric, email,
       filter: {},
@@ -388,12 +448,51 @@ export default {
       isSubmitModal: false,
       setNameInCerificateModal: false,
       updateInfoModal: false,
+      viewNotesModal: false,
       selectedParticipant: {},
       formData: {},
-      formNameInCerificate: {front_title: '', name_in_certificate: '', back_title: '' }
+      formNameInCerificate: {front_title: '', name_in_certificate: '', back_title: '' },
+      chartGenderOptions,
+      chartGenderSeries,
+      chartPoloSizeOptions,
+      chartPoloSizeSeries,
     }
   },
   methods : {
+    clearDate() {
+      this.dateFilter = null
+    },
+    getChartData() {
+      getChartGender({params: {date: this.dateFilter, gender: this.genderFilter, poloSize: this.poloSizeFilter}}).then(response => {
+        this.chartGenderOptions = {
+          chart: {
+            id: 'chart-gender',
+            toolbar: {
+              show: true
+            }
+          },
+          labels: response.data.categories,
+        }
+        this.chartGenderSeries = response.data.data
+      }).catch(error => {
+        this.$bvToast.toast(`Error: ${error.response.data.message}`, { title: `Error`, variant: 'danger', toaster: 'b-toaster-top-center', solid: true })
+      })
+
+      getChartPoloSize({params: {date: this.dateFilter, gender: this.genderFilter, poloSize: this.poloSizeFilter}}).then(response => {
+        this.chartPoloSizeOptions = {
+          chart: {
+            id: 'chart-gender',
+            toolbar: {
+              show: true
+            }
+          },
+          labels: response.data.categories,
+        }
+        this.chartPoloSizeSeries = response.data.data
+      }).catch(error => {
+        this.$bvToast.toast(`Error: ${error.response.data.message}`, { title: `Error`, variant: 'danger', toaster: 'b-toaster-top-center', solid: true })
+      })
+    },
     setNameInCerificate(item) {
       this.setNameInCerificateModal = true
       this.selectedParticipant = item
@@ -415,7 +514,7 @@ export default {
                 this.$swal({ icon: 'success', title: 'Success', text: `Name in Certificate has been saved successfully`, timer: 2500, customClass: { confirmButton: 'btn btn-primary', }, buttonsStyling: false })
                 this.refetchData()
             }).catch(error => {
-                this.$swal({ icon: 'error', title: 'Error', text: `${error.response.data.message}`, customClass: { confirmButton: 'btn btn-warning', }, buttonsStyling: false })
+                this.$bvToast.toast(`Error: ${error.response.data.message}`, { title: `Error`, variant: 'danger', toaster: 'b-toaster-top-center', solid: true })
                 this.isSubmitModal = false
             })
         })
@@ -435,13 +534,17 @@ export default {
                 this.isSubmitModal = false
                 this.refetchData()
             }).catch(error => {
-                this.$swal({ icon: 'error', title: 'Error', text: `${error.response.data.message}`, customClass: { confirmButton: 'btn btn-warning', }, buttonsStyling: false })
+                this.$bvToast.toast(`Error: ${error.response.data.message}`, { title: `Error`, variant: 'danger', toaster: 'b-toaster-top-center', solid: true })
                 this.isSubmitModal = false
             })
         })
     },
     updateInfo(item) {
       this.updateInfoModal = true
+      this.formData = item
+    },
+    viewNotes(item) {
+      this.viewNotesModal = true
       this.formData = item
     },
     resetModal() {
@@ -475,7 +578,7 @@ export default {
           window.location = response.data.downloadLink
       }).catch(error => {
           this.isLoading = false
-          this.$swal({ icon: 'error', title: 'Error', text: `${error.response.data.message}`, customClass: { confirmButton: 'btn btn-warning', }, buttonsStyling: false })
+          this.$bvToast.toast(`Error: ${error.response.data.message}`, { title: `Error`, variant: 'danger', toaster: 'b-toaster-top-center', solid: true })
       })
     },
   },
@@ -491,4 +594,5 @@ export default {
 <style lang="scss">
 @import '~@resources/scss/vue/libs/vue-select.scss';
 @import '~@resources/scss/vue/libs/vue-sweetalert.scss';
+@import '~@resources/scss/vue/libs/vue-flatpicker.scss';
 </style>

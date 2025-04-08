@@ -97,3 +97,11 @@ export const convertToBlob = (...args) => {
 export const getJobSearch = (...args) => {
     return httpService.getHttp().get(resourcePath + '/job-search', ...args)
 }
+
+export const getChartGender = (...args) => {
+    return httpService.getHttp().get(resourcePath + '/chart-gender', ...args)
+}
+
+export const getChartPoloSize = (...args) => {
+    return httpService.getHttp().get(resourcePath + '/chart-polo-size', ...args)
+}

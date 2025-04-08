@@ -15,6 +15,7 @@ export default function useUsersList() {
   const tableColumns = [
     { key: 'booking' },
     { key: 'name', sortable: true },
+    { key: 'booking_account_hospital', label: 'Hospital' },
     { key: 'email' },
     { key: 'whatsapp' },
     { key: 'nik' },
@@ -30,6 +31,8 @@ export default function useUsersList() {
   const sortBy = ref('id')
   const isSortDirDesc = ref(true)
   const genderFilter = ref(null)
+  const poloSizeFilter = ref(null)
+  const dateFilter = ref(null)
 
   const dataMeta = computed(() => {
     const localItemsCount = refUserListTable.value ? refUserListTable.value.localItems.length : 0
@@ -44,7 +47,7 @@ export default function useUsersList() {
     refUserListTable.value.refresh()
   }
 
-  watch([currentPage, perPage, searchQuery, genderFilter], () => {
+  watch([currentPage, perPage, searchQuery, genderFilter, poloSizeFilter, dateFilter], () => {
     refetchData()
   })
 
@@ -56,6 +59,8 @@ export default function useUsersList() {
         sortBy: sortBy.value,
         sortDesc: isSortDirDesc.value,
         gender: genderFilter.value,
+        poloSize: poloSizeFilter.value,
+        date: dateFilter.value
       }})
       .then(response => {
         const { data, total } = response.data
@@ -102,5 +107,7 @@ export default function useUsersList() {
 
     // Extra Filters
     genderFilter,
+    poloSizeFilter,
+    dateFilter
   }
 }

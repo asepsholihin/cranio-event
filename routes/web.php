@@ -111,6 +111,8 @@ Route::prefix('spa')->middleware(['auth'])->group(function () {
     Route::delete('booking-order/delete-credit-receipt/{id}', [BookingOrderSPAController::class, 'deleteCreditReceipt']);
     Route::get('booking-order/trip-search', [BookingOrderSPAController::class, 'tripSearch']);
     Route::get('participant/export-participant-address', [ParticipantSPAController::class, 'exportParticipantAddress']);
+    Route::get('participant/chart-gender', [ParticipantSPAController::class, 'chartGender']);
+    Route::get('participant/chart-polo-size', [ParticipantSPAController::class, 'chartPoloSize']);
     Route::resource('participant', ParticipantSPAController::class)->only(['show', 'store', 'index', 'destroy']);
     Route::get('participant-raw-data', [ParticipantSPAController::class, 'participantRawData']);
     Route::post('participant/update-domisili', [ParticipantSPAController::class, 'updateDomisili']);

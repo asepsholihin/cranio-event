@@ -47,7 +47,12 @@ class RegistrationController extends Controller
     }
 
     public function bookingDetail(Request $request) {
-        $booking = Booking::where('account_wa', $request->account_wa)->first();
+        if($request->account_wa) {
+            $booking = Booking::where('account_wa', $request->account_wa)->first();
+        }
+        if($request->code) {
+            $booking = Booking::where('temp_booking_id', $request->code)->first();
+        }
 
         if (!$booking) {
             return response()->json([

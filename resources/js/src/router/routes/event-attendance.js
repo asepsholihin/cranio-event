@@ -34,8 +34,8 @@ export default [
     },
 
     {
-      path: '/manasik-report/:online/:id',
-      name: 'manasik-report',
+      path: '/attendance-report/:online/:id',
+      name: 'attendance-report',
       component: () => import('@/views/pages/event-attendance/report.vue'),
       meta: {
           pageTitle: '',

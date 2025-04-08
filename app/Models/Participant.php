@@ -132,7 +132,6 @@ class Participant extends Authenticatable implements Auditable
     protected $appends = [
         'profile_thumbnail',
         'profile_photo',
-        'age'
     ];
 
     public function profilePhoto(): Attribute
@@ -154,11 +153,6 @@ class Participant extends Authenticatable implements Auditable
         );
     }
 
-    public function getAgeAttribute()
-    {
-        return $this->birth_date ? \Carbon\Carbon::createFromFormat('Y-m-d', $this->birth_date)->age : '';
-    }
-
     public function scopeTableSearch($query)
     {
         $query->select(['participants.*',
@@ -170,24 +164,29 @@ class Participant extends Authenticatable implements Auditable
         if(in_array(3, auth()->user()->department_ids)) {
             $query->where('participants.created_by', auth()->user()->id);
         }
-
         if (!empty(request()->query('gender'))) {
             $query->where('participants.gender', request()->query('gender'));
         }
-
-        if (empty(request()->query('q', ''))) {
-            return $query;
+        if (!empty(request()->query('poloSize'))) {
+            $query->where('participants.polo_size', request()->query('poloSize'));
         }
-
-        $search = '%' . request()->query('q') . '%';
-        return $query->where(function ($query) use ($search) {
-            $query
-                ->where('participants.email',  request()->query('q'))
-                ->orWhere('participants.name', 'like', $search)
-                ->orWhere('participants.no_hp', 'like', $search)
-                ->orWhere('participants.nik', 'like', $search)
-                ->orWhere('participants.no_passport', 'like', $search);
-        });
+        if (!empty(request()->query('date'))) {
+            $dateXplode = explode('to', request()->query('date'));
+            $start = date('Y-m-d', strtotime($dateXplode[0]));
+            $end = date('Y-m-d', strtotime($dateXplode[1]??$dateXplode[0]));
+            $query->whereBetween('participants.created_at', [$start, $end]);
+        }
+        if (!empty(request()->query('q'))) {
+            $search = '%' . request()->query('q') . '%';
+            $query->where(function ($q) use ($search) {
+                $q
+                    ->where('participants.email',  request()->query('q'))
+                    ->orWhere('participants.name', 'like', $search)
+                    ->orWhere('participants.whatsapp', 'like', $search)
+                    ->orWhere('participants.nik', 'like', $search);
+            });
+        }
+        return $query;
     }
 
     private function getIdInThisMonth()

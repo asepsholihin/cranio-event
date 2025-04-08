@@ -842,4 +842,64 @@ class ParticipantSPAController extends Controller
         }
         return response()->json($data);
     }
+
+    public function chartGender(Request $request)
+    {
+        $query = Participant::select([
+            DB::raw("SUM(CASE WHEN gender = 1 THEN 1 ELSE 0 END) AS men"),
+            DB::raw("SUM(CASE WHEN gender = 2 THEN 1 ELSE 0 END) AS women"),
+        ]);
+        if (!empty(request()->query('gender'))) {
+            $query->where('participants.gender', request()->query('gender'));
+        }
+        if (!empty(request()->query('poloSize'))) {
+            $query->where('participants.polo_size', request()->query('poloSize'));
+        }
+        if (!empty(request()->query('date'))) {
+            $dateXplode = explode('to', request()->query('date'));
+            $start = date('Y-m-d', strtotime($dateXplode[0]));
+            $end = date('Y-m-d', strtotime($dateXplode[1]??$dateXplode[0]));
+            $query->whereBetween('participants.created_at', [$start, $end]);
+        }
+        $participant = $query->first();
+
+        $data = array();
+
+        $data['categories'] = array('Pria', 'Wanita');
+        $data['data'] = array(intval($participant->men), intval($participant->women));
+
+        return response()->json($data);
+    }
+    
+    public function chartPoloSize(Request $request)
+    {
+        $query = Participant::select([
+            DB::raw("SUM(CASE WHEN polo_size = 'S' THEN 1 ELSE 0 END) AS S"),
+            DB::raw("SUM(CASE WHEN polo_size = 'M' THEN 1 ELSE 0 END) AS M"),
+            DB::raw("SUM(CASE WHEN polo_size = 'L' THEN 1 ELSE 0 END) AS L"),
+            DB::raw("SUM(CASE WHEN polo_size = 'XL' THEN 1 ELSE 0 END) AS XL"),
+            DB::raw("SUM(CASE WHEN polo_size = 'XXL' THEN 1 ELSE 0 END) AS XXL"),
+            DB::raw("SUM(CASE WHEN polo_size = 'XXXL' THEN 1 ELSE 0 END) AS XXXL"),
+        ]);
+        if (!empty(request()->query('gender'))) {
+            $query->where('participants.gender', request()->query('gender'));
+        }
+        if (!empty(request()->query('poloSize'))) {
+            $query->where('participants.polo_size', request()->query('poloSize'));
+        }
+        if (!empty(request()->query('date'))) {
+            $dateXplode = explode('to', request()->query('date'));
+            $start = date('Y-m-d', strtotime($dateXplode[0]));
+            $end = date('Y-m-d', strtotime($dateXplode[1]??$dateXplode[0]));
+            $query->whereBetween('participants.created_at', [$start, $end]);
+        }
+        $participant = $query->first();
+
+        $data = array();
+
+        $data['categories'] = array('S', 'M', 'L', 'XL', 'XXL', 'XXXL');
+        $data['data'] = array(intval($participant->S), intval($participant->M), intval($participant->L), intval($participant->XL), intval($participant->XXL), intval($participant->XXXL));
+
+        return response()->json($data);
+    }
 }
