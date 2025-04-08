@@ -40,7 +40,7 @@ class InvoiceBookingPDF
 
     public function download()
     {
-        return $this->pdf->download(strtoupper($this->invoice->name) . '_INVOICE_' . $this->invoice->invoice_no . '.pdf');
+        return $this->pdf->download('INVOICE_' . str_replace('/','_',$this->booking->booking_no) . '.pdf');
     }
 
     public function output()

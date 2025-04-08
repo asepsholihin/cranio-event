@@ -430,6 +430,7 @@ Route::prefix('public')->group(function () {
     Route::get('registration/{uuid}', [RegistrationController::class, 'registeredAccount']);
     Route::get('booking/detail', [RegistrationController::class, 'bookingDetail']);
     Route::post('booking/payment-confirmation', [RegistrationController::class, 'postDataPaymentConfirmation']);
+    Route::get('booking/download-invoice/{uuid}', [RegistrationController::class, 'downloadInvoicePDF']);
 });
 
 

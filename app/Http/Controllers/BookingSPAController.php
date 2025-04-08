@@ -101,6 +101,6 @@ class BookingSPAController extends Controller
     public function downloadInvoicePDF($bookingId)
     {
         $booking = Booking::find($bookingId);
-        return (new InvoiceBookingPDF($booking))->stream();
+        return (new InvoiceBookingPDF($booking))->download();
     }
 }

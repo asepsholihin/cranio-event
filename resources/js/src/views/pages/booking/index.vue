@@ -558,7 +558,25 @@ export default {
       })
     },
     downloadInvoice(item) {
-      window.open(getInvoicePDF(item.id), "_blank");
+      getInvoicePDF(item.id).then(response => {
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
+        const contentDisposition = response.headers['content-disposition']
+        fileLink.href = fileURL;
+        let fileName = 'unknown';
+        if (contentDisposition) {
+            const fileNameMatch = contentDisposition.match(/filename=(.+)/);
+            if (fileNameMatch.length === 2)
+                fileName = fileNameMatch[1];
+        }
+        fileLink.setAttribute('download', fileName);
+        document.body.appendChild(fileLink);
+        fileLink.click();
+        this.isSubmitModal = false
+      }).catch(error => {
+        this.$bvToast.toast(`Error: ${error}`, { title: `Error`, variant: 'danger', toaster: 'b-toaster-top-center', solid: true })
+        this.isSubmitModal = false
+      })
     },
     exportData() {
       this.isSubmitModal = true

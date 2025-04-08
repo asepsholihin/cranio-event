@@ -27,6 +27,6 @@ export const exportData = (args) => {
 }
 
 export const getInvoicePDF = (id) => {
-    //return httpService.getHttp().get(resourcePath + '/download-receipt'+ `/${id}`,{ responseType: 'blob' })
-    return resourcePath + '/download-invoice/' + id
+    return httpService.getHttp().get(resourcePath + '/download-invoice/'+ `${id}`,{ responseType: 'blob' })
+    // return resourcePath + '/download-invoice/' + id
 }

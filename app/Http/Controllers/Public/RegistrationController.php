@@ -13,6 +13,7 @@ use Illuminate\Validation\Rule;
 use App\Exceptions\ErrorMessageException;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use App\File\PDF\InvoiceBookingPDF;
 use Image;
 use DB;
 use Carbon\Carbon;
@@ -204,5 +205,11 @@ class RegistrationController extends Controller
             'success' => true,
             'data' => $participant
         ], 200);
+    }
+
+    public function downloadInvoicePDF($uuid)
+    {
+        $booking = Booking::where('temp_booking_id', $uuid)->first();
+        return (new InvoiceBookingPDF($booking))->download();
     }
 }
