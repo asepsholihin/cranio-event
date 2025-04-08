@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Attendance;
 use App\Models\EventAttendance;
 use App\Models\ParticipantUmrohTrip;
+use App\Models\ParticipantBooking;
 use App\Models\Participant;
+use App\Models\Booking;
 use App\Models\UmrohTrip;
 use App\Models\OrderUmrohTrip;
 use App\Models\LogQontakBroadcast;
@@ -91,21 +93,14 @@ class EventAttendanceController extends Controller
                 }
             }
 
-            if ($request->has('umroh_trip_id')) {
-                $participantUmrohTrip = ParticipantUmrohTrip::join('participants', 'participant.id', '=', 'participant_umroh_trips.participant_id')
-                    ->join('package_umroh_trips', 'package_umroh_trips.id', '=', 'participant_umroh_trips.package_umroh_trip_id')
-                    ->join('umroh_trips', 'umroh_trips.id', '=', 'participant_umroh_trips.umroh_trip_id')
-                    ->where('participant_umroh_trips.umroh_trip_id', $request->umroh_trip_id)->whereIn('participant_umroh_trips.role_type', [1,2,4])->get();
-                foreach ($participantUmrohTrip as $participant) {
-                    Attendance::firstOrCreate(
-                        ['event_id' => $eventAttendance->id, 'participant_id' => $participant->participant_id],
-                        ['event_id' => $eventAttendance->id, 'participant_id' => $participant->participant_id]
-                    );
-                }
-
-                $eventTimeline = EventTimeline::where('umroh_trip_id', $request->umroh_trip_id)->first();
-                $eventTimeline->event_id = $eventAttendance->id;
-                $eventTimeline->save();
+            $participantBooking = ParticipantBooking::join('bookings', 'participant_bookings.booking_id', 'bookings.id')
+            ->where('bookings.order_status', Booking::STATUS_PAID)
+            ->get();
+            foreach ($participantBooking as $participant) {
+                Attendance::firstOrCreate(
+                    ['event_id' => $eventAttendance->id, 'participant_id' => $participant->participant_id],
+                    ['event_id' => $eventAttendance->id, 'participant_id' => $participant->participant_id]
+                );
             }
         });
     }

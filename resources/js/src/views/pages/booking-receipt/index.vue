@@ -67,7 +67,7 @@
             <template #button-content>
               <feather-icon icon="MoreVerticalIcon" size="16" class="align-middle text-body" />
             </template>
-            <b-dropdown-item @click="updateReceiptStatus(data.item)">
+            <b-dropdown-item @click="updateReceiptStatus(data.item)" v-if="hasPermission('booking-receipt-add-or-edit') && data.item.status == 1">
               Update Status
             </b-dropdown-item>
             <b-dropdown-item variant="danger" @click="deleteData(data.item)" v-if="hasPermission('booking-receipt-delete')">

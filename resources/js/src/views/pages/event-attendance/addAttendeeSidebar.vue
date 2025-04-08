@@ -34,7 +34,7 @@
                         <b-avatar size="45" :src="option.profile_thumbnail" :text="avatarText(option.name)"
                             :variant="`light-primary`" />
                         </template>
-                        {{ option.name }}<br/>{{ formatDate(option.birth_date) }}<br/>{{option.no_hp}}
+                        {{ option.name }}<br/>{{option.whatsapp}}
                     </b-media>
                   </template>
                   <template slot="selected-option" slot-scope="option">
@@ -44,7 +44,7 @@
                             <b-avatar size="45" :src="option.profile_thumbnail" :text="avatarText(option.name)"
                                 :variant="`light-primary`" />
                             </template>
-                            {{ option.name }}<br/>{{ formatDate(option.birth_date) }}<br/>{{option.no_hp}}
+                            {{ option.name }}<br/>{{option.whatsapp}}
                         </b-media>
                     </div>
                   </template>

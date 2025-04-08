@@ -14,14 +14,10 @@ export default function useUsersList() {
   // Table Handlers
   const tableColumns = [
     { key: 'select', sortable: false },
-    { key: 'no_urut', sortable: true },
     { key: 'name', sortable: true },
-    { key: 'manasik_table', sortable: true, thClass: 'text-nowrap' },
-    { key: 'no_hp' },
-    { key: 'manasik_online', sortable: true, thClass: 'text-nowrap' },
-    { key: 'check_in_at', sortable: true, label: 'Manasik Offline', thClass: 'text-nowrap' },
-    { key: 'departure_from', sortable: true, label: 'Depart Plan', thClass: 'text-nowrap' },
-    { key: 'departure_from_update', sortable: true, label: 'Final Depart', thClass: 'text-nowrap' },
+    { key: 'whatsapp' },
+    { key: 'check_in_at', sortable: true, label: 'Waktu Absen', thClass: 'text-nowrap' },
+    { key: 'account_hospital', sortable: true, label: 'Nama Rumah Sakit', thClass: 'text-nowrap' },
     { key: 'actions' },
   ]
   const perPage = ref(500)
@@ -30,7 +26,7 @@ export default function useUsersList() {
   const currentPage = ref(1)
   const perPageOptions = [10, 25, 50, 100, 500]
   const searchQuery = ref('')
-  const sortBy = ref('participant_umroh_trips.manasik_table')
+  const sortBy = ref('')
   const isSortDirDesc = ref(false)
   const statusLinkConfirmFilter = ref(null)
   const bookingFilter = ref(null)

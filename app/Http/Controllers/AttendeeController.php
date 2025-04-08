@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Attendance;
 use App\Models\Participant;
-use App\Models\LogQontakBroadcast;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -27,9 +26,11 @@ class AttendeeController extends Controller
      */
     public function index()
     {
+        $orderBy = request()->query('sortBy', 'name');
+        $sortBy = request()->query('sortDesc') == 'true' ? 'desc' : 'asc';
         $perPage = request()->query('perPage', 500);
         $attendances = Attendance::tableSearch()
-        ->orderByRaw('participant_umroh_trips.no_urut asc, qontak asc, participant_umroh_trips.manasik_table asc, crew asc')
+        ->orderBy($orderBy, $sortBy)
         ->paginate($perPage)
         ->withQueryString()
         ->withPath(self::SPA_PATH);
@@ -55,30 +56,6 @@ class AttendeeController extends Controller
                 if($session_attendances) {
                     $onlines[] = $session_attendances;
                 }
-            }
-
-            if($value->qontak_status) {
-                if($value->qontak_status == "Delivered") {
-                    $logQontak = LogQontakBroadcast::select('id','qontak_log','whatsapp_status','status')->where('participant_id', $value->participant_id)
-                    ->where('type', 'Link Event')->where('event_id', $value->event_id)
-                    ->first();
-                    QontakStatusMessage::dispatch($logQontak);
-                    $statusDelivery = "sending";
-                    $statusDeliveryMessage = "Link kehadiran berhasil dikirim ke Qontak";
-                }
-                if($value->qontak_status == "Failed") {
-                    $statusDelivery = "failed";
-                    $statusDeliveryMessage = "Link kehadiran gagal dikirim ke Qontak";
-                }
-                if($value->whatsapp_status == 'failed') {
-                    $statusDelivery = "failed";
-                    $statusDeliveryMessage = "Link kehadiran gagal kirim ke Participant";
-                } else {
-                    $statusDelivery = "delivered";
-                    $statusDeliveryMessage = "Link kehadiran berhasil dikirim ke Participant";
-                }
-                $value->link_event_delivery_status = $statusDelivery;
-                $value->link_event_sent = $statusDeliveryMessage;
             }
 
             $value->manasik_online = $onlines;

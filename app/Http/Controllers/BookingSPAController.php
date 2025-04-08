@@ -68,6 +68,7 @@ class BookingSPAController extends Controller
             if($request->total_pax < $booking->pax_assign) {
                 throw new ErrorMessageException("Total Pax tidak boleh kurang dari peserta yang terdaftar");
             } 
+            Booking::updatePayment($booking);
         }
 
         $booking->update($request->except('file_evidence'));

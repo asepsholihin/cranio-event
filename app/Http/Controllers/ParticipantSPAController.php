@@ -133,22 +133,11 @@ class ParticipantSPAController extends Controller
         }
 
         $search = '%' . $search . '%';
-        $query = Participant::select(['id', 'name', 'email','no_hp', 'birth_date', 'profile_photo_path', 'home_address'])
+        $query = Participant::select(['id', 'name', 'email','whatsapp', 'profile_photo_path'])
         ->where('email',  $request->get('q'))
         ->orWhere('name', 'like', $search)
-        ->orWhere('no_hp', 'like', $search)
-        ->orWhere('nik', 'like', $search)
-        ->orWhere('no_passport', 'like', $search);
-        if(!in_array(1, auth()->user()->office_ids)) {
-            // Bukan Kantor Pusat
-            // if(in_array(8, auth()->user()->department_ids)) {
-            //     // Kepala Cabang
-            //     $query->join('users', 'users.id', 'participant.created_by');
-            //     $query->where('users.office_id', auth()->user()->office_id);
-            // } else {
-            //     $query->where('participant.created_by', auth()->user()->id);
-            // }
-        }
+        ->orWhere('whatsapp', 'like', $search)
+        ->orWhere('nik', 'like', $search);
         $result = $query->limit(30)->get();
 
         return response()->json($result);
@@ -157,7 +146,7 @@ class ParticipantSPAController extends Controller
     private function suggestParticipantBookingOrder(Request $request)
     {
         $packageName = PackageUmrohTrip::select('name')->first($request->packageId)->name;
-        $result = Participant::select(['id', 'name', 'no_hp', 'birth_date', 'profile_photo_path', 'home_address', DB::raw("0 as crm")])
+        $result = Participant::select(['id', 'name', 'whatsapp', 'profile_photo_path', DB::raw("0 as crm")])
             ->where('suggest_booking_order',  $request->bookingOrder)
             ->where('suggest_package',  $packageName)
             ->where('suggest_room',  $request->roomType)

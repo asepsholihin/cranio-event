@@ -17,7 +17,7 @@ export default function useUsersList() {
     { key: 'package' },
     { key: 'account_hospital', label: 'Hospital', sortable: true },
     { key: 'total_pax', label: 'Pax', sortable: true },
-    { key: 'total_price', sortable: true },
+    { key: 'total_price_with_tax', label: 'Total Price', sortable: true },
     { key: 'created_at', sortable: true },
     { key: 'order_status', label: 'Status', sortable: true },
     { key: 'room_info', thClass: 'text-center', tdClass: 'text-center' },

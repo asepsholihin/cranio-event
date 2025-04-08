@@ -15,12 +15,6 @@ export default [
     permission: 'event-attendance-view',
   },
   {
-    title: 'Open Registration',
-    icon: 'ArrowRightCircleIcon',
-    route: 'event-attendance-open-registration',
-    permission: 'event-attendance-view',
-  },
-  {
     title: 'Booking',
     icon: 'BookIcon',
     route: 'booking',

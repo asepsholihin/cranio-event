@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\BookingReceipt;
 use App\Models\Booking;
+use App\Models\ParticipantBooking;
+use App\Models\Attendance;
+use App\Models\EventAttendance;
 use Illuminate\Http\Request;
 use App\Exceptions\ErrorMessageException;
 use Maatwebsite\Excel\Facades\Excel;
@@ -63,13 +66,32 @@ class BookingReceiptSPAController extends Controller
                 $bookingReceipt->save();
                 $bookingReceipt->setOrderNumber();
                 
-                $booking = Booking::find($bookingReceipt->booking_id);
-                $booking->total_paid = $booking->total_paid + $bookingReceipt->payment_amount;
-                $booking->total_unpaid = $booking->total_unpaid - $bookingReceipt->payment_amount;
-                if($booking->total_unpaid == 0) {
-                    $booking->order_status = Booking::STATUS_PAID;
+                if($request->get('status') == 2) {
+                    $booking = Booking::find($bookingReceipt->booking_id);
+                    $booking->total_paid = $booking->total_paid + $bookingReceipt->payment_amount;
+                    $booking->total_unpaid = $booking->total_unpaid - $bookingReceipt->payment_amount;
+                    if($booking->total_unpaid <= 0) {
+                        $booking->order_status = Booking::STATUS_PAID;
+                    }
+                    $booking->save();
+
+                    // Add Attendance
+                    if($booking->order_status == Booking::STATUS_PAID) {
+                        $participantBooking = ParticipantBooking::join('bookings', 'participant_bookings.booking_id', 'bookings.id')
+                        ->where('bookings.order_status', Booking::STATUS_PAID)
+                        ->where('bookings.id', $booking->id)
+                        ->get();
+                        $events = EventAttendance::all();
+                        foreach ($participantBooking as $participant) {
+                            foreach ($events as $event) {
+                                Attendance::firstOrCreate(
+                                    ['event_id' => $event->id, 'participant_id' => $participant->participant_id],
+                                    ['event_id' => $event->id, 'participant_id' => $participant->participant_id]
+                                );
+                            }
+                        }
+                    }
                 }
-                $booking->save();
             });
         }
     }

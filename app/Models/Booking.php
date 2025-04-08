@@ -18,6 +18,7 @@ class Booking extends Model implements Auditable
     const MONTH_ROMAWI = [1=>"I","II","III", "IV", "V","VI","VII","VIII","IX","X", "XI","XII"];
 
     const STATUS_PENDING = "pending";
+    const STATUS_UNPAID = "unpaid";
     const STATUS_PAID = "paid";
     const STATUS_BOOKED = "booked";
     const STATUS_ACCESS_GIVEN = "access_given";
@@ -129,5 +130,16 @@ class Booking extends Model implements Auditable
                 $attributes['room_key_evidence'] ?? null
             ),
         );
+    }
+
+    public static function updatePayment($booking)
+    {
+        $totalPaid = BookingReceipt::where('booking_id', $booking->id)->where('status', 2)->sum('payment_amount');
+        $totalUnpaid = intval($booking->total_price_with_tax) - intval($totalPaid);
+        Booking::find($booking->id)->update([
+            'total_paid' => $totalPaid,
+            'total_unpaid' => $totalUnpaid,
+            'order_status' => ($totalUnpaid == 0) ? self::STATUS_PAID : self::STATUS_UNPAID,
+        ]);
     }
 }

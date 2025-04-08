@@ -70,7 +70,6 @@
         <!-- Column: Report -->
         <template #cell(report)="data">
             <b-button class="mr-1" variant="warning" size="sm" :to="{ name: 'manasik-report', params: { id: data.item.id, online: 'offline' } }"><feather-icon icon="PieChartIcon" /><span class="align-middle ml-50">Offline</span></b-button>
-            <b-button variant="danger" size="sm" :to="{ name: 'manasik-report', params: { id: data.item.id, online: 'online' } }"><feather-icon icon="PieChartIcon" /><span class="align-middle ml-50">Online</span></b-button>
         </template>
 
         <!-- Column: Actions -->

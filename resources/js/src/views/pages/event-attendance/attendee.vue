@@ -6,13 +6,6 @@
         <check-in-barcode-sidebar :event-attendance="event" :is-barcode-sidebar-active.sync="isBarcodeSidebarActive"
             @refetch-data="refreshDataPage" v-if="hasPermission('event-attendance-add-or-edit')" />
 
-        <photo-booth-barcode-sidebar :event-attendance="event"
-            :is-photo-booth-barcode-sidebar-active.sync="isPhotoBoothBarcodeSidebarActive" @refetch-data="refreshDataPage"
-            v-if="hasPermission('event-attendance-add-or-edit')" />
-
-        <import-sidebar :event-attendance="event" :is-import-sidebar-active.sync="isImportSidebarActive"
-            @refetch-data="refetchData" v-if="hasPermission('event-attendance-add-or-edit')" />
-
         <b-card>
             <h3 class="text-default">{{ event.event }} - {{ event.name }}</h3>
             <h4>{{ formatDate(event.event_date) }} <b-button variant="link" @click="copyLinkDepatureConfirmation(event.slug)" class="text-small ml-2" v-if="event.slug">Copy Link Konfirmasi Keberangkatan</b-button></h4>
@@ -21,7 +14,7 @@
 
             <b-row>
                 <b-col cols="12">
-                    <div class="d-flex align-items-center justify-content-end mb-1">
+                    <div class="d-flex align-items-center justify-content-end">
                         <b-button class="mr-1" variant="primary" @click="selectRowAction">
                             <template v-if="!isRowChecked">
                                 <span class="text-nowrap">
@@ -34,86 +27,14 @@
                                 </span>
                             </template>
                         </b-button>
-                        <b-dropdown class="mr-1" :disabled="isSubmitModal" right variant="gradient-primary" v-if="hasPermission('event-attendance-add-or-edit')">
-                            <template #button-content>
-                                Action
-                            </template>
-                            <b-dropdown-item :disabled="!isRowChecked" @click="setManasikTable()">
-                                Set Manasik Table
-                            </b-dropdown-item>
-                            <b-dropdown-item v-if="event.slug == null" variant="danger" @click="generateDepartureConfirmationLink()">
-                                Buat Link Konfirmasi Keberangkatan
-                            </b-dropdown-item>
-                            <b-dropdown-item :disabled="!isRowChecked" variant="info" @click="generateEventLink()">
-                                Kirim Link Konfirmasi Kehadiran
-                            </b-dropdown-item>
-                            <b-dropdown-item variant="warning" @click="generateEventManasikOnline()">
-                                Buat Link Manasik Online
-                            </b-dropdown-item>
-                        </b-dropdown>
-                        <b-dropdown :disabled="isSubmitModal" right variant="gradient-primary" v-if="hasPermission('event-attendance-add-or-edit')">
-                            <template #button-content>
-                                Download
-                            </template>
-                            <b-dropdown-item @click="exportDepartureUpdate()">
-                                Export Keberangkatan
-                            </b-dropdown-item>
-                            <b-dropdown-item @click="downloadTableNumber()">
-                                File Manasik Table
-                            </b-dropdown-item>
-                        </b-dropdown>
-                    </div>
-                    <div class="d-flex align-items-center justify-content-end">
-                        <!-- <b-button variant="primary" @click="isPhotoBoothBarcodeSidebarActive = true" class="mr-1"
-                            v-if="hasPermission('event-attendance-add-or-edit')">
-                            <span class="text-nowrap">Photo Booth Barcode</span>
-                        </b-button> -->
-                        <b-button variant="success" @click="isImportSidebarActive = true"
-                            v-if="hasPermission('event-attendance-add-or-edit')" class="mr-1">
-                            <span class="text-nowrap">Import Keberangkatan</span>
-                        </b-button>
                         <b-button variant="primary" @click="isBarcodeSidebarActive = true" class="mr-1"
                             v-if="hasPermission('event-attendance-add-or-edit')">
                             <span class="text-nowrap">Check In Barcode</span>
                         </b-button>
-                        <b-button variant="primary" @click="isAddAttendeeSidebarActive = true"
+                        <b-button variant="primary" @click="isAddAttendeeSidebarActive = true" class="mr-1"
                             v-if="hasPermission('event-attendance-add-or-edit')">
                             <span class="text-nowrap">Add Attendee</span>
                         </b-button>
-                    </div>
-                </b-col>
-            </b-row>
-            <!-- Table Top -->
-            <div class="my-2">
-                <b-row>
-                    <!-- Per Page -->
-                    <b-col cols="12" md="3" class="d-flex align-items-center justify-content-start mb-1">
-                        <label>Show</label>
-                        <v-select v-model="perPage" :options="perPageOptions" :clearable="false"
-                            class="per-page-selector d-inline-block mx-50" />
-                        <label>entries</label>
-                    </b-col>
-
-                    <!-- Search -->
-                    <b-col cols="12" md="3" class="mb-1">
-                        <b-form-input v-model="searchQuery" debounce="350" class="d-inline-block mr-1" type="search"
-                            placeholder="Search..." />
-                    </b-col>
-                    <b-col cols="12" md="3" class="mb-1">
-                        <v-select v-model="bookingFilter" :options="bookingOptions" class="w-100 mr-1"
-                            :reduce="val => val.value" placeholder="Booking Order" />
-                    </b-col>
-                    <b-col cols="12" md="3" class="mb-1">
-                        <v-select v-model="packageFilter" :options="packageOptions" class="w-100 mr-1"
-                            :reduce="val => val.id" label="name" placeholder="Package" />
-                    </b-col>
-                </b-row>
-                <b-row class="align-items-center justify-content-end">
-                    <b-col cols="12" md="3" class="mb-1">
-                        <v-select v-model="statusLinkConfirmFilter" :options="statusLinkConfirmOptions" class="w-100 mr-1"
-                        :reduce="val => val.value" placeholder="Status Link Konfirmasi" />
-                    </b-col>
-                    <b-col cols="12" md="3" class="mb-1">
                         <div class="d-flex align-items-center justify-content-end">
                             <b-dropdown :disabled="isSubmitModal" right variant="gradient-primary" v-if="hasPermission('event-attendance-add-or-edit')">
                                 <template #button-content>
@@ -127,6 +48,23 @@
                                 </b-dropdown-item>
                             </b-dropdown>
                         </div>
+                    </div>
+                </b-col>
+            </b-row>
+            <!-- Table Top -->
+            <div class="my-2">
+                <b-row>
+                    <!-- Per Page -->
+                    <b-col cols="12" md="6" class="d-flex align-items-center justify-content-start mb-1">
+                        <label>Show</label>
+                        <v-select v-model="perPage" :options="perPageOptions" :clearable="false"
+                            class="per-page-selector d-inline-block mx-50" />
+                        <label>entries</label>
+                    </b-col>
+                    <!-- Search -->
+                    <b-col cols="12" md="6" class="d-flex align-items-center justify-content-start mb-1">
+                        <b-form-input v-model="searchQuery" debounce="350" class="d-inline-block mr-1" type="search"
+                            placeholder="Search..." />
                     </b-col>
                 </b-row>
 
@@ -219,25 +157,10 @@
                             <template #button-content>
                                 <feather-icon icon="MoreVerticalIcon" size="16" class="align-middle text-body" />
                             </template>
-                            <b-dropdown-item @click="showDepartureConfirmationForm(data.item)"
-                                v-if="hasPermission('event-attendance-add-or-edit') && data.item.departure_from_update == null">
-                                <feather-icon icon="EditIcon" />
-                                <span class="align-middle ml-50">Konfirmasi Keberangkatan</span>
-                            </b-dropdown-item>
-                            <b-dropdown-item @click="downloadBarcode(data.item)"
-                                v-if="hasPermission('event-attendance-add-or-edit')">
-                                <feather-icon icon="DownloadCloudIcon" />
-                                <span class="align-middle ml-50">Download Barcode</span>
-                            </b-dropdown-item>
                             <b-dropdown-item @click="sendBarcode(data.item)"
                                 v-if="hasPermission('event-attendance-add-or-edit')">
                                 <feather-icon icon="SendIcon" />
-                                <span class="align-middle ml-50">Send Barcode</span>
-                            </b-dropdown-item>
-                            <b-dropdown-item variant="info" @click="generateEventLinkPartial(data.item)"
-                                v-if="hasPermission('event-attendance-add-or-edit')">
-                                <feather-icon icon="SendIcon" />
-                                <span class="align-middle ml-50">Kirim Link Konfirmasi Kehadiran</span>
+                                <span class="align-middle ml-50">Kirim Ulang QR Code</span>
                             </b-dropdown-item>
                             <b-dropdown-item variant="danger" @click="deleteAttendee(data.item)"
                                 v-if="hasPermission('event-attendance-add-or-edit')">
@@ -412,12 +335,8 @@ import useAttendeeList from './useAttendeeList'
 import { hasPermission } from '@/auth/utils'
 import addAttendeeSidebar from './addAttendeeSidebar.vue'
 import checkInBarcodeSidebar from './checkInBarcodeSidebar.vue'
-import photoBoothBarcodeSidebar from './photoBoothBarcodeSidebar.vue'
 import { avatarText, formatDateTimeShort, formatDate } from '@core/utils/filter'
 import { ref } from '@vue/composition-api'
-import { getBookingSearch } from '@/network/umroh-booking-seat'
-import { getPackages } from '@/network/booking-order'
-import importSidebar from './importSidebar.vue'
 import { downloadTableNumber } from '@/network/equipment'
 
 export default {
@@ -446,8 +365,6 @@ export default {
         flatPickr,
         addAttendeeSidebar,
         checkInBarcodeSidebar,
-        photoBoothBarcodeSidebar,
-        importSidebar,
 
         // Form Validation
         ValidationProvider,
@@ -533,8 +450,6 @@ export default {
     },
     data() {
         const event = {}
-        const bookingOptions = []
-        const packageOptions = []
         const id = parseInt(this.$route.params.id) || 0
         if (id == 0) this.$router.back()
         this.eventId = id
@@ -543,8 +458,6 @@ export default {
             if(this.event.hotel_name) {
                 this.hotelOptions.push({ label: this.event.hotel_name, value: this.event.hotel_name })
             }
-            this.buildBookingOption(this.event.umroh_trip_id)
-            this.buildPackageOption(this.event.umroh_trip_id)
         }).catch(error => { })
         const refreshDataPage = () => {
             this.refetchData()
@@ -555,8 +468,6 @@ export default {
         return {
             refreshDataPage,
             isSubmitModal: false,
-            password: '',
-            passwordFieldTypeNew: 'password',
             isButtonLoading: false,
             required,
             min,
@@ -566,8 +477,6 @@ export default {
             formData: {},
             actionCIButton: false,
             selectedParticipant: {},
-            bookingOptions,
-            packageOptions,
             formManasikTable: {},
             formManasikTableModal: false,
             formDepartureConfirmation: {},
@@ -576,11 +485,6 @@ export default {
             isRowChecked: false,
             setMultipleManasikTableModal: false
         }
-    },
-    computed: {
-        passwordToggleIconNew() {
-            return this.passwordFieldTypeNew === 'password' ? 'EyeIcon' : 'EyeOffIcon'
-        },
     },
     methods: {
         rowVariant(item) {
@@ -620,38 +524,6 @@ export default {
                 this.$refs.refUserListTable.clearSelected()
             else
                 this.$refs.refUserListTable.selectAllRows()
-        },
-        buildBookingOption(umroh_trip_id) {
-            this.bookingOptions = []
-            if (umroh_trip_id) {
-                getBookingSearch({
-                    params: {
-                        umrohTripId: umroh_trip_id,
-                        // packageUmrohTripId: val
-                    }
-                }).then(response => {
-                    const listOpt = []
-                    response.data.forEach(function (item) {
-                        listOpt.push({ 'label': item.order_no + ' - ' + item.name, 'value': item.id, 'notes': item.notes })
-                    })
-                    this.bookingOptions = listOpt
-                }).catch(error => {
-                    if (error.response.data.errors) {
-                        this.$refs.refObsForm.setErrors(error.response.data.errors)
-                    } else {
-                        this.$refs.refObsForm.setErrors(error.response.data)
-                    }
-                })
-            }
-        },
-        buildPackageOption(umroh_trip_id) {
-            this.packageFilter = null
-            this.packageOptions = []
-            getPackages(umroh_trip_id).then(response => {
-                this.packageOptions = response.data.packages
-            }).catch(error => {
-                this.$swal({ icon: 'error', title: 'Error', text: `${error.response.data.message}`, timer: 3500, customClass: { confirmButton: 'btn btn-warning', }, buttonsStyling: false })
-            })
         },
         exportDepartureUpdate() {
             exportDepartureUpdate({ eventId: this.eventId }).then(response => {

@@ -53,8 +53,8 @@
           <span class="text-nowrap">{{ data.item.account_wa }}</span>
         </template>
 
-        <template #cell(total_price)="data">
-          <span class="text-nowrap">Rp {{ parseInt(data.item.total_price).toLocaleString() }}</span><br>
+        <template #cell(total_price_with_tax)="data">
+          <span class="text-nowrap">Rp {{ parseInt(data.item.total_price_with_tax).toLocaleString() }}</span><br>
           <span class="text-nowrap text-danger" v-if="data.item.total_unpaid > 0">Unpaid: Rp {{ parseInt(data.item.total_unpaid).toLocaleString() }}</span>
         </template>
 
