@@ -1,6 +1,6 @@
 <template>
   <div
-    class="customizer d-none d-md-block"
+    class="customizer d-none"
     :class="{'open': isCustomizerOpen}"
   >
     <!-- Toggler -->
@@ -130,7 +130,7 @@
             switch
             inline
           />
-        </div> 
+        </div>
 
       </div> -->
 

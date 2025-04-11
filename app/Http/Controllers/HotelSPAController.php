@@ -18,8 +18,11 @@ class HotelSPAController extends Controller
 
     public function __construct()
     {
-        $this->middleware('permission:land-arrangement-view')->only(['index','show','queryHotels']);
-        $this->middleware('permission:land-arrangement-add-or-edit')->only(['store']);
+
+        $this->middleware('permission:event-attendance-view')->only(['index', 'show', 'queryHotels']);
+        $this->middleware('permission:event-attendance-add-or-edit')->only(['store']);
+        // $this->middleware('permission:land-arrangement-view')->only(['index','show','queryHotels']);
+        // $this->middleware('permission:land-arrangement-add-or-edit')->only(['store']);
     }
 
     /**
@@ -101,7 +104,7 @@ class HotelSPAController extends Controller
         if(!empty($request->makkah_madinah)) {
             $query->whereIn('city_id', [2,3]);
         }
-            
+
         $result = $query->get();
         return response()->json($result);
     }
