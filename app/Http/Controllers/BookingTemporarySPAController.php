@@ -63,11 +63,9 @@ class BookingTemporarySPAController extends Controller
         return response()->json($booking->toArray());
     }
 
-    public function destroy(TempBooking $booking)
+    public function destroy($uuid)
     {
-        $booking->deleted_by = auth()->user()->id;
-        $booking->save();
-        $booking->delete();
+        TempBooking::where('uuid', $uuid)->delete();
     }
 
     public function exportData(Request $request)

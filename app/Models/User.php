@@ -102,7 +102,12 @@ class User extends Authenticatable implements Auditable
     {
         $keyword = request()->query('q', '');
         $query->leftjoin('department_user', 'department_user.user_id', 'users.id');
-        $query->select('users.*');
+        $query->select(
+            'users.id',
+            'users.name',
+            'users.email',
+            'users.access_status'
+        );
         $query->whereNot(function ($query) {
             $query->where('users.id', Auth::user()->id)->orWhere('users.id', 1);
         })->where(function ($query) {
@@ -117,7 +122,7 @@ class User extends Authenticatable implements Auditable
             $query->where('department_user.department_id', request()->query('department'));
         }
         $query->whereNotIn('users.id', [Auth::user()->id, 1]);
-
+        $query->groupBy('users.id', 'users.name', 'users.email', 'users.access_status');
         return $query;
     }
 

@@ -162,7 +162,7 @@ class Participant extends Authenticatable implements Auditable
         DB::raw("(SELECT order_status FROM bookings JOIN participant_bookings ON bookings.id = participant_bookings.booking_id WHERE participant_bookings.participant_id = participants.id ORDER BY bookings.id DESC) as booking_order_status")
         ]);
         if(in_array(3, auth()->user()->department_ids)) {
-            $query->where('participants.created_by', auth()->user()->id);
+            // $query->where('participants.created_by', auth()->user()->id);
         }
         if (!empty(request()->query('gender'))) {
             $query->where('participants.gender', request()->query('gender'));
