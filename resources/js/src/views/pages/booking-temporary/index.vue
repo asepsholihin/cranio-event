@@ -142,7 +142,7 @@
               <td>{{ formData.total_room }} Room - {{ formData.total_pax }} Pax</td>
             </tr>
           </table>
-          
+
           <!-- Room Number -->
           <validation-provider #default="{ errors }" name="Room Number" vid="room_number" rules="required">
             <b-form-group label="Room Number" :state="errors.length > 0 ? false : null">
@@ -218,7 +218,7 @@ export default {
       { label: 'Pending', value: 1 },
       { label: 'Created', value: 2 }
     ]
-    
+
     const {
       fetchData,
       tableColumns,
@@ -272,7 +272,7 @@ export default {
   },
   data() {
     const packageOptions = []
-    
+
     return {
       required, numeric,
       formData: {},
@@ -321,7 +321,7 @@ export default {
     },
     deleteData(item){
         this.$swal({
-        title: `Delete Data ${item.name}?`,
+        title: `Delete Data ${item.account_name}?`,
         text: "It cannot be reverted",
         icon: 'warning',
         showCancelButton: true,
@@ -333,7 +333,7 @@ export default {
         buttonsStyling: false,
       }).then(result => {
         if (result.value) {
-          deleteData(item.id).then(response => {
+          deleteData(item.uuid).then(response => {
             this.refetchData()
           })
           .catch(error => {
