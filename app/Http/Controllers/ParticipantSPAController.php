@@ -26,6 +26,7 @@ use App\Exports\ParticipantAddressExport;
 use App\Models\ParticipantCRM;
 use DB;
 use App\Jobs\RefineParticipantByOffice;
+use Carbon\Carbon;
 
 class ParticipantSPAController extends Controller
 {
@@ -417,7 +418,7 @@ class ParticipantSPAController extends Controller
         //         'city' => $city,
         //         'district' => $district,
         //         'subdistrict' => $subdistrict,
-        //     ]); 
+        //     ]);
         // }
         // return response()->json($data);
 
@@ -435,7 +436,7 @@ class ParticipantSPAController extends Controller
         //         'district' => $district,
         //     ];
         //     $data = $update;
-        //     DB::table('master_address')->where('id', $value->id)->update($update); 
+        //     DB::table('master_address')->where('id', $value->id)->update($update);
         // }
 
         // $master_address = DB::table('master_address')->select('id','province','city','district','subdistrict')->where('subdistrict', 'like', '%(%')->get();
@@ -452,7 +453,7 @@ class ParticipantSPAController extends Controller
         //         'subdistrict' => $subdistrict,
         //     ];
         //     $data = $update;
-        //     DB::table('master_address')->where('id', $value->id)->update($update); 
+        //     DB::table('master_address')->where('id', $value->id)->update($update);
         // }
 
         // return response()->json($data);
@@ -532,7 +533,7 @@ class ParticipantSPAController extends Controller
                 'home_kecamatan' => $home_kecamatan,
                 'ktp_kelurahan' => $ktp_kelurahan,
                 'home_kelurahan' => $home_kelurahan
-            ]); 
+            ]);
         }
         return response()->json($data);
     }
@@ -582,8 +583,8 @@ class ParticipantSPAController extends Controller
             $row['city'] = $master->city ?? '';
 
             if($master) {
-                $value->update(['ktp_city' => $master->city]); 
-                $data[] = $row;  
+                $value->update(['ktp_city' => $master->city]);
+                $data[] = $row;
             }
         }
         return response()->json($data);
@@ -606,8 +607,8 @@ class ParticipantSPAController extends Controller
             $row['splitCity'] = $splitCity;
             $row['kecamatan'] = $master->district ?? '';
             if($master) {
-                $value->update(['ktp_kecamatan' => $master->district]); 
-                $data[] = $row;  
+                $value->update(['ktp_kecamatan' => $master->district]);
+                $data[] = $row;
             }
         }
 
@@ -632,8 +633,8 @@ class ParticipantSPAController extends Controller
             $row['splitCity'] = $splitCity;
             $row['kelurahan'] = $master->subdistrict ?? '';
             if($master) {
-                $value->update(['ktp_kelurahan' => $master->subdistrict]); 
-                $data[] = $row;  
+                $value->update(['ktp_kelurahan' => $master->subdistrict]);
+                $data[] = $row;
             }
         }
 
@@ -685,8 +686,8 @@ class ParticipantSPAController extends Controller
             $row['city'] = $master->city ?? '';
 
             if($master) {
-                $value->update(['home_city' => $master->city]); 
-                $data[] = $row;  
+                $value->update(['home_city' => $master->city]);
+                $data[] = $row;
             }
         }
         return response()->json($data);
@@ -709,8 +710,8 @@ class ParticipantSPAController extends Controller
             $row['splitCity'] = $splitCity;
             $row['kecamatan'] = $master->district ?? '';
             if($master) {
-                $value->update(['home_kecamatan' => $master->district]); 
-                $data[] = $row;  
+                $value->update(['home_kecamatan' => $master->district]);
+                $data[] = $row;
             }
         }
 
@@ -735,8 +736,8 @@ class ParticipantSPAController extends Controller
             $row['splitCity'] = $splitCity;
             $row['kelurahan'] = $master->subdistrict ?? '';
             if($master) {
-                $value->update(['home_kelurahan' => $master->subdistrict]); 
-                $data[] = $row;  
+                $value->update(['home_kelurahan' => $master->subdistrict]);
+                $data[] = $row;
             }
         }
 
@@ -811,6 +812,24 @@ class ParticipantSPAController extends Controller
         return response()->json($participant);
     }
 
+    public function action(Request $request){
+        $request->validate(['id' => 'required']);
+        $participant = Participant::find($request->get('id'));
+
+        if ($request->hasFile('file_evidence')) {
+            $profilePhotoPath = $request->file('file_evidence')->store(Participant::DIR_EVIDENCE);
+            $request->merge(['room_key_evidence' => $profilePhotoPath]);
+        }
+
+        if($request->set_room) {
+            $request->merge([
+                'received_at' => Carbon::now(),
+                'given_by' => auth()->user()->id
+            ]);
+        }
+        $participant->update($request->except('file_evidence'));
+    }
+
     public function jobSearch(Request $request)
     {
         $jobs = DB::table('master_jobs')->select('id','name')->where('status', TRUE)->orderBy('id', 'ASC')->get();
@@ -832,10 +851,10 @@ class ParticipantSPAController extends Controller
             $recordNumber = ($key+1) * $page;
 
             $jiCode = Participant::PREFIX_JI_CODE . $yearShort . str_pad($recordNumber, 5, 0, STR_PAD_LEFT);
-            
+
             // DB::table('participants')->where('id', $value->id)->update([
             //     'ji_code' => $jiCode
-            // ]); 
+            // ]);
             $value->ji_code = $jiCode;
             $value->save();
             $data[] = $value;
@@ -870,7 +889,7 @@ class ParticipantSPAController extends Controller
 
         return response()->json($data);
     }
-    
+
     public function chartPoloSize(Request $request)
     {
         $query = Participant::select([

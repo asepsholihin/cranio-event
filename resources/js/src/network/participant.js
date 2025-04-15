@@ -105,3 +105,6 @@ export const getChartGender = (...args) => {
 export const getChartPoloSize = (...args) => {
     return httpService.getHttp().get(resourcePath + '/chart-polo-size', ...args)
 }
+export const postAction = (...args) => {
+    return httpService.getHttp().post(resourcePath + '/action', ...args)
+}

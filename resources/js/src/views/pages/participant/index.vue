@@ -60,13 +60,27 @@
       </div>
 
       <b-table ref="refUserListTable" class="position-relative" :items="fetchUsers" responsive hover
-        :fields="tableColumns" primary-key="id" :sort-by.sync="sortBy" show-empty empty-text="No matching records found"
+        :fields="tableColumns" primary-key="id" :tbody-tr-class="rowClass" :sort-by.sync="sortBy" show-empty empty-text="No matching records found"
         :sort-desc.sync="isSortDirDesc">
 
         <!-- Column: Booking -->
         <template #cell(booking)="data">
           <span>{{ data.item.booking_no }}</span><br>
           <span>{{ data.item.booking_account_name }}</span>
+        </template>
+
+        <!-- Column: Room Info -->
+        <template #cell(room_info)="data">
+          <div v-if="data.item.room_number != null">
+            <p class="m-0">{{ data.item.room_number }}</p>
+            <b-button variant="primary" size="sm" @click="viewRoomInfo(data.item)">View Detail</b-button>
+          </div>
+          <b-button variant="primary" size="sm" v-if="data.item.room_number == null" @click="setRoom(data.item)">Set Room Number</b-button>
+        </template>
+
+        <!-- Column: Request -->
+        <template #cell(request)="data">
+          <span>{{ (data.item.request) ? data.item.request : ' - ' }}</span><br>
         </template>
 
         <!-- Column: Name -->
@@ -99,6 +113,9 @@
             <b-dropdown-item @click="viewNotes(data.item)">
               <feather-icon icon="FileTextIcon" />
               <span class="align-middle ml-50">View Notes</span>
+            </b-dropdown-item>
+            <b-dropdown-item @click="setRoom(data.item)" v-if="data.item.room_number == null && hasPermission('booking-add-or-edit')">
+              Set Room Number
             </b-dropdown-item>
             <b-dropdown-item v-if="hasPermission('participant-add-or-edit')">
               <feather-icon icon="SendIcon" />
@@ -173,7 +190,7 @@
         </b-form>
       </validation-observer>
     </b-modal>
-    
+
     <b-modal v-model="updateInfoModal" ok-title="Save Changes" @hidden="resetModal" @ok="handleSubmitUpdateInfo" :busy="isSubmitModal" centered no-close-on-backdrop>
       <template #modal-title>
         <h3>Update Participant</h3>
@@ -278,6 +295,36 @@
       </validation-observer>
     </b-modal>
 
+    <b-modal size="lg" v-model="viewRoomInfoModal" @hidden="resetModal" no-close-on-backdrop ok-only ok-title="Close">
+      <template #modal-title>
+          <h4>View Room Info</h4>
+      </template>
+      <table class="mb-1">
+        <tr>
+          <td>Room Number</td>
+          <td width="10%" class="text-center">:</td>
+          <td>{{ formData.room_number }}</td>
+        </tr>
+        <tr>
+          <td>Received By</td>
+          <td width="10%" class="text-center">:</td>
+          <td>{{ formData.received_by }}</td>
+        </tr>
+        <tr>
+          <td>Given By</td>
+          <td width="10%" class="text-center">:</td>
+          <td>{{ formData.given_by_name }}</td>
+        </tr>
+        <tr>
+          <td>Received Date</td>
+          <td width="10%" class="text-center">:</td>
+          <td>{{ formatDateTime(formData.received_at) }}</td>
+        </tr>
+      </table>
+      <p>Evidence</p>
+      <img class="w-50" :src="formData.room_key_evidence" alt="Evidence">
+    </b-modal>
+
     <b-modal v-model="viewNotesModal" ok-only @hidden="resetModal" centered no-close-on-backdrop>
       <template #modal-title>
         <h3>Catatan Teman Sekamar</h3>
@@ -304,6 +351,56 @@
           <p class="font-weight-bold">{{ (formData.request) ? formData.request : '-' }}</p>
         </b-col>
       </b-row>
+    </b-modal>
+
+    <b-modal v-model="setRoomModal" :busy="isSubmitModal" @hidden="resetModal" no-close-on-backdrop @ok="handleOkSetRoom" ok-title="Submit">
+      <template #modal-title>
+          <h4>Set Room Number</h4>
+      </template>
+      <validation-observer ref="refObsForm">
+        <!-- Form -->
+        <b-form @submit.prevent="onSubmitSetRoom" @reset.prevent="resetModal">
+          <validation-provider #default="{ errors }" vid="message">
+            <b-alert variant="danger" show v-if="errors[0]">
+              <div class="alert-body">
+                {{ errors[0] }}
+              </div>
+            </b-alert>
+          </validation-provider>
+
+          <validation-provider #default="{ errors }" name="Room Number" vid="room_number">
+            <b-form-group label="Room Number">
+              <b-form-input v-model="formData.room_number" name="room_number" :state="errors.length > 0 ? false : null" trim />
+              <b-form-invalid-feedback>
+                {{ errors[0] }}
+              </b-form-invalid-feedback>
+            </b-form-group>
+          </validation-provider>
+
+          <validation-provider #default="{ errors }" name="Received By" vid="received_by">
+            <b-form-group label="Received By">
+              <b-form-input v-model="formData.received_by" name="received_by" :state="errors.length > 0 ? false : null" trim />
+              <b-form-invalid-feedback>
+                {{ errors[0] }}
+              </b-form-invalid-feedback>
+            </b-form-group>
+          </validation-provider>
+
+          <b-media class="mb-2">
+              <template #aside>
+              <b-avatar :src="formData.evidence" :text="avatarText('NA')" size="90px" rounded />
+              </template>
+              <div class="d-flex flex-wrap">
+              <b-button v-if="hasPermission('booking-add-or-edit')" variant="primary" size="sm" @click="$refs.refInputEl.click()">
+                  <input ref="refInputEl" type="file" accept="image/jpeg, image/png, image/webp" class="d-none" @input="inputImageRenderer">
+                  <span class="d-none d-sm-inline">Upload Evidence</span>
+                  <feather-icon icon="EditIcon" class="d-inline d-sm-none" />
+              </b-button>
+              </div>
+              <div class="mt-1 text-muted">Max Size: 5MB</div>
+          </b-media>
+        </b-form>
+      </validation-observer>
     </b-modal>
   </div>
 </template>
@@ -332,9 +429,9 @@ import {
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import vSelect from 'vue-select'
 import flatPickr from 'vue-flatpickr-component'
-import { avatarText, formatDateShort } from '@core/utils/filter'
+import { avatarText, formatDateShort, formatDate, formatDateTime } from '@core/utils/filter'
 import useDataList from './useDataList'
-import { createNameInCertificate, postUpdateData, deleteData, exportParticipant, getChartGender, getChartPoloSize } from '@/network/participant'
+import { createNameInCertificate, postUpdateData, deleteData, exportParticipant, getChartGender, getChartPoloSize, postAction } from '@/network/participant'
 import { hasPermission } from '@/auth/utils'
 import _ from 'lodash'
 import { required, numeric, email } from '@validations'
@@ -368,7 +465,7 @@ export default {
   setup() {
     const genderOptions = [{ label: 'Laki-laki', value: 1 }, { label: 'Perempuan', value: 2 }]
     const poloSizeOptions = [{ label: 'S', value: 'S' }, { label: 'M', value: 'M' }, { label: 'L', value: 'L' }, { label: 'XL', value: 'XL' }, { label: 'XXL', value: 'XXL' }, { label: 'XXXL', value: 'XXXL' }]
-   
+
     const {
       fetchUsers,
       tableColumns,
@@ -419,7 +516,9 @@ export default {
       genderFilter,
       poloSizeFilter,
       dateFilter,
-      hasPermission
+      hasPermission,
+      formatDateTime,
+      formatDate
     }
   },
   watch: {
@@ -440,7 +539,7 @@ export default {
     const chartPoloSizeSeries = []
 
     this.getChartData()
-    
+
     return {
       required, numeric, email,
       filter: {},
@@ -456,6 +555,8 @@ export default {
       chartGenderSeries,
       chartPoloSizeOptions,
       chartPoloSizeSeries,
+      setRoomModal: false,
+      viewRoomInfoModal: false,
     }
   },
   methods : {
@@ -547,9 +648,79 @@ export default {
       this.viewNotesModal = true
       this.formData = item
     },
+    viewRoomInfo(item) {
+      this.viewRoomInfoModal = true
+      this.formData = item
+    },
     resetModal() {
         this.formAccessLogin = {email: '', password: '' }
         this.formNameInCerificate = {front_title: '', name_in_certificate: '', back_title: '' }
+        this.formData = {}
+    },
+    setRoom(item) {
+      this.setRoomModal = true
+      this.formData = {
+        id: item.id,
+        room_number: item.room_number,
+        received_by: item.received_by,
+      }
+    },
+    inputImageRenderer() {
+      this.formData.file_evidence = this.$refs.refInputEl.files[0]
+      const file = this.$refs.refInputEl.files[0]
+      const reader = new FileReader()
+
+      reader.addEventListener(
+        'load',
+        () => {
+          this.formData = {
+            ...this.formData,
+            evidence: reader.result
+          }
+        },
+        false,
+      )
+
+      if (file) {
+        reader.readAsDataURL(file)
+      }
+    },
+    handleOkSetRoom(bvModalEvent) {
+      bvModalEvent.preventDefault()
+      this.onSubmitSetRoom()
+    },
+    onSubmitSetRoom() {
+      this.$refs.refObsForm.validate().then((success) => {
+        if (!success) return;
+        this.isSubmitModal = true
+        const vForm = new FormData()
+        for (var key in this.formData) {
+          if (key == 'evidence')
+            continue
+          if (this.formData[key] != null)
+            vForm.append(key, this.formData[key])
+        }
+        vForm.append('set_room', true)
+        postAction(vForm).then(response => {
+          this.$bvToast.toast(`Booking has been updated successfully`, {
+            title: `Success`,
+            variant: 'primary',
+            toaster: 'b-toaster-top-center',
+            solid: true,
+          })
+          this.setRoomModal = false
+          this.isSubmitModal = false
+          this.refetchData()
+        })
+        .catch(error => {
+          if (error.response.data.errors) {
+            this.$refs.refObsForm.setErrors(error.response.data.errors)
+          } else {
+            this.$refs.refObsForm.setErrors(error.response.data)
+          }
+          this.isSubmitModal = false
+        })
+      })
     },
     deleteParticipant(item){
         this.$swal({
@@ -581,11 +752,21 @@ export default {
           this.$bvToast.toast(`Error: ${error.response.data.message}`, { title: `Error`, variant: 'danger', toaster: 'b-toaster-top-center', solid: true })
       })
     },
+    rowClass(item) {
+        if(item){
+            if(item.request != '' && item.request != '-'){
+                return 'table-request';
+            }
+        }
+    },
   },
 }
 </script>
 
 <style lang="scss" scoped>
+::v-deep .table-request > tr, ::v-deep .table-request > td {
+    background-color: #fdcb6e !important;
+}
 .per-page-selector {
   width: 90px;
 }
