@@ -15,6 +15,8 @@ export default function useUsersList() {
   const tableColumns = [
     { key: 'booking' },
     { key: 'name', sortable: true },
+    { key: 'request', label: 'Request'},
+    { key: 'room_info', label: 'Room Info'},
     { key: 'booking_account_hospital', label: 'Hospital' },
     { key: 'email' },
     { key: 'whatsapp' },
@@ -64,7 +66,7 @@ export default function useUsersList() {
       }})
       .then(response => {
         const { data, total } = response.data
-        
+
         totalUsers.value = total
         callback(data)
       })

@@ -78,6 +78,7 @@ Route::prefix('spa')->middleware(['auth'])->group(function () {
 
     Route::get('/count-badge-nav', [SPAController::class, 'countBadgeNav']);
     Route::get('participant/medical-record-search', [ParticipantSPAController::class, 'medicalRecordParticipant']);
+    Route::post('participant/action', [ParticipantSPAController::class, 'action']);
     Route::get('participant/job-search', [ParticipantSPAController::class, 'jobSearch']);
     Route::get('participant/search', [ParticipantSPAController::class, 'queryParticipant']);
     Route::get('participant/search-for-booking', [ParticipantSPAController::class, 'participantForBooking']);
@@ -457,7 +458,7 @@ Route::prefix('spa')->middleware(['auth'])->group(function () {
     Route::post('participant-merchandise/deletes', [ParticipantMerchandiseSPAController::class, 'deletes']);
     Route::get('participant-merchandise-export', [ParticipantMerchandiseSPAController::class, 'exportData']);
     Route::get('participant-merchandise-shipment-export', [ParticipantMerchandiseSPAController::class, 'exportShipmentData']);
-    
+
 
     Route::get('document-delivery/shipment-labels', [DocumentDeliverySPAController::class, 'shipmentLabels']);
     Route::resource('document-delivery', DocumentDeliverySPAController::class)->only('index','show','store','destroy');
@@ -887,7 +888,7 @@ Route::prefix('spa')->middleware(['auth'])->group(function () {
     Route::get('booking/download-invoice/{id}', [BookingSPAController::class, 'downloadInvoicePDF']);
     Route::get('booking/download-receipt/{id}', [BookingSPAController::class, 'downloadReceiptPDF']);
 
-    
+
     Route::resource('booking-temporary', BookingTemporarySPAController::class)->only(['show', 'store', 'index', 'destroy']);
     Route::resource('booking-receipt', BookingReceiptSPAController::class)->only(['show', 'store', 'index', 'destroy']);
     Route::post('booking-receipt/action', [BookingReceiptSPAController::class, 'action']);

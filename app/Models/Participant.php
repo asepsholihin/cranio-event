@@ -29,6 +29,7 @@ class Participant extends Authenticatable implements Auditable
 
     const PHOTO = 'photo';
     const DIR_PHOTO = 'participant/profiles';
+    const DIR_EVIDENCE = 'participant/evidence';
     const DIR_THUMBNAIL = 'thumbnail/';
     const PREFIX_PHONE_NUMBER = '62';
     const PREFIX_JI_CODE = 'JI';
@@ -54,6 +55,11 @@ class Participant extends Authenticatable implements Auditable
         'polo_size',
         'name_in_certificate',
         'request',
+        'room_number',
+        'received_by',
+        'given_by',
+        'received_at',
+        'room_key_evidence',
         'created_by',
         'created_by',
     ];
@@ -132,7 +138,13 @@ class Participant extends Authenticatable implements Auditable
     protected $appends = [
         'profile_thumbnail',
         'profile_photo',
+        'given_by_name'
     ];
+
+    public function getGivenByNameAttribute(){
+        $user = User::find($this->given_by);
+        return $user->name ?? ' - ';
+    }
 
     public function profilePhoto(): Attribute
     {
@@ -149,6 +161,15 @@ class Participant extends Authenticatable implements Auditable
             get: fn ($value, $attributes) => StorageAttributes::getTempUrl(
                 $attributes['profile_photo_path'] ?? null,
                 self::DIR_THUMBNAIL
+            ),
+        );
+    }
+
+    public function roomKeyEvidence(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, $attributes) => StorageAttributes::getTempUrl(
+                $attributes['room_key_evidence'] ?? null
             ),
         );
     }
