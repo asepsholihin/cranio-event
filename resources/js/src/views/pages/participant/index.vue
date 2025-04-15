@@ -754,7 +754,7 @@ export default {
     },
     rowClass(item) {
         if(item){
-            if(item.request != '' && item.request != '-'){
+            if(item.request != '' && item.request != '-' && item.request != null && item.request != 'null'){
                 return 'table-request';
             }
         }
