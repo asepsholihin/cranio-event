@@ -14,7 +14,7 @@ class BookingReceipt extends Model implements Auditable
     use SoftDeletes, \OwenIt\Auditing\Auditable;
 
     const DIR_FILE = 'web/receipts/';
-    const PREFIX_ORDER_NUMBER = 'ORD/';
+    const PREFIX_ORDER_NUMBER = 'Inv.Cranio/';
     const MONTH_ROMAWI = [1=>"I","II","III", "IV", "V","VI","VII","VIII","IX","X", "XI","XII"];
 
     const STATUS_PENDING = "pending";
@@ -53,8 +53,9 @@ class BookingReceipt extends Model implements Auditable
                 $additional_code = "-" . date('y', strtotime($date));
             }
         }
-        $orderNumber = self::PREFIX_ORDER_NUMBER . date('y/') . self::MONTH_ROMAWI[date('n')] ."/". str_pad($this->getIdInThisMonth(), 5, 0, STR_PAD_LEFT);
-        $this->receipt_no = $orderNumber . $additional_code ."/". strtoupper(Str::uuid()->toString());
+        $eventPlace = "Bali";
+        $orderNumber = self::PREFIX_ORDER_NUMBER . self::MONTH_ROMAWI[date('n')] ."/". $eventPlace ."/". date('y') . "/" . str_pad($this->getIdInThisMonth(), 5, 0, STR_PAD_LEFT);
+        $this->receipt_no = $orderNumber . $additional_code;
         $this->save();
     }
 

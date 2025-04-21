@@ -8,11 +8,13 @@ use App\Models\Booking;
 use App\Models\TempBooking;
 use App\Models\BookingReceipt;
 use App\Models\ParticipantBooking;
+use App\Mail\Booking\BookingMail;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Exceptions\ErrorMessageException;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
 use App\File\PDF\InvoiceBookingPDF;
 use Image;
 use DB;
@@ -161,6 +163,9 @@ class RegistrationController extends Controller
                     'participant_id' => $participant->id,
                 ]);
             }
+
+            $email = new BookingMail($booking);
+            Mail::to($booking->account_email)->send($email);
         });
 
         return response()->json([
