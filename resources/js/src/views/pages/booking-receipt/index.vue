@@ -70,6 +70,9 @@
             <b-dropdown-item @click="updateReceiptStatus(data.item)" v-if="hasPermission('booking-receipt-add-or-edit') && data.item.status == 1">
               Update Status
             </b-dropdown-item>
+            <b-dropdown-item @click="viewReceipt(data.item)" v-if="hasPermission('booking-receipt-add-or-edit') && data.item.status != 1">
+              View
+            </b-dropdown-item>
             <b-dropdown-item variant="danger" @click="deleteData(data.item)" v-if="hasPermission('booking-receipt-delete')">
               <feather-icon icon="Trash2Icon" />
               <span class="align-middle ml-50">Delete</span>
@@ -157,6 +160,48 @@
           </validation-provider>
         </b-form>
       </validation-observer>
+    </b-modal>
+
+    <b-modal size="lg" v-model="viewReceiptModal" @hidden="resetModal" no-close-on-backdrop ok-only>
+      <template #modal-title>
+          <h4>View Receipt</h4>
+      </template>
+      
+      <table class="mb-2">
+        <tr>
+          <td valign="top">Booking No</td>
+          <td valign="top" width="10%" class="text-center">:</td>
+          <td valign="top">{{ formData.booking_no }}<br>{{ formData.account_wa }}</td>
+        </tr>
+        <tr>
+          <td>Sender Name</td>
+          <td width="10%" class="text-center">:</td>
+          <td>{{ formData.sender_name }}</td>
+        </tr>
+        <tr>
+          <td>Rekening Tujuan</td>
+          <td width="10%" class="text-center">:</td>
+          <td>{{ formData.bank_account }}</td>
+        </tr>
+        <tr>
+          <td>Payment Amount</td>
+          <td width="10%" class="text-center">:</td>
+          <td>Rp {{ parseInt(formData.payment_amount).toLocaleString() }}</td>
+        </tr>
+        <tr>
+          <td>Status</td>
+          <td width="10%" class="text-center">:</td>
+          <td>
+            <b-badge variant="warning" v-if="formData.status == 1">Pending</b-badge>
+            <b-badge variant="success" v-if="formData.status == 2">Verified</b-badge>
+            <b-badge variant="success" v-if="formData.status == 3">Rejected</b-badge>
+          </td>
+        </tr>
+      </table>
+
+      <div>
+        <img :src="formData.evidence" class="img-fluid" alt="Receipt">
+      </div>
     </b-modal>
   </div>
 </template>
@@ -280,6 +325,7 @@ export default {
       required, numeric,
       formData: {},
       updateReceiptStatusModal: false,
+      viewReceiptModal: false,
       isButtonLoading: false,
     }
   },
@@ -292,6 +338,10 @@ export default {
     },
     updateReceiptStatus(item) {
       this.updateReceiptStatusModal = true
+      this.formData = item
+    },
+    viewReceipt(item) {
+      this.viewReceiptModal = true
       this.formData = item
     },
     handleOkUpdateInfo(bvModalEvent) {
@@ -325,7 +375,7 @@ export default {
     },
     deleteData(item){
         this.$swal({
-        title: `Delete Data ${item.name}?`,
+        title: `Delete Data ${item.sender_name}?`,
         text: "It cannot be reverted",
         icon: 'warning',
         showCancelButton: true,

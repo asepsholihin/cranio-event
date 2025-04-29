@@ -54,7 +54,9 @@
         </template>
 
         <template #cell(total_price_with_tax)="data">
-          <span class="text-nowrap">Rp {{ parseInt(data.item.total_price_with_tax).toLocaleString() }}</span><br>
+          <span class="text-nowrap" v-if="data.item.total_price_with_tax">Rp {{ parseInt(data.item.total_price_with_tax).toLocaleString() }}</span>
+          <span class="text-nowrap" v-else>Rp {{ data.item.total_price.toLocaleString() }}</span>
+          <br>
           <span class="text-nowrap text-danger" v-if="data.item.total_unpaid > 0">Unpaid: Rp {{ parseInt(data.item.total_unpaid).toLocaleString() }}</span>
         </template>
 
