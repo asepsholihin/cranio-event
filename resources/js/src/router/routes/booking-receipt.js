@@ -7,7 +7,7 @@ export default [
         pageTitle: '',
         breadcrumb: [
           {
-            text: 'Booking Temporary',
+            text: 'Pembayaran',
             active: true,
           },
         ],
