@@ -184,7 +184,7 @@ use Carbon\Carbon;
                         <li>{{ $participant->name }}</li>
                         @endforeach
                     </ul>
-                    <p>Institusi: {{ $booking->account_hospital }} dalamacaraIndonesian Neurosurgical NursesMeeting Symposium & Workshop Nasional “CRANIO” dengan tema : “An Integrated Perioperative Nursing Care on Neurosurgery with Approach Craniotomy”</p>
+                    <p>Institusi: {{ $booking->account_hospital }} dalam acara Indonesian Neurosurgical NursesMeeting Symposium & Workshop Nasional dengan tema : “Transcranial Endoscope (ICH,RTV) Endoscopic Transsphenoidal Surgery Biportal Endoscopic Spine Surgery”</p>
                 </td>
                 <td valign="top" class="center">{{ $booking->total_pax }}</td>
                 <td valign="top"><div class="right text-nowrap">{{ $currency }} {{ NumberFormat::separatorAmount($booking->price_per_pax) }}</div></td>
