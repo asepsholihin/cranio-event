@@ -70,8 +70,8 @@ export const createNameInCertificate = (...args) => {
     return httpService.getHttp().post(resourcePath + '/create-name-in-certificate', ...args)
 }
 
-export const exportParticipant = (...args) => {
-    return httpService.getHttp().post(resourcePath + '/export', ...args)
+export const exportParticipant = (args) => {
+    return httpService.getHttp().get(resourcePath + '/export', {responseType: 'blob', params: args})
 }
 
 export const exportParticipantAddress = (args) => {

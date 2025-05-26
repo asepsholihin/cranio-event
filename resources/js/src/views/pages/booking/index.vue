@@ -35,8 +35,8 @@
           <b-col cols="12" md="6">
             <div class="d-flex align-items-center justify-content-end">
               <b-form-input v-model="searchQuery" debounce="350" type="search" class="d-inline-block mr-1" placeholder="Search..." />
-              <b-button variant="success" class="mb-lg-0 mb-1" @click="exportData">
-                <span class="text-nowrap">Export</span>
+              <b-button variant="success" class="mb-lg-0 mb-1" @click="exportData" :disabled="isButtonLoading">
+                <b-spinner small v-show="isButtonLoading" /> <span class="text-nowrap">Export</span>
               </b-button>
             </div>
           </b-col>
@@ -315,7 +315,8 @@ import {
   BDropdown,
   BDropdownItem,
   BPagination,
-  BFormInvalidFeedback
+  BFormInvalidFeedback,
+  BSpinner
 } from 'bootstrap-vue'
 import _ from 'lodash'
 import vSelect from 'vue-select'
@@ -347,6 +348,7 @@ export default {
     BDropdownItem,
     BPagination,
     BFormInvalidFeedback,
+    BSpinner,
 
     vSelect,
     flatPickr,
@@ -431,6 +433,7 @@ export default {
       setRoomModal: false,
       viewRoomInfoModal: false,
       isSubmitModal: false,
+      isButtonLoading: false,
       umrohTripFilterOptions,
       packageOptions,
       roomTypeOptions,
@@ -581,7 +584,7 @@ export default {
       })
     },
     exportData() {
-      this.isSubmitModal = true
+      this.isButtonLoading = true
       var vForm = {}
       vForm.status = this.statusFilter
       vForm.checkinDate = this.checkinDateFilter
@@ -602,10 +605,10 @@ export default {
         fileLink.setAttribute('download', fileName);
         document.body.appendChild(fileLink);
         fileLink.click();
-        this.isSubmitModal = false
+        this.isButtonLoading = false
       }).catch(error => {
         this.$bvToast.toast(`Error: ${error}`, { title: `Error`, variant: 'danger', toaster: 'b-toaster-top-center', solid: true })
-        this.isSubmitModal = false
+        this.isButtonLoading = false
       })
     },
     deleteData(item){

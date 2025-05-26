@@ -51,8 +51,8 @@
           <b-col cols="12" md="6">
             <div class="d-lg-flex align-items-center justify-content-end">
               <b-form-input v-model="searchQuery" debounce="350" type="search" class="d-inline-block mr-1 mb-lg-0 mb-2" placeholder="Search..." />
-              <b-button variant="primary" @click="exportParticipant()" class="mb-lg-0 mb-2" v-if="hasPermission('participant-add-or-edit')">
-                <span class="text-nowrap">Export Data</span>
+              <b-button variant="primary" @click="exportParticipant()" class="mb-lg-0 mb-2" v-if="hasPermission('participant-add-or-edit')" :disabled="isLoading">
+                <b-spinner small v-show="isLoading" /> <span class="text-nowrap">Export Data</span>
               </b-button>
             </div>
           </b-col>
@@ -746,7 +746,19 @@ export default {
       this.isLoading = true
       exportParticipant({}).then(response => {
           this.isLoading = false
-          window.location = response.data.downloadLink
+          const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+          const fileLink = document.createElement('a')
+          const contentDisposition = response.headers['content-disposition']
+          fileLink.href = fileURL;
+          let fileName = 'unknown';
+          if (contentDisposition) {
+              const fileNameMatch = contentDisposition.match(/filename=(.+)/);
+              if (fileNameMatch.length === 2)
+                  fileName = fileNameMatch[1];
+          }
+          fileLink.setAttribute('download', fileName);
+          document.body.appendChild(fileLink);
+          fileLink.click();
       }).catch(error => {
           this.isLoading = false
           this.$bvToast.toast(`Error: ${error.response.data.message}`, { title: `Error`, variant: 'danger', toaster: 'b-toaster-top-center', solid: true })

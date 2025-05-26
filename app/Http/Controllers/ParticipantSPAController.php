@@ -313,24 +313,12 @@ class ParticipantSPAController extends Controller
 
     public function exportParticipant(Request $request)
     {
-
-        $umrohTrip = UmrohTrip::find($request->umrohTripId);
-        $fileName = ($umrohTrip) ? rtrim(preg_replace(array('/\s{2,}/', '/[\t\n]/', '/[^a-zA-Z0-9\']/','/[^\p{L}\p{N}]/u', '/\s*(?:[\d_]|[^\w\s])+/', '!\s+!'), ' ', $umrohTrip->title), " ") : '';
-
-        $storageKey = "/Downloads/JAMAAH-EXPORT-" . $fileName . "-" . date('d-m-Y') . ".xlsx";
-        Excel::store(new ParticipantExport($request->umrohTripId), $storageKey);
-
-        $expiredAt = now('UTC')->addDays(1);
-        $params = [
-            'Content-Disposition' => 'attachment'
-        ];
-        $presignedUrl = Storage::temporaryUrl($storageKey, $expiredAt, $params);
-        return response()->json(['downloadLink' => $presignedUrl]);
+        $storageKey = "Export-Participant-" . hrtime(true) . ".xlsx";
+        return Excel::download(new ParticipantExport(), $storageKey);
     }
 
     public function exportParticipantAddress(Request $request)
     {
-
         $umrohTrip = UmrohTrip::find($request->umrohTripId);
         $fileName = $umrohTrip->title ?? '';
 

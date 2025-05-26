@@ -114,11 +114,11 @@ Route::prefix('spa')->middleware(['auth'])->group(function () {
     Route::get('participant/export-participant-address', [ParticipantSPAController::class, 'exportParticipantAddress']);
     Route::get('participant/chart-gender', [ParticipantSPAController::class, 'chartGender']);
     Route::get('participant/chart-polo-size', [ParticipantSPAController::class, 'chartPoloSize']);
+    Route::get('participant/export', [ParticipantSPAController::class, 'exportParticipant']);
     Route::resource('participant', ParticipantSPAController::class)->only(['show', 'store', 'index', 'destroy']);
     Route::get('participant-raw-data', [ParticipantSPAController::class, 'participantRawData']);
     Route::post('participant/update-domisili', [ParticipantSPAController::class, 'updateDomisili']);
     Route::post('participant/update-data', [ParticipantSPAController::class, 'updateData']);
-    Route::post('participant/export', [ParticipantSPAController::class, 'exportParticipant']);
 
     // CRM
     Route::resource('participant-crm', ParticipantCRMSPAController::class)->only(['index', 'store', 'destroy']);
