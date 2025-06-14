@@ -177,10 +177,10 @@ class Participant extends Authenticatable implements Auditable
     public function scopeTableSearch($query)
     {
         $query->select(['participants.*',
-        DB::raw("(SELECT booking_no FROM bookings JOIN participant_bookings ON bookings.id = participant_bookings.booking_id WHERE participant_bookings.participant_id = participants.id ORDER BY bookings.id DESC) as booking_no"),
-        DB::raw("(SELECT account_name FROM bookings JOIN participant_bookings ON bookings.id = participant_bookings.booking_id WHERE participant_bookings.participant_id = participants.id ORDER BY bookings.id DESC) as booking_account_name"),
-        DB::raw("(SELECT account_hospital FROM bookings JOIN participant_bookings ON bookings.id = participant_bookings.booking_id WHERE participant_bookings.participant_id = participants.id ORDER BY bookings.id DESC) as booking_account_hospital"),
-        DB::raw("(SELECT order_status FROM bookings JOIN participant_bookings ON bookings.id = participant_bookings.booking_id WHERE participant_bookings.participant_id = participants.id ORDER BY bookings.id DESC) as booking_order_status")
+        DB::raw("(SELECT booking_no FROM bookings JOIN participant_bookings ON bookings.id = participant_bookings.booking_id WHERE participant_bookings.participant_id = participants.id limit 1 ORDER BY bookings.id DESC) as booking_no"),
+        DB::raw("(SELECT account_name FROM bookings JOIN participant_bookings ON bookings.id = participant_bookings.booking_id WHERE participant_bookings.participant_id = participants.id limit 1 ORDER BY bookings.id DESC) as booking_account_name"),
+        DB::raw("(SELECT account_hospital FROM bookings JOIN participant_bookings ON bookings.id = participant_bookings.booking_id WHERE participant_bookings.participant_id = participants.id limit 1 ORDER BY bookings.id DESC) as booking_account_hospital"),
+        DB::raw("(SELECT order_status FROM bookings JOIN participant_bookings ON bookings.id = participant_bookings.booking_id WHERE participant_bookings.participant_id = participants.id limit 1 ORDER BY bookings.id DESC) as booking_order_status")
         ]);
         if(in_array(3, auth()->user()->department_ids)) {
             // $query->where('participants.created_by', auth()->user()->id);
