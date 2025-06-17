@@ -76,7 +76,7 @@ class ParticipantExport implements FromQuery, ShouldAutoSize, WithHeadings, With
     public function query()
     {
         $query = Participant::select(['participants.*',
-        DB::raw("(SELECT account_hospital FROM bookings JOIN participant_bookings ON bookings.id = participant_bookings.booking_id WHERE participant_bookings.participant_id = participants.id ORDER BY bookings.id DESC) as hospital"),
+        DB::raw("(SELECT account_hospital FROM bookings JOIN participant_bookings ON bookings.id = participant_bookings.booking_id WHERE participant_bookings.participant_id = participants.id ORDER BY bookings.id DESC limit 1) as hospital"),
         ]);
         $query->orderByRaw('participants.name ASC');
         return $query;
