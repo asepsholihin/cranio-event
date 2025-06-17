@@ -79,7 +79,7 @@ class ParticipantSheet implements FromQuery, ShouldAutoSize, WithHeadings, WithS
     public function query()
     {
         $query = Participant::select(['participants.*',
-        DB::raw("(SELECT account_hospital FROM bookings JOIN participant_bookings ON bookings.id = participant_bookings.booking_id WHERE participant_bookings.participant_id = participants.id ORDER BY bookings.id DESC) as booking_account_hospital"),
+        DB::raw("(SELECT account_hospital FROM bookings JOIN participant_bookings ON bookings.id = participant_bookings.booking_id WHERE participant_bookings.participant_id = participants.id ORDER BY bookings.id DESC limit 1) as booking_account_hospital"),
         ]);
         $query->orderByRaw('participants.name ASC');
         return $query;
