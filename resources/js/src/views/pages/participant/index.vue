@@ -258,10 +258,9 @@
             </b-form-group>
           </validation-provider>
 
-          <validation-provider #default="{ errors }" name="NIK" vid="nik" rules="required|numeric">
-            <b-form-group label="NIK">
-              <b-form-input type="text" v-model="formData.nik" placeholder="NIK"
-                :state="errors.length > 0 ? false : null" trim />
+          <validation-provider #default="{ errors }" name="Jumlah Pembayaran" vid="booking_total_price_with_tax" rules="required|numeric">
+            <b-form-group label="Jumlah Pembayaran">
+              <cleave v-model="formData.booking_total_price_with_tax" class="form-control" :options="optionClave" :state="errors.length > 0 ? false : null" v-on:input="calculatePrice" />
               <b-form-invalid-feedback>
                 {{ errors[0] }}
               </b-form-invalid-feedback>
@@ -270,9 +269,9 @@
 
           <b-row>
             <b-col sm="6">
-              <validation-provider #default="{ errors }" name="Gender" vid="gender" rules="required">
-                <b-form-group label="Gender">
-                  <v-select id="type" v-model="formData.gender" :options="genderOptions" :clearable="true" :reduce="(label) => label.value" />
+              <validation-provider #default="{ errors }" name="Apakah Menginap?" vid="is_stay_in" rules="required">
+                <b-form-group label="Apakah Menginap">
+                  <v-select id="type" v-model="formData.is_stay_in" :options="stayOptions" :clearable="true" :reduce="(label) => label.value" />
                   <b-form-invalid-feedback>
                     {{ errors[0] }}
                   </b-form-invalid-feedback>
@@ -435,6 +434,7 @@ import { createNameInCertificate, postUpdateData, deleteData, exportParticipant,
 import { hasPermission } from '@/auth/utils'
 import _ from 'lodash'
 import { required, numeric, email } from '@validations'
+import Cleave from 'vue-cleave-component'
 
 export default {
   components: {
@@ -459,10 +459,12 @@ export default {
 
     vSelect,
     flatPickr,
+    Cleave,
     ValidationProvider,
     ValidationObserver
   },
   setup() {
+    const stayOptions = [{ label: 'Ya', value: 1 }, { label: 'Tidak', value: 2 }]
     const genderOptions = [{ label: 'Laki-laki', value: 1 }, { label: 'Perempuan', value: 2 }]
     const poloSizeOptions = [{ label: 'S', value: 'S' }, { label: 'M', value: 'M' }, { label: 'L', value: 'L' }, { label: 'XL', value: 'XL' }, { label: 'XXL', value: 'XXL' }, { label: 'XXXL', value: 'XXXL' }]
 
@@ -503,6 +505,7 @@ export default {
       refUserListTable,
       refetchData,
       genderOptions,
+      stayOptions,
       poloSizeOptions,
 
       // Filter
@@ -557,6 +560,10 @@ export default {
       chartPoloSizeSeries,
       setRoomModal: false,
       viewRoomInfoModal: false,
+      optionClave: {
+        numeral: true,
+        numeralThousandsGroupStyle: 'thousand',
+      },
     }
   },
   methods : {

@@ -178,6 +178,7 @@ class Participant extends Authenticatable implements Auditable
     {
         $query->select(['participants.*',
         DB::raw("(SELECT booking_no FROM bookings JOIN participant_bookings ON bookings.id = participant_bookings.booking_id WHERE participant_bookings.participant_id = participants.id ORDER BY bookings.id DESC limit 1) as booking_no"),
+        DB::raw("(SELECT total_price_with_tax FROM bookings JOIN participant_bookings ON bookings.id = participant_bookings.booking_id WHERE participant_bookings.participant_id = participants.id ORDER BY bookings.id DESC limit 1) as booking_total_price_with_tax"),
         DB::raw("(SELECT account_name FROM bookings JOIN participant_bookings ON bookings.id = participant_bookings.booking_id WHERE participant_bookings.participant_id = participants.id ORDER BY bookings.id DESC limit 1) as booking_account_name"),
         DB::raw("(SELECT account_hospital FROM bookings JOIN participant_bookings ON bookings.id = participant_bookings.booking_id WHERE participant_bookings.participant_id = participants.id ORDER BY bookings.id DESC limit 1) as booking_account_hospital"),
         DB::raw("(SELECT order_status FROM bookings JOIN participant_bookings ON bookings.id = participant_bookings.booking_id WHERE participant_bookings.participant_id = participants.id ORDER BY bookings.id DESC limit 1) as booking_order_status")

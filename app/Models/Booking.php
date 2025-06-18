@@ -50,6 +50,7 @@ class Booking extends Model implements Auditable
         'given_by',
         'received_at',
         'room_key_evidence',
+        'is_stay_in'
     ];
 
     public static function boot()
@@ -136,7 +137,7 @@ class Booking extends Model implements Auditable
     public static function updatePayment($booking)
     {
         $totalPaid = BookingReceipt::where('booking_id', $booking->id)->where('status', 2)->sum('payment_amount');
-        $totalUnpaid = intval($booking->total_price_with_tax) - intval($totalPaid);
+        $totalUnpaid = intval($booking->total_price_with_tax??$booking->total_price) - intval($totalPaid);
         Booking::find($booking->id)->update([
             'total_paid' => $totalPaid,
             'total_unpaid' => $totalUnpaid,

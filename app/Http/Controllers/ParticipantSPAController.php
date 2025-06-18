@@ -14,6 +14,7 @@ use App\Models\UmrohTrip;
 use App\Models\OrderUmrohTrip;
 use App\Models\InvoiceUmrohTrip;
 use App\Models\MasterAddress;
+use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -748,8 +749,21 @@ class ParticipantSPAController extends Controller
 
     public function updateData(Request $request)
     {
-        $participant = Participant::find($request->id);
-        $participant->update($request->all());
+        DB::transaction(function () use ($request) {
+            $participant = Participant::find($request->id);
+            $participant->update($request->all());
+
+            if($request->booking_no) {
+                $booking = Booking::where('booking_no', $request->booking_no)->first();
+                if($booking) {
+                    $booking->update([
+                        'total_price_with_tax' => $request->booking_total_price_with_tax,
+                        'is_stay_in' => $request->is_stay_in,
+                    ]);
+                    Booking::updatePayment($booking);
+                }
+            }
+        });
     }
 
     public function refineParticipantDuplicate(Request $request)
