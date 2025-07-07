@@ -292,6 +292,7 @@ Route::prefix('spa')->middleware(['auth'])->group(function () {
     Route::post('department-status', [DepartmentSPAController::class, 'changeStatus']);
     //
     Route::get('event-attendance/send-barcode', [EventAttendanceController::class, 'sendBarcode']);
+    Route::get('event-attendance/multiple-send-barcode', [EventAttendanceController::class, 'multipleSendBarcode']);
     Route::get('event-attendance/participant-detail/{id}', [EventAttendanceController::class, 'participantDetail']);
     Route::get('event-attendance/list-participant-unattendee/{eventId}', [EventAttendanceController::class, 'participantUnattendeeList']);
     Route::get('event-attendance/chart-attendance', [EventAttendanceController::class, 'chartAttendance']);

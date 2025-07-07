@@ -79,10 +79,6 @@
             <template #button-content>
               <feather-icon icon="MoreVerticalIcon" size="16" class="align-middle text-body" />
             </template>
-            <b-dropdown-item variant="success" :to="{ name: 'event-attendance-confirmation', params: { id: data.item.id, name: data.item.name } }">
-              <feather-icon icon="CheckIcon" />
-              <span class="align-middle ml-50">Attendance Confirmation Report</span>
-            </b-dropdown-item>
             <b-dropdown-item variant="warning" @click="isAddSidebarActive = true; addCopyEventId = data.item.id" v-if="hasPermission('event-attendance-add-or-edit')">
               <feather-icon icon="CopyIcon" />
               <span class="align-middle ml-50">Copy Attendee Into New Event</span>

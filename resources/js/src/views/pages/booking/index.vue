@@ -361,6 +361,7 @@ export default {
 
     const statusOptions = [
       { label: 'Pending', value: 'pending' },
+      { label: 'Unpaid', value: 'unpaid' },
       { label: 'Paid', value: 'paid' },
       { label: 'Booked', value: 'booked' },
       { label: 'Access Given', value: 'access_given' },

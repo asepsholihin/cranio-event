@@ -62,7 +62,8 @@ class Attendance extends Model
             (CASE WHEN (SELECT count(check_in_at) FROM attendances as att WHERE att.participant_id = attendances.participant_id AND att.event_id = attendances.event_id AND session IS NULL limit 1) > 0 THEN \'z\'
             ELSE \'a\' END) AS checkin'
         ),
-        ]);
+        ])
+        ->whereNull('participants.deleted_at');
 
         if (!empty(request()->query('booking'))) {
             $query->where('participant_bookings.order_umroh_trip_id', request()->query('booking'));
@@ -77,7 +78,7 @@ class Attendance extends Model
         $search = '%' . request()->query('q') .'%';
         return $query->where(function($q) use ($search) {
             $q->where('participants.name', 'like', $search);
-            $q->orWhere('participants.no_hp', 'like', $search);
+            $q->orWhere('participants.whatsapp', 'like', $search);
         });
     }
 }

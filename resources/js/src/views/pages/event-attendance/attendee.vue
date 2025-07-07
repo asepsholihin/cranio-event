@@ -27,6 +27,10 @@
                                 </span>
                             </template>
                         </b-button>
+                        <b-button variant="primary" @click="sendMultipleBarcode()" class="mr-1"
+                            v-if="hasPermission('event-attendance-add-or-edit')">
+                            <span class="text-nowrap">Kirim Barcode</span>
+                        </b-button>
                         <b-button variant="primary" @click="isBarcodeSidebarActive = true" class="mr-1"
                             v-if="hasPermission('event-attendance-add-or-edit')">
                             <span class="text-nowrap">Check In Barcode</span>
@@ -329,7 +333,7 @@ import { BCard, BAvatar, BMedia, BRow, BLink, BDropdown, BDropdownItem, BPaginat
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import { required, numeric, email, min } from '@validations'
 import vSelect from 'vue-select'
-import { getDetail, postAttendee, getParticipantBarcode, deleteAttendee, getParticipantDetail, updateManasikTable, generateEventLink, departureConfirmationByAdmin, exportDepartureUpdate, generateDepartureConfirmationLink, exportData, sendParticipantBarcode, resetDepartureConfirmation } from '@/network/event-attendance'
+import { getDetail, postAttendee, getParticipantBarcode, deleteAttendee, getParticipantDetail, updateManasikTable, generateEventLink, departureConfirmationByAdmin, exportDepartureUpdate, generateDepartureConfirmationLink, exportData, sendParticipantBarcode, sendMultipleParticipantBarcode, resetDepartureConfirmation } from '@/network/event-attendance'
 import flatPickr from 'vue-flatpickr-component'
 import useAttendeeList from './useAttendeeList'
 import { hasPermission } from '@/auth/utils'
@@ -624,7 +628,7 @@ export default {
         sendBarcode(attendee) {
             this.$swal({
                 title: `Apakah anda yakin akan mengirim barcode ke participant ${attendee.name}?`,
-                text: "Barcode akan dikirim ke participant melalui whatsapp",
+                text: "Barcode akan dikirim ke participant melalui email",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Ya, kirim sekarang!',
@@ -639,6 +643,35 @@ export default {
                     form.id = this.eventId
                     form.participantId = attendee.participant_id
                     sendParticipantBarcode(form).then(response => {
+                        this.$swal({ icon: 'success', title: 'Success', text: `Barcode sudah dikirim ke participant`, timer: 2500, customClass: { confirmButton: 'btn btn-primary', }, buttonsStyling: false })
+                        navigator.clipboard.writeText(response.data)
+                    }).catch(error => {
+                        this.$swal({ icon: 'error', title: 'Error', text: `${error.response.data.message}`, customClass: { confirmButton: 'btn btn-warning', }, buttonsStyling: false })
+                        this.isSubmitModal = false
+                    })
+                }
+            })
+        },
+        sendMultipleBarcode() {
+            this.$swal({
+                title: `Apakah anda yakin akan mengirim barcode ke participant yang ditandai?`,
+                text: "Barcode akan dikirim ke participant melalui email",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, kirim sekarang!',
+                customClass: {
+                    confirmButton: 'btn btn-danger',
+                    cancelButton: 'btn btn-outline-primary ml-1',
+                },
+                buttonsStyling: false,
+            }).then(result => {
+                if (result.value) {
+                    const form = {}
+                    form.id = this.eventId
+                    if(this.selectedIds.length > 0) {
+                        form.participantIds = this.selectedIds
+                    }
+                    sendMultipleParticipantBarcode(form).then(response => {
                         this.$swal({ icon: 'success', title: 'Success', text: `Barcode sudah dikirim ke participant`, timer: 2500, customClass: { confirmButton: 'btn btn-primary', }, buttonsStyling: false })
                         navigator.clipboard.writeText(response.data)
                     }).catch(error => {

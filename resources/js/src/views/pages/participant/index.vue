@@ -67,6 +67,11 @@
         <template #cell(booking)="data">
           <span>{{ data.item.booking_no }}</span><br>
           <span>{{ data.item.booking_account_name }}</span>
+          <div>
+            <b-badge variant="warning" v-if="data.item.booking_order_status == 'unpaid'">Unpaid</b-badge>
+            <b-badge variant="success" v-if="data.item.booking_order_status == 'paid'">Paid</b-badge>
+            <b-badge variant="danger" v-if="data.item.booking_order_status == 'cancel'">Cancel</b-badge>
+          </div>
         </template>
 
         <!-- Column: Room Info -->
@@ -258,9 +263,9 @@
             </b-form-group>
           </validation-provider>
 
-          <validation-provider #default="{ errors }" name="Jumlah Pembayaran" vid="booking_total_price_with_tax" rules="required|numeric">
+          <validation-provider #default="{ errors }" name="Jumlah Pembayaran" vid="booking_total_price_with_tax">
             <b-form-group label="Jumlah Pembayaran">
-              <cleave v-model="formData.booking_total_price_with_tax" class="form-control" :options="optionClave" :state="errors.length > 0 ? false : null" v-on:input="calculatePrice" />
+              <cleave v-model="formData.booking_total_price_with_tax" class="form-control" :options="optionClave" :state="errors.length > 0 ? false : null" />
               <b-form-invalid-feedback>
                 {{ errors[0] }}
               </b-form-invalid-feedback>
@@ -269,7 +274,7 @@
 
           <b-row>
             <b-col sm="6">
-              <validation-provider #default="{ errors }" name="Apakah Menginap?" vid="is_stay_in" rules="required">
+              <validation-provider #default="{ errors }" name="Apakah Menginap?" vid="is_stay_in">
                 <b-form-group label="Apakah Menginap">
                   <v-select id="type" v-model="formData.is_stay_in" :options="stayOptions" :clearable="true" :reduce="(label) => label.value" />
                   <b-form-invalid-feedback>

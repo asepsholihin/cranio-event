@@ -108,6 +108,10 @@ export const sendParticipantBarcode = (args) => {
     return httpService.getHttp().get(resourcePath + '/send-barcode', { params: args })
 }
 
+export const sendMultipleParticipantBarcode = (args) => {
+    return httpService.getHttp().get(resourcePath + '/multiple-send-barcode', { params: args })
+}
+
 export const getChartManasikOnline = (...args) => {
     return httpService.getHttp().get(resourcePath + '/chart-manasik-online', ...args)
 }

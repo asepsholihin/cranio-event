@@ -23,9 +23,12 @@ use App\File\PDF\AttendanceReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\EventAttandance\BarcodeRegistration;
 use App\Jobs\SendWhatsappQREventConfirmation;
 use App\Jobs\SendWhatsappLinkEventConfirmation;
 use App\Jobs\CreateBookingHotelEvent;
+use App\Jobs\SendParticipantBarcodeEmail;
 use App\File\Image\BarcodeParticipant;
 use App\File\Image\BarcodeEventParticipant;
 use App\File\Image\BarcodeText;
@@ -901,9 +904,24 @@ class EventAttendanceController extends Controller
     public function sendBarcode(Request $request)
     {
         $event = EventAttendance::find($request->id);
-        $participantDetail = Participant::find($request->participantId);
-        SendWhatsappQREventConfirmation::dispatch($event, $participantDetail->no_hp, $participantDetail->name, $participantDetail);
-        return response()->json($participantDetail);
+        $participant = Participant::find($request->participantId);
+        
+        $email = new BarcodeRegistration($event, $participant);
+        Mail::to($participant->email)->queue($email);
+
+        return response()->json(['success' => true]);
+    }
+
+    public function multipleSendBarcode(Request $request)
+    {
+        $participants = Participant::whereIn('id', $request->participantIds)->get();
+
+        foreach ($participants as $participant) {
+            // Kirim sebagai job
+            SendParticipantBarcodeEmail::dispatch($request->id, $participant->id);
+        }
+        
+        return response()->json($participants);
     }
 
     public function chartManasikOnline(Request $request)

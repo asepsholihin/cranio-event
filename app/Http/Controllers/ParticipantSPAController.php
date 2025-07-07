@@ -753,14 +753,17 @@ class ParticipantSPAController extends Controller
             $participant = Participant::find($request->id);
             $participant->update($request->all());
 
-            if($request->booking_no) {
+            if($request->booking_no && $request->booking_total_price_with_tax) {
                 $booking = Booking::where('booking_no', $request->booking_no)->first();
                 if($booking) {
-                    $booking->update([
-                        'total_price_with_tax' => $request->booking_total_price_with_tax,
-                        'is_stay_in' => $request->is_stay_in,
-                    ]);
-                    Booking::updatePayment($booking);
+                    $booking->total_price_with_tax = $request->booking_total_price_with_tax;
+                    if($request->is_stay_in) {
+                        $booking->is_stay_in = $request->is_stay_in;
+                    }
+                    $booking->save();
+                    if($request->booking_total_price_with_tax) {
+                        Booking::updatePayment($booking);
+                    }
                 }
             }
         });
