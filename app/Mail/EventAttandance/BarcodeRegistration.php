@@ -11,6 +11,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Str;
 use Symfony\Component\Mime\Email;
+use Intervention\Image\Facades\Image;
 
 class BarcodeRegistration extends Mailable
 {
@@ -48,17 +49,60 @@ class BarcodeRegistration extends Mailable
         }
 
         // Generate barcode sebagai PNG base64
-        $barcodeBase64 = \DNS2D::getBarcodePNG($this->participant->barcode, 'QRCODE');
+        $barcodeBase64 = \DNS2D::getBarcodePNG($this->participant->barcode, 'QRCODE', 6); // skala 6 agar cukup besar
         $barcodeBinary = base64_decode($barcodeBase64);
 
-        // Simpan file sementara
-        $filename = 'barcode_' . uniqid() . '.png';
-        $filePath = storage_path("app/{$filename}");
-        file_put_contents($filePath, $barcodeBinary);
+        // Buat image dari barcode
+        $barcodeImage = Image::make($barcodeBinary);
 
-        // Embed gambar dan simpan CID via withSwiftMessage
+        // Atur ukuran barcode (misalnya 300x300) — resize
+        $barcodeImage->resize(512, 512);
+
+        // Tambahkan nama di bawah barcode
+        $namaPeserta = $this->participant->name;
+        $namaInstansi = $this->hospital->account_hospital;
+
+        // Tentukan font path (gunakan default system font atau upload font .ttf sendiri jika diperlukan)
+        $fontPath = storage_path('private_assets/fonts/Mulish-Regular.ttf'); // kamu bisa letakkan font di `public/fonts`
+
+        // Buat canvas baru (dengan padding dan ruang teks)
+        $padding = 20;
+        $textHeight = 50;
+
+        $canvas = Image::canvas(
+            $barcodeImage->width() + $padding * 2,
+            $barcodeImage->height() + $padding * 2 + $textHeight,
+            '#ffffff'
+        );
+
+        // Tempel barcode ke tengah atas
+        $canvas->insert($barcodeImage, 'top-left', $padding, $padding);
+
+        // 5. Tambahkan teks NAMA
+        $canvas->text($namaPeserta, $canvas->width() / 2, $barcodeImage->height() + $padding + 15, function ($font) use($fontPath) {
+            $font->file($fontPath); // pastikan font ada
+            $font->size(20);
+            $font->color('#000000');
+            $font->align('center');
+            $font->valign('top');
+        });
+
+        // 6. Tambahkan teks INSTANSI
+        $canvas->text($namaInstansi, $canvas->width() / 2, $barcodeImage->height() + $padding + 15 + 30, function ($font) use($fontPath) {
+            $font->file($fontPath);
+            $font->size(18);
+            $font->color('#444444');
+            $font->align('center');
+            $font->valign('top');
+        });
+
+        // Simpan ke file sementara
+        $filename = $namaPeserta . '.png';
+        $filePath = storage_path("app/{$filename}");
+        $canvas->save($filePath);
+
+        // Embed ke email (Laravel >=10 pakai Symfony Mailer)
         $this->withSymfonyMessage(function (Email $message) use ($filePath, &$cid) {
-            // Tambahkan sebagai attachment inline
             $cid = $message->embedFromPath($filePath);
         });
 

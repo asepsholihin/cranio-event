@@ -122,10 +122,10 @@
             <b-dropdown-item @click="setRoom(data.item)" v-if="data.item.room_number == null && hasPermission('booking-add-or-edit')">
               Set Room Number
             </b-dropdown-item>
-            <b-dropdown-item v-if="hasPermission('participant-add-or-edit')">
+            <!-- <b-dropdown-item v-if="hasPermission('participant-add-or-edit')" @click="sendBarcode(data.item)">
               <feather-icon icon="SendIcon" />
               <span class="align-middle ml-50">Kirim QR Code</span>
-            </b-dropdown-item>
+            </b-dropdown-item> -->
             <b-dropdown-item variant="danger" @click="deleteParticipant(data.item)">
               <feather-icon icon="Trash2Icon" />
               <span class="align-middle ml-50">Delete</span>
@@ -436,6 +436,7 @@ import flatPickr from 'vue-flatpickr-component'
 import { avatarText, formatDateShort, formatDate, formatDateTime } from '@core/utils/filter'
 import useDataList from './useDataList'
 import { createNameInCertificate, postUpdateData, deleteData, exportParticipant, getChartGender, getChartPoloSize, postAction } from '@/network/participant'
+import { sendParticipantBarcode } from '@/network/event-attendance'
 import { hasPermission } from '@/auth/utils'
 import _ from 'lodash'
 import { required, numeric, email } from '@validations'
@@ -733,6 +734,32 @@ export default {
           this.isSubmitModal = false
         })
       })
+    },
+    sendBarcode(attendee) {
+        this.$swal({
+            title: `Apakah anda yakin akan mengirim barcode ke participant ${attendee.name}?`,
+            text: "Barcode akan dikirim ke participant melalui email",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, kirim sekarang!',
+            customClass: {
+                confirmButton: 'btn btn-danger',
+                cancelButton: 'btn btn-outline-primary ml-1',
+            },
+            buttonsStyling: false,
+        }).then(result => {
+            if (result.value) {
+                const form = {}
+                form.participantId = attendee.participant_id
+                sendParticipantBarcode(form).then(response => {
+                    this.$swal({ icon: 'success', title: 'Success', text: `Barcode sudah dikirim ke participant`, timer: 2500, customClass: { confirmButton: 'btn btn-primary', }, buttonsStyling: false })
+                    navigator.clipboard.writeText(response.data)
+                }).catch(error => {
+                    this.$swal({ icon: 'error', title: 'Error', text: `${error.response.data.message}`, customClass: { confirmButton: 'btn btn-warning', }, buttonsStyling: false })
+                    this.isSubmitModal = false
+                })
+            }
+        })
     },
     deleteParticipant(item){
         this.$swal({
