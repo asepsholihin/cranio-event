@@ -30,7 +30,7 @@ class EventAttendance extends Model
     {
         $query->selectRaw("event_attendances.name, event_attendances.event, event_attendances.event_date, event_attendances.id AS id," .
         "(SELECT COALESCE(SUM(CASE WHEN check_in_at IS NOT NULL THEN 1 ELSE 0 END), 0) FROM attendances as att WHERE att.event_id = event_attendances.id AND session IS NULL) as total_checkin," .
-        "(SELECT COALESCE(COUNT(DISTINCT(att.id)), 0) FROM attendances as att WHERE att.event_id = event_attendances.id AND session IS NULL) AS total_attendance, event_attendances.location, event_attendances.event_at");
+        "(SELECT COALESCE(COUNT(DISTINCT(att.id)), 0) FROM attendances as att WHERE att.event_id = event_attendances.id AND session IS NULL) AS total_attendance, event_attendances.location, event_attendances.event_at, event_attendances.event_end_at");
 
         if (! empty(request()->query('event'))) {
             $query->where('event_attendances.event', request()->query('event'));
