@@ -48,20 +48,4 @@ export default [
     route: 'user-platform',
     permission: 'user-platform-view',
   },
-  {
-    header: 'SEO',
-    permissions: ['seo-settings-view'],
-  },
-  {
-    title: 'SEO Settings',
-    icon: 'SettingsIcon',
-    route: 'seo-setting',
-    permission: 'seo-settings-view',
-  },
-  {
-    title: 'Log Article',
-    icon: 'SettingsIcon',
-    route: 'log-article-activity',
-    permission: 'log-activity-view',
-  },
 ]

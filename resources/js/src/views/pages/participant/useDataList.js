@@ -13,6 +13,7 @@ export default function useUsersList() {
 
   // Table Handlers
   const tableColumns = [
+    { key: 'select', sortable: false },
     { key: 'booking' },
     { key: 'name', sortable: true },
     { key: 'request', label: 'Request'},

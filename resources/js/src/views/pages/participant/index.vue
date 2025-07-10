@@ -40,7 +40,7 @@
         </b-row>
         <b-row>
           <!-- Per Page -->
-          <b-col cols="12" md="6" class="d-flex align-items-center justify-content-start mb-1 mb-md-0">
+          <b-col cols="12" md="4" class="d-flex align-items-center justify-content-start mb-1 mb-md-0">
             <label>Show</label>
             <v-select v-model="perPage" :options="perPageOptions" :clearable="false"
               class="per-page-selector d-inline-block mx-50" />
@@ -48,8 +48,21 @@
           </b-col>
 
           <!-- Search -->
-          <b-col cols="12" md="6">
+          <b-col cols="12" md="8">
             <div class="d-lg-flex align-items-center justify-content-end">
+              <b-button class="mr-1" variant="primary" @click="selectRowAction">
+                  <template v-if="!isRowChecked">
+                      <span class="text-nowrap">
+                          <feather-icon icon="CheckSquareIcon" size="14" /> Select All
+                      </span>
+                  </template>
+                  <template v-else>
+                      <span class="text-nowrap">
+                          <feather-icon icon="SquareIcon" size="14" /> Deselect All
+                      </span>
+                  </template>
+              </b-button>
+              <b-button class="mr-1 text-nowrap" variant="primary" @click="setRoomGroupModal = !setRoomGroupModal" :disabled="selectedNames.length <= 0">Set Room Group</b-button>
               <b-form-input v-model="searchQuery" debounce="350" type="search" class="d-inline-block mr-1 mb-lg-0 mb-2" placeholder="Search..." />
               <b-button variant="primary" @click="exportParticipant()" class="mb-lg-0 mb-2" v-if="hasPermission('participant-add-or-edit')" :disabled="isLoading">
                 <b-spinner small v-show="isLoading" /> <span class="text-nowrap">Export Data</span>
@@ -59,9 +72,18 @@
         </b-row>
       </div>
 
-      <b-table ref="refUserListTable" class="position-relative" :items="fetchUsers" responsive hover
+      <b-table ref="refUserListTable" select-mode="multi" selected-variant="primary" selectable class="position-relative" :items="fetchUsers" responsive hover
         :fields="tableColumns" primary-key="id" :tbody-tr-class="rowClass" :sort-by.sync="sortBy" show-empty empty-text="No matching records found"
-        :sort-desc.sync="isSortDirDesc">
+        :sort-desc.sync="isSortDirDesc" @row-selected="onRowSelected">
+
+        <template #cell(select)="{ rowSelected }">
+          <template v-if="rowSelected">
+            <feather-icon icon="CheckSquareIcon" size="20" class="align-end" />
+          </template>
+          <template v-else>
+            <feather-icon icon="SquareIcon" size="20" class="align-end" />
+          </template>
+        </template>
 
         <!-- Column: Booking -->
         <template #cell(booking)="data">
@@ -76,8 +98,11 @@
 
         <!-- Column: Room Info -->
         <template #cell(room_info)="data">
+          <div v-if="data.item.room_group != null">
+            <p class="mb-50 text-nowrap">Room Group: <strong>{{ data.item.room_group }}</strong></p>
+          </div>
           <div v-if="data.item.room_number != null">
-            <p class="m-0">{{ data.item.room_number }}</p>
+            <p class="mb-50 text-nowrap">Room Number: <strong>{{ data.item.room_number }}</strong></p>
             <b-button variant="primary" size="sm" @click="viewRoomInfo(data.item)">View Detail</b-button>
           </div>
           <b-button variant="primary" size="sm" v-if="data.item.room_number == null" @click="setRoom(data.item)">Set Room Number</b-button>
@@ -122,10 +147,6 @@
             <b-dropdown-item @click="setRoom(data.item)" v-if="data.item.room_number == null && hasPermission('booking-add-or-edit')">
               Set Room Number
             </b-dropdown-item>
-            <!-- <b-dropdown-item v-if="hasPermission('participant-add-or-edit')" @click="sendBarcode(data.item)">
-              <feather-icon icon="SendIcon" />
-              <span class="align-middle ml-50">Kirim QR Code</span>
-            </b-dropdown-item> -->
             <b-dropdown-item variant="danger" @click="deleteParticipant(data.item)">
               <feather-icon icon="Trash2Icon" />
               <span class="align-middle ml-50">Delete</span>
@@ -357,6 +378,38 @@
       </b-row>
     </b-modal>
 
+    <b-modal v-model="setRoomGroupModal" :busy="isSubmitModal" @hidden="resetModal" no-close-on-backdrop @ok="handleOkSetRoomGroup" ok-title="Submit">
+      <template #modal-title>
+          <h4>Set Room Group</h4>
+      </template>
+      <validation-observer ref="refObsForm">
+        <!-- Form -->
+        <b-form @submit.prevent="onSubmitSetRoom" @reset.prevent="resetModal">
+          <validation-provider #default="{ errors }" vid="message">
+            <b-alert variant="danger" show v-if="errors[0]">
+              <div class="alert-body">
+                {{ errors[0] }}
+              </div>
+            </b-alert>
+          </validation-provider>
+
+          <div class="mb-1">
+            {{ selectedNames }}
+          </div>
+
+          <validation-provider #default="{ errors }" name="Room Group" vid="roomHotelGroup" rules="required">
+            <b-form-group label="Room Group" :state="errors.length > 0 ? false : null">
+              <v-select v-model="roomGroupSet" :options="roomGroupOptions" :clearable="false" />
+              <b-form-invalid-feedback :state="errors.length > 0 ? false : null">
+                {{ errors[0] }}
+              </b-form-invalid-feedback>
+            </b-form-group>
+          </validation-provider>
+
+        </b-form>
+      </validation-observer>
+    </b-modal>
+
     <b-modal v-model="setRoomModal" :busy="isSubmitModal" @hidden="resetModal" no-close-on-backdrop @ok="handleOkSetRoom" ok-title="Submit">
       <template #modal-title>
           <h4>Set Room Number</h4>
@@ -473,7 +526,8 @@ export default {
     const stayOptions = [{ label: 'Ya', value: 1 }, { label: 'Tidak', value: 2 }]
     const genderOptions = [{ label: 'Laki-laki', value: 1 }, { label: 'Perempuan', value: 2 }]
     const poloSizeOptions = [{ label: 'S', value: 'S' }, { label: 'M', value: 'M' }, { label: 'L', value: 'L' }, { label: 'XL', value: 'XL' }, { label: 'XXL', value: 'XXL' }, { label: 'XXXL', value: 'XXXL' }]
-
+    var arrayRooms = Array.from({ length: 500 }, (_, i) => i + 1)
+    const roomGroupOptions = arrayRooms
     const {
       fetchUsers,
       tableColumns,
@@ -527,7 +581,8 @@ export default {
       dateFilter,
       hasPermission,
       formatDateTime,
-      formatDate
+      formatDate,
+      roomGroupOptions
     }
   },
   watch: {
@@ -570,9 +625,36 @@ export default {
         numeral: true,
         numeralThousandsGroupStyle: 'thousand',
       },
+      isRowChecked: false,
+      setRoomGroupModal: false,
+      roomGroupSet: null,
+      selectedIds: [], selectedNames: []
     }
   },
   methods : {
+    onRowSelected(items) {
+        const selectedIds = []
+        const selectedNames = []
+        items.forEach(function (item) {
+            selectedIds.push(item.id)
+            selectedNames.push(item.name)
+        })
+
+        this.selectedIds = selectedIds
+        this.selectedNames = selectedNames
+
+        if (items.length > 0) {
+            this.isRowChecked = true
+        } else {
+            this.isRowChecked = false
+        }
+    },
+    selectRowAction() {
+      if (this.isRowChecked)
+          this.$refs.refUserListTable.clearSelected()
+      else
+          this.$refs.refUserListTable.selectAllRows()
+    },
     clearDate() {
       this.dateFilter = null
     },
@@ -669,6 +751,7 @@ export default {
         this.formAccessLogin = {email: '', password: '' }
         this.formNameInCerificate = {front_title: '', name_in_certificate: '', back_title: '' }
         this.formData = {}
+        this.roomGroupSet = null
     },
     setRoom(item) {
       this.setRoomModal = true
@@ -735,31 +818,31 @@ export default {
         })
       })
     },
-    sendBarcode(attendee) {
-        this.$swal({
-            title: `Apakah anda yakin akan mengirim barcode ke participant ${attendee.name}?`,
-            text: "Barcode akan dikirim ke participant melalui email",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Ya, kirim sekarang!',
-            customClass: {
-                confirmButton: 'btn btn-danger',
-                cancelButton: 'btn btn-outline-primary ml-1',
-            },
-            buttonsStyling: false,
-        }).then(result => {
-            if (result.value) {
-                const form = {}
-                form.participantId = attendee.participant_id
-                sendParticipantBarcode(form).then(response => {
-                    this.$swal({ icon: 'success', title: 'Success', text: `Barcode sudah dikirim ke participant`, timer: 2500, customClass: { confirmButton: 'btn btn-primary', }, buttonsStyling: false })
-                    navigator.clipboard.writeText(response.data)
-                }).catch(error => {
-                    this.$swal({ icon: 'error', title: 'Error', text: `${error.response.data.message}`, customClass: { confirmButton: 'btn btn-warning', }, buttonsStyling: false })
-                    this.isSubmitModal = false
-                })
-            }
+    handleOkSetRoomGroup(bvModalEvent) {
+      bvModalEvent.preventDefault()
+      this.onSubmitRoomGroup()
+    },
+    onSubmitRoomGroup() {
+      this.$refs.refObsForm.validate().then(success => {
+        if (!success) return
+        this.isSubmitModal = true
+        const vForm = {}
+        vForm.ids = this.selectedIds
+        vForm.set_room_group = true
+        vForm.roomGroup = this.roomGroupSet
+        postAction(vForm).then(response => {
+          this.setRoomGroupModal = false
+          this.$swal({ icon: 'success', title: 'Success', text: `Room Group has been changed successfully`, timer: 2500, customClass: { confirmButton: 'btn btn-primary', }, buttonsStyling: false })
+          this.refetchData()
+        }).catch(error => {
+          if (error.response.data.errors) {
+            this.$refs.refObsForm.setErrors(error.response.data.errors)
+          } else {
+            this.$bvToast.toast(`Error: ${error.response.data.message}`, { title: `Error`, variant: 'danger', toaster: 'b-toaster-top-center', solid: true })
+          }
+          this.isSubmitModal = false
         })
+      })
     },
     deleteParticipant(item){
         this.$swal({

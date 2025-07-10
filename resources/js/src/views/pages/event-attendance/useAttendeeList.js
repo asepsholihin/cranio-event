@@ -15,7 +15,7 @@ export default function useUsersList() {
   const tableColumns = [
     { key: 'select', sortable: false },
     { key: 'name', sortable: true },
-    { key: 'whatsapp' },
+    { key: 'room_number', sortable: true, label: 'Room Info', thClass: 'text-nowrap' },
     { key: 'check_in_at', sortable: true, label: 'Waktu Absen', thClass: 'text-nowrap' },
     { key: 'account_hospital', sortable: true, label: 'Nama Rumah Sakit', thClass: 'text-nowrap' },
     { key: 'actions' },

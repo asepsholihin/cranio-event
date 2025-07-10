@@ -101,24 +101,21 @@
                         {{ (data.item.name_in_passport) ? data.item.name_in_passport.toUpperCase() : data.item.name.toUpperCase() }}<br />
                         <div class="text-warning" v-if="data.item.umroh_trip_id!=event.umroh_trip_id">{{ data.item.trip }}</div>
                         <div v-if="data.item.package_name">{{ data.item.package_name }}</div>
-                        <small>Gender: {{ resolveGender(data.item.gender) }}</small>
+                        <small>Gender: {{ resolveGender(data.item.gender) }}</small><br>
+                        <small>{{ data.item.whatsapp }}</small>
                     </b-media>
                 </template>
 
-                <!-- Column: NO HP -->
-                <template #cell(no_hp)="data">
-                    {{ data.item.no_hp }}
-                    <div class="text-nowrap text-small" v-if="data.item.link_event_sent">
-                        <span v-if="data.item.link_event_delivery_status == 'sending'" class="text-warning">
-                            <feather-icon icon="ClockIcon" /> {{ data.item.link_event_sent }}
-                        </span>
-                        <span v-if="data.item.link_event_delivery_status == 'delivered'" class="text-success">
-                            <feather-icon icon="CheckIcon" /> {{ data.item.link_event_sent }}
-                        </span>
-                        <span v-if="data.item.link_event_delivery_status == 'failed'" class="text-danger">
-                            <feather-icon icon="XCircleIcon" /> {{ data.item.link_event_sent }}
-                        </span>
+                <!-- Column: Room Info -->
+                <template #cell(room_number)="data">
+                    <div v-if="data.item.room_group != null">
+                        <p class="mb-50 text-nowrap">Room Group: <strong>{{ data.item.room_group }}</strong></p>
                     </div>
+                    <div v-if="data.item.room_number != null">
+                        <p class="mb-50 text-nowrap">Room Number: <strong>{{ data.item.room_number }}</strong></p>
+                    </div>
+                    <b-button variant="primary" size="sm" v-if="data.item.room_number == null" @click="setRoom(data.item)">Set Room</b-button>
+                    <b-button variant="link" size="sm" v-if="data.item.room_number != null" @click="setRoom(data.item)">Change Room</b-button>
                 </template>
 
                 <!-- Column: Manasik Table -->
@@ -325,6 +322,56 @@
                 </b-form>
             </validation-observer>
         </b-modal>
+
+        <b-modal v-model="setRoomModal" :busy="isSubmitModal" @hidden="resetModal" no-close-on-backdrop @ok="handleOkSetRoom" ok-title="Submit">
+            <template #modal-title>
+                <h4>Set Room Number</h4>
+            </template>
+            <validation-observer ref="refObsForm">
+                <!-- Form -->
+                <b-form @submit.prevent="onSubmitSetRoom" @reset.prevent="resetModal">
+                <validation-provider #default="{ errors }" vid="message">
+                    <b-alert variant="danger" show v-if="errors[0]">
+                    <div class="alert-body">
+                        {{ errors[0] }}
+                    </div>
+                    </b-alert>
+                </validation-provider>
+
+                <validation-provider #default="{ errors }" name="Room Number" vid="room_number">
+                    <b-form-group label="Room Number">
+                    <b-form-input v-model="formData.room_number" name="room_number" :state="errors.length > 0 ? false : null" trim />
+                    <b-form-invalid-feedback>
+                        {{ errors[0] }}
+                    </b-form-invalid-feedback>
+                    </b-form-group>
+                </validation-provider>
+
+                <validation-provider #default="{ errors }" name="Received By" vid="received_by">
+                    <b-form-group label="Received By">
+                    <b-form-input v-model="formData.received_by" name="received_by" :state="errors.length > 0 ? false : null" trim />
+                    <b-form-invalid-feedback>
+                        {{ errors[0] }}
+                    </b-form-invalid-feedback>
+                    </b-form-group>
+                </validation-provider>
+
+                <b-media class="mb-2">
+                    <template #aside>
+                    <b-avatar :src="formData.evidence" :text="avatarText('NA')" size="90px" rounded />
+                    </template>
+                    <div class="d-flex flex-wrap">
+                    <b-button v-if="hasPermission('booking-add-or-edit')" variant="primary" size="sm" @click="$refs.refInputEl.click()">
+                        <input ref="refInputEl" type="file" accept="image/jpeg, image/png, image/webp" class="d-none" @input="inputImageRenderer">
+                        <span class="d-none d-sm-inline">Upload Evidence</span>
+                        <feather-icon icon="EditIcon" class="d-inline d-sm-none" />
+                    </b-button>
+                    </div>
+                    <div class="mt-1 text-muted">Max Size: 5MB</div>
+                </b-media>
+                </b-form>
+            </validation-observer>
+        </b-modal>
     </div>
 </template>
 
@@ -342,6 +389,7 @@ import checkInBarcodeSidebar from './checkInBarcodeSidebar.vue'
 import { avatarText, formatDateTimeShort, formatDate } from '@core/utils/filter'
 import { ref } from '@vue/composition-api'
 import { downloadTableNumber } from '@/network/equipment'
+import { postAction } from '@/network/participant'
 
 export default {
     components: {
@@ -487,7 +535,8 @@ export default {
             formDepartureConfirmationModal: false,
             selectedIds: [], selectedNames: [], selectedData: [],
             isRowChecked: false,
-            setMultipleManasikTableModal: false
+            setMultipleManasikTableModal: false,
+            setRoomModal: false,
         }
     },
     methods: {
@@ -562,6 +611,71 @@ export default {
                     this.refetchData()
                 }).catch(error => {
                     this.$swal({ icon: 'error', title: 'Error', text: `${error.response.data.message}`, customClass: { confirmButton: 'btn btn-warning', }, buttonsStyling: false })
+                    this.isSubmitModal = false
+                })
+            })
+        },
+        setRoom(item) {
+            this.setRoomModal = true
+            this.formData = {
+                id: item.participant_id,
+                room_number: item.room_number,
+                received_by: item.received_by,
+            }
+        },
+        inputImageRenderer() {
+            this.formData.file_evidence = this.$refs.refInputEl.files[0]
+            const file = this.$refs.refInputEl.files[0]
+            const reader = new FileReader()
+
+            reader.addEventListener(
+                'load',
+                () => {
+                this.formData = {
+                    ...this.formData,
+                    evidence: reader.result
+                }
+                },
+                false,
+            )
+
+            if (file) {
+                reader.readAsDataURL(file)
+            }
+        },
+        handleOkSetRoom(bvModalEvent) {
+            bvModalEvent.preventDefault()
+            this.onSubmitSetRoom()
+        },
+        onSubmitSetRoom() {
+            this.$refs.refObsForm.validate().then((success) => {
+                if (!success) return;
+                this.isSubmitModal = true
+                const vForm = new FormData()
+                for (var key in this.formData) {
+                if (key == 'evidence')
+                    continue
+                if (this.formData[key] != null)
+                    vForm.append(key, this.formData[key])
+                }
+                vForm.append('set_room', true)
+                postAction(vForm).then(response => {
+                    this.$bvToast.toast(`Booking has been updated successfully`, {
+                        title: `Success`,
+                        variant: 'primary',
+                        toaster: 'b-toaster-top-center',
+                        solid: true,
+                    })
+                    this.setRoomModal = false
+                    this.isSubmitModal = false
+                    this.refetchData()
+                })
+                .catch(error => {
+                    if (error.response.data.errors) {
+                        this.$refs.refObsForm.setErrors(error.response.data.errors)
+                    } else {
+                        this.$refs.refObsForm.setErrors(error.response.data)
+                    }
                     this.isSubmitModal = false
                 })
             })

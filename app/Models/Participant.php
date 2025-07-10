@@ -55,6 +55,7 @@ class Participant extends Authenticatable implements Auditable
         'polo_size',
         'name_in_certificate',
         'request',
+        'room_group',
         'room_number',
         'received_by',
         'given_by',

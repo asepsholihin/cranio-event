@@ -56,14 +56,15 @@ class Attendance extends Model
         ->join('bookings', 'participant_bookings.booking_id', 'bookings.id')
         ->where('attendances.event_id',request()->query('eventId', 0))
         ->select(['attendances.event_id','attendances.participant_id',
-        'participants.name', 'participants.whatsapp', 'participants.gender','participants.profile_photo_path','participants.barcode', 'bookings.account_hospital',
+        'participants.name', 'participants.whatsapp', 'participants.gender','participants.profile_photo_path','participants.barcode', 'participants.room_number', 'participants.room_group', 'participants.received_by', 'bookings.account_hospital',
         DB::raw('(SELECT check_in_at FROM attendances as att WHERE att.participant_id = attendances.participant_id AND att.event_id = attendances.event_id AND session IS NULL limit 1) as check_in_at'),
         DB::raw('
             (CASE WHEN (SELECT count(check_in_at) FROM attendances as att WHERE att.participant_id = attendances.participant_id AND att.event_id = attendances.event_id AND session IS NULL limit 1) > 0 THEN \'z\'
             ELSE \'a\' END) AS checkin'
         ),
         ])
-        ->whereNull('participants.deleted_at');
+        ->whereNull('participants.deleted_at')
+        ->orderByRaw('checkin DESC');
 
         if (!empty(request()->query('booking'))) {
             $query->where('participant_bookings.order_umroh_trip_id', request()->query('booking'));

@@ -818,8 +818,10 @@ class ParticipantSPAController extends Controller
     }
 
     public function action(Request $request){
-        $request->validate(['id' => 'required']);
-        $participant = Participant::find($request->get('id'));
+        $request->validate([
+            'id' => 'required_if:set_room,true',
+            'ids' => 'required_if:set_room_group,true',
+        ]);
 
         if ($request->hasFile('file_evidence')) {
             $profilePhotoPath = $request->file('file_evidence')->store(Participant::DIR_EVIDENCE);
@@ -831,8 +833,19 @@ class ParticipantSPAController extends Controller
                 'received_at' => Carbon::now(),
                 'given_by' => auth()->user()->id
             ]);
+            $participant = Participant::find($request->get('id'));
+            $participant->update($request->except('file_evidence'));
         }
-        $participant->update($request->except('file_evidence'));
+
+        if($request->set_room_group) {
+            $request->merge([
+                'room_group' => $request->roomGroup
+            ]);
+            $participants = Participant::whereIn('id', $request->get('ids'))->get();
+            foreach ($participants as $participant) {
+                $participant->update($request->except('file_evidence'));
+            }
+        }
     }
 
     public function jobSearch(Request $request)
