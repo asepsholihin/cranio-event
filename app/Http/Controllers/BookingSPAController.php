@@ -94,7 +94,7 @@ class BookingSPAController extends Controller
 
     public function exportData(Request $request)
     {
-        $storageKey = "Export-Booking-Hotel-Event-" . hrtime(true) . ".xlsx";
+        $storageKey = "Export-Booking-" . hrtime(true) . ".xlsx";
         return Excel::download(new BookingExport($request->all()), $storageKey);
     }
 

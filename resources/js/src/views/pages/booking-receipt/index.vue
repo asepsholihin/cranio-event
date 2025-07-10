@@ -31,6 +31,9 @@
           <b-col cols="12" md="6">
             <div class="d-flex align-items-center justify-content-end">
               <b-form-input v-model="searchQuery" debounce="350" type="search" class="d-inline-block mr-1" placeholder="Search..." />
+              <b-button variant="success" class="mb-lg-0 mb-1" @click="exportData" :disabled="isButtonLoading">
+                <b-spinner small v-show="isButtonLoading" /> <span class="text-nowrap">Export</span>
+              </b-button>
             </div>
           </b-col>
         </b-row>
@@ -223,7 +226,8 @@ import {
   BDropdown,
   BDropdownItem,
   BPagination,
-  BFormInvalidFeedback
+  BFormInvalidFeedback,
+  BSpinner
 } from 'bootstrap-vue'
 import _ from 'lodash'
 import vSelect from 'vue-select'
@@ -231,7 +235,7 @@ import flatPickr from 'vue-flatpickr-component'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import { required, numeric } from '@validations'
 import useDataList from './useDataList'
-import { deleteData, postAction } from '@/network/booking-receipt'
+import { deleteData, postAction, exportData } from '@/network/booking-receipt'
 import { hasPermission } from '@/auth/utils'
 import { formatDate, formatDateTimeShort } from '@core/utils/filter'
 
@@ -253,6 +257,7 @@ export default {
     BDropdownItem,
     BPagination,
     BFormInvalidFeedback,
+    BSpinner,
 
     vSelect,
     flatPickr,
@@ -371,6 +376,34 @@ export default {
           }
           this.isButtonLoading = false
         })
+      })
+    },
+    exportData() {
+      this.isButtonLoading = true
+      var vForm = {}
+      vForm.status = this.statusFilter
+      vForm.checkinDate = this.checkinDateFilter
+      vForm.hotel = this.hotelFilter
+      vForm.roomType = this.roomTypeFilter
+      vForm.umrohTripId = this.umrohTripFilter
+      exportData(vForm).then(response => {
+        const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+        const fileLink = document.createElement('a')
+        const contentDisposition = response.headers['content-disposition']
+        fileLink.href = fileURL;
+        let fileName = 'unknown';
+        if (contentDisposition) {
+            const fileNameMatch = contentDisposition.match(/filename=(.+)/);
+            if (fileNameMatch.length === 2)
+                fileName = fileNameMatch[1];
+        }
+        fileLink.setAttribute('download', fileName);
+        document.body.appendChild(fileLink);
+        fileLink.click();
+        this.isButtonLoading = false
+      }).catch(error => {
+        this.$bvToast.toast(`Error: ${error}`, { title: `Error`, variant: 'danger', toaster: 'b-toaster-top-center', solid: true })
+        this.isButtonLoading = false
       })
     },
     deleteData(item){

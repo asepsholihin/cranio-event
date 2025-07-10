@@ -16,7 +16,7 @@ export default function useUsersList() {
     { key: 'booking_no', sortable: true },
     { key: 'sender_name', sortable: true },
     { key: 'bank_account', sortable: true },
-    { key: 'total_price', sortable: true },
+    { key: 'payment_amount', sortable: true },
     { key: 'created_at', sortable: true },
     { key: 'status', sortable: true },
     { key: 'actions' },

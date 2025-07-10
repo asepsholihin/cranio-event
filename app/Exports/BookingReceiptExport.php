@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\Models\Booking;
+use App\Models\BookingReceipt;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
@@ -16,7 +16,7 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Style;
 use Carbon\Carbon;
 
-class BookingExport implements FromQuery, ShouldAutoSize, WithHeadings, WithStyles, WithMapping, WithEvents
+class BookingReceiptExport implements FromQuery, ShouldAutoSize, WithHeadings, WithStyles, WithMapping, WithEvents
 {
     private $rowNumber;
     private $request;
@@ -45,14 +45,11 @@ class BookingExport implements FromQuery, ShouldAutoSize, WithHeadings, WithStyl
     {
         return [
             'No.',
-            'Nama Participant',
-            'Nomor Whatsapp',
-            'Hospital',
-            'Paket',
-            'Total Pax',
+            'Booking No.',
+            'Sender Name',
+            'Bank Account',
             'Total Price',
-            'Total Unpaid',
-            'Date',
+            'Created At',
             'Status'
         ];
     }
@@ -63,17 +60,18 @@ class BookingExport implements FromQuery, ShouldAutoSize, WithHeadings, WithStyl
     public function map($booking): array
     {
         $this->rowNumber += 1;
+        $status = "Pending";
+        if($booking->status == 1) $status="Pending";
+        if($booking->status == 2) $status="Verified";
+        if($booking->status == 3) $status="Rejected";
         return [
             $this->rowNumber,
-            $booking->account_name,
-            $booking->account_wa,
-            $booking->account_hospital,
-            $booking->package,
-            $booking->total_pax,
-            $booking->total_price,
-            $booking->total_unpaid,
+            $booking->booking_no,
+            $booking->sender_name,
+            $booking->bank_account,
+            $booking->payment_amount,
             ($booking->created_at) ? Carbon::parse($booking->created_at)->isoFormat('D MMMM Y') : null,
-            $booking->order_status,
+            $status,
         ];
     }
 
@@ -82,8 +80,8 @@ class BookingExport implements FromQuery, ShouldAutoSize, WithHeadings, WithStyl
     */
     public function query()
     {
-        $query = Booking::tableSearch();
-        $query->orderByRaw('bookings.account_name ASC');
+        $query = BookingReceipt::tableSearch();
+        $query->orderByRaw('booking_receipts.sender_name ASC');
         return $query;
     }
 

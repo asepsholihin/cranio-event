@@ -114,4 +114,9 @@ class BookingReceiptSPAController extends Controller
         $booking_receipt->delete();
     }
 
+    public function exportData(Request $request)
+    {
+        $storageKey = "Export-Booking-Receipt-" . hrtime(true) . ".xlsx";
+        return Excel::download(new BookingReceiptExport($request->all()), $storageKey);
+    }
 }

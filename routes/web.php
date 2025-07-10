@@ -892,6 +892,7 @@ Route::prefix('spa')->middleware(['auth'])->group(function () {
 
     Route::resource('booking-temporary', BookingTemporarySPAController::class)->only(['show', 'store', 'index', 'destroy']);
     Route::resource('booking-receipt', BookingReceiptSPAController::class)->only(['show', 'store', 'index', 'destroy']);
+    Route::get('booking-receipt-export', [BookingReceiptSPAController::class, 'exportData']);
     Route::post('booking-receipt/action', [BookingReceiptSPAController::class, 'action']);
 });
 
