@@ -41,7 +41,8 @@
           <table role="presentation" border="0" cellpadding="0" cellspacing="0">
             <tr>
               <td class="content-block powered-by">
-                <a href="https://cranioindonesia.site/">Cranio Indonesia</a>
+                <a href="https://cranioindonesia.site/">Cranio Indonesia</a><br>
+                <a style="font-size: 12px" href="https://akusolusi.com/">Cranio System is Developed with ❤  by www.akusolusi.com </a>
               </td>
             </tr>
           </table>

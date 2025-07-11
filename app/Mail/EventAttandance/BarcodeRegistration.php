@@ -67,7 +67,7 @@ class BarcodeRegistration extends Mailable
 
         // Buat canvas baru (dengan padding dan ruang teks)
         $padding = 20;
-        $textHeight = 50;
+        $textHeight = 80;
 
         $canvas = Image::canvas(
             $barcodeImage->width() + $padding * 2,
@@ -92,6 +92,15 @@ class BarcodeRegistration extends Mailable
             $font->file($fontPath);
             $font->size(18);
             $font->color('#444444');
+            $font->align('center');
+            $font->valign('top');
+        });
+
+        // 7. Tambahkan teks Supported
+        $canvas->text("Cranio System is Developed with ♥ by www.akusolusi.com", $canvas->width() / 2, $barcodeImage->height() + $padding + 45 + 30, function ($font) use($fontPath) {
+            $font->file($fontPath);
+            $font->size(12);
+            $font->color('#777777');
             $font->align('center');
             $font->valign('top');
         });
