@@ -83,6 +83,8 @@ class Attendance extends Model
         $search = '%' . request()->query('q') .'%';
         return $query->where(function($q) use ($search) {
             $q->where('participants.name', 'like', $search);
+            $q->orWhere('participants.room_number', 'like', $search);
+            $q->orWhere('participants.room_group', 'like', $search);
             $q->orWhere('participants.whatsapp', 'like', $search);
         });
     }
