@@ -97,7 +97,7 @@ class EventAttendanceController extends Controller
             }
 
             $participantBooking = ParticipantBooking::join('bookings', 'participant_bookings.booking_id', 'bookings.id')
-            ->where('bookings.order_status', Booking::STATUS_PAID)
+            // ->where('bookings.order_status', Booking::STATUS_PAID)
             ->get();
             foreach ($participantBooking as $participant) {
                 Attendance::firstOrCreate(

@@ -69,6 +69,7 @@
                     <b-col cols="12" md="6" class="d-flex align-items-center justify-content-start mb-1">
                         <b-form-input v-model="searchQuery" debounce="350" class="d-inline-block mr-1" type="search"
                             placeholder="Search..." />
+                        <v-select v-model="roomGroupFilter" :options="roomGroupOptions" :clearable="true" class="w-100" placeholder="Filter by Room Group" />
                     </b-col>
                 </b-row>
 
@@ -449,6 +450,8 @@ export default {
             { label: 'Rumah', value: 'Rumah' },
             { label: 'Penginapan lainnya', value: 'Penginapan lainnya' }
         ]
+        var arrayRooms = Array.from({ length: 500 }, (_, i) => i + 1)
+        const roomGroupOptions = arrayRooms
         const {
             fetchUsers,
             tableColumns,
@@ -467,7 +470,8 @@ export default {
             resolveGender,
             bookingFilter,
             packageFilter,
-            statusLinkConfirmFilter
+            statusLinkConfirmFilter,
+            roomGroupFilter
         } = useAttendeeList()
         return {
             resolveUserRoleVariant,
@@ -496,8 +500,10 @@ export default {
             bookingFilter,
             packageFilter,
             statusLinkConfirmFilter,
+            roomGroupFilter,
             statusLinkConfirmOptions,
-            hotelOptions
+            hotelOptions,
+            roomGroupOptions
         }
     },
     data() {

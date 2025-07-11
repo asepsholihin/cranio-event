@@ -63,6 +63,7 @@ class Attendance extends Model
             ELSE \'a\' END) AS checkin'
         ),
         ])
+        ->whereNull('bookings.deleted_at')
         ->whereNull('participants.deleted_at')
         ->orderByRaw('checkin DESC');
 
@@ -71,6 +72,9 @@ class Attendance extends Model
         }
         if (!empty(request()->query('package'))) {
             $query->where('participant_bookings.package_umroh_trip_id', request()->query('package'));
+        }
+        if (!empty(request()->query('roomGroup'))) {
+            $query->where('participants.room_group', request()->query('roomGroup'));
         }
         if (empty(request()->query('q', ''))) {
             return $query;

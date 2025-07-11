@@ -31,6 +31,7 @@ export default function useUsersList() {
   const statusLinkConfirmFilter = ref(null)
   const bookingFilter = ref(null)
   const packageFilter = ref(null)
+  const roomGroupFilter = ref(null)
   const permissionList = ref([])
 
   const dataMeta = computed(() => {
@@ -46,7 +47,7 @@ export default function useUsersList() {
     refUserListTable.value.refresh()
   }
 
-  watch([currentPage, perPage, searchQuery, statusLinkConfirmFilter, bookingFilter, packageFilter], () => {
+  watch([currentPage, perPage, searchQuery, statusLinkConfirmFilter, bookingFilter, packageFilter, roomGroupFilter], () => {
     refetchData()
   })
   const resolveGender = gender => {
@@ -65,6 +66,7 @@ export default function useUsersList() {
         statusLinkConfirm: statusLinkConfirmFilter.value,
         booking: bookingFilter.value,
         package: packageFilter.value,
+        roomGroup: roomGroupFilter.value,
       }
     })
       .then(response => {
@@ -121,6 +123,7 @@ export default function useUsersList() {
     // Extra Filters
     statusLinkConfirmFilter,
     bookingFilter,
-    packageFilter
+    packageFilter,
+    roomGroupFilter
   }
 }
