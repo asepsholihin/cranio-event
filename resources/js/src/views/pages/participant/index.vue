@@ -399,7 +399,8 @@
 
           <validation-provider #default="{ errors }" name="Room Group" vid="roomHotelGroup" rules="required">
             <b-form-group label="Room Group" :state="errors.length > 0 ? false : null">
-              <v-select v-model="roomGroupSet" :options="roomGroupOptions" :clearable="false" />
+              <b-form-input type="text" v-model="roomGroupSet" placeholder="Room Group"
+                :state="errors.length > 0 ? false : null" trim />
               <b-form-invalid-feedback :state="errors.length > 0 ? false : null">
                 {{ errors[0] }}
               </b-form-invalid-feedback>
@@ -752,6 +753,9 @@ export default {
         this.formNameInCerificate = {front_title: '', name_in_certificate: '', back_title: '' }
         this.formData = {}
         this.roomGroupSet = null
+        this.selectedNames = []
+        this.selectedIds = []
+        this.isSubmitModal = false
     },
     setRoom(item) {
       this.setRoomModal = true
@@ -832,6 +836,7 @@ export default {
         vForm.roomGroup = this.roomGroupSet
         postAction(vForm).then(response => {
           this.setRoomGroupModal = false
+          this.isSubmitModal = false
           this.$swal({ icon: 'success', title: 'Success', text: `Room Group has been changed successfully`, timer: 2500, customClass: { confirmButton: 'btn btn-primary', }, buttonsStyling: false })
           this.refetchData()
         }).catch(error => {

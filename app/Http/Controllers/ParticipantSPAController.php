@@ -846,7 +846,7 @@ class ParticipantSPAController extends Controller
 
         if($request->set_room_group) {
             $request->merge([
-                'room_group' => $request->roomGroup
+                'room_group' => strtoupper($request->roomGroup)
             ]);
             $participants = Participant::whereIn('id', $request->get('ids'))->get();
             foreach ($participants as $participant) {
