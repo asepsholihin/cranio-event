@@ -65,7 +65,7 @@ class ParticipantRoomSheet implements FromQuery, ShouldAutoSize, WithHeadings, W
     {
         $this->rowNumber += 1;
 
-        $this->setCellListGroup($participant->room_number, $participant->room_group);
+        $this->setCellListGroup($participant->room_group);
 
         return [
             $this->rowNumber,
