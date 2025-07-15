@@ -126,14 +126,14 @@ class ParticipantRoomSheet implements FromQuery, ShouldAutoSize, WithHeadings, W
     public function query()
     {
         $query = Participant::query()
-            ->join('participant_bookings', 'participant_bookings.participant_id', '=', 'participants.id')
             ->select([
                 'participants.name',
                 'participants.whatsapp',
                 'participants.room_number',
                 'participants.room_group',
+                DB::raw('CASE WHEN room_group IS NULL THEN 99999 ELSE room_group END AS room_group_order')
             ]);
-            $query->orderByRaw('room_group ASC, room_number ASC');
+            $query->orderByRaw('room_group_order ASC');
 
             return $query;
     }

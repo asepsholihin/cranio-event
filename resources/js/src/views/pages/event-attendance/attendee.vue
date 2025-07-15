@@ -546,6 +546,7 @@ export default {
             isRowChecked: false,
             setMultipleManasikTableModal: false,
             setRoomModal: false,
+            isLoading: false,
         }
     },
     methods: {
