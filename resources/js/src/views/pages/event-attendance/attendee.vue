@@ -39,6 +39,9 @@
                             v-if="hasPermission('event-attendance-add-or-edit')">
                             <span class="text-nowrap">Add Attendee</span>
                         </b-button>
+                        <b-button variant="primary" class="mr-1" :disabled="isLoading" @click="exportRoomList()">
+                            <span class="text-nowrap">Export Roomlist</span>
+                        </b-button>
                         <div class="d-flex align-items-center justify-content-end">
                             <b-dropdown :disabled="isSubmitModal" right variant="gradient-primary" v-if="hasPermission('event-attendance-add-or-edit')">
                                 <template #button-content>
@@ -390,7 +393,7 @@ import checkInBarcodeSidebar from './checkInBarcodeSidebar.vue'
 import { avatarText, formatDateTimeShort, formatDate } from '@core/utils/filter'
 import { ref } from '@vue/composition-api'
 import { downloadTableNumber } from '@/network/equipment'
-import { postAction } from '@/network/participant'
+import { postAction, exportParticipantRoomList } from '@/network/participant'
 
 export default {
     components: {
@@ -978,6 +981,31 @@ export default {
                         this.isSubmitModal = false
                     })
                 }
+            })
+        },
+        exportRoomList() {
+            this.isLoading = true
+            const vForm = {}
+            vForm.eventId = this.eventId
+            exportParticipantRoomList(vForm).then(response => {
+                this.isLoading = false
+                const fileURL = window.URL.createObjectURL(new Blob([response.data]))
+                const fileLink = document.createElement('a')
+                const contentDisposition = response.headers['content-disposition']
+                fileLink.href = fileURL;
+                let fileName = 'unknown';
+                if (contentDisposition) {
+                    contentDisposition.replace(/['"]+/g, '')
+                    const fileNameMatch = contentDisposition.match(/filename=(.+)/);
+                    if (fileNameMatch.length === 2)
+                        fileName = fileNameMatch[1];
+                }
+                fileLink.setAttribute('download', fileName);
+                document.body.appendChild(fileLink);
+                fileLink.click();
+            }).catch(error => {
+                this.isLoading = false
+                this.$swal({ icon: 'error', title: 'Error', text: `${error.response.data.message}`, customClass: { confirmButton: 'btn btn-warning', }, buttonsStyling: false })
             })
         },
         exportAttendance(type) {

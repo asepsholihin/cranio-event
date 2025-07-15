@@ -23,6 +23,7 @@ use Image;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use App\Exports\ParticipantExport;
+use App\Exports\ParticipantRoomExport;
 use App\Exports\ParticipantAddressExport;
 use App\Models\ParticipantCRM;
 use DB;
@@ -325,6 +326,12 @@ class ParticipantSPAController extends Controller
 
         $storageKey = "JAMAAH-ALAMAT-EXPORT-" . $fileName . "-" . date('d-m-Y') . ".xlsx";
         return Excel::download(new ParticipantAddressExport($request->umrohTripId), $storageKey);
+    }
+
+    public function exportParticipantRoomList(Request $request)
+    {
+        $storageKey = "Export-Room-List-" . hrtime(true) . ".xlsx";
+        return Excel::download(new ParticipantRoomExport(request()->get('eventId')), $storageKey);
     }
 
     public function participantForBooking(Request $request)

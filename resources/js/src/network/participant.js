@@ -108,3 +108,7 @@ export const getChartPoloSize = (...args) => {
 export const postAction = (...args) => {
     return httpService.getHttp().post(resourcePath + '/action', ...args)
 }
+
+export const exportParticipantRoomList = (args) => {
+    return httpService.getHttp().get(resourcePath + '/export-room-list', {responseType: 'blob', params: args})
+}
