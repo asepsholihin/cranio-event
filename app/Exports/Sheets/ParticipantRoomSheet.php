@@ -23,11 +23,6 @@ class ParticipantRoomSheet implements FromQuery, ShouldAutoSize, WithHeadings, W
 
     private $startRow;
     private $rowNumber;
-    private $totalDoubleType;
-    private $totalTripleType;
-    private $totalQuadType;
-    private $totalQueenType;
-    private $totalSingleType;
     private $groupCellList;
     private $groupCellIndex;
     private $currentGroupRoom;
@@ -35,11 +30,6 @@ class ParticipantRoomSheet implements FromQuery, ShouldAutoSize, WithHeadings, W
     public function __construct($eventId)
     {
         $this->rowNumber = 0;
-        $this->totalDoubleType = 0;
-        $this->totalTripleType = 0;
-        $this->totalQuadType = 0;
-        $this->totalQueenType = 0;
-        $this->totalSingleType = 0;
         $this->groupCellIndex = 1;
         $this->currentGroupRoom = null;
 
@@ -88,10 +78,10 @@ class ParticipantRoomSheet implements FromQuery, ShouldAutoSize, WithHeadings, W
         ];
     }
 
-    private function setCellListGroup($roomNumber, $roomGroup)
+    private function setCellListGroup($roomGroup)
     {
         $untilGroupRow = $this->rowNumber + $this->startRow;
-        $groupHotelRoom = $roomNumber . $roomGroup;
+        $groupHotelRoom = $roomGroup;
 
         if (empty($groupHotelRoom)) {
             $this->groupCellIndex += (count($this->groupCellList) == 1) ? 0 : 1;
@@ -113,9 +103,6 @@ class ParticipantRoomSheet implements FromQuery, ShouldAutoSize, WithHeadings, W
     public function prepareRows($rows)
     {
         return $rows->transform(function ($participant) {
-            $participant->gender = ($participant->gender == 1) ? 'Laki-laki' : 'Perempuan';
-            $participant->room_type = strtoupper($participant->room_type);
-
             return $participant;
         });
     }
@@ -203,7 +190,6 @@ class ParticipantRoomSheet implements FromQuery, ShouldAutoSize, WithHeadings, W
             $end = $this->groupCellList[$i + 1];
             $index = $start;
             $phpSpreadSheet->mergeCells("D{$start}:D{$end}");
-            $phpSpreadSheet->mergeCells("E{$start}:E{$end}");
             $i++;
         }
     }
