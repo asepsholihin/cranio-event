@@ -82,13 +82,13 @@ class Attendance extends Model
 
         $search = '%' . request()->query('q') .'%';
         $roomGroup = Participant::where('name', 'like', '%' . $search . '%')->whereNotNull('room_group')->pluck('room_group');
-
+        
         return $query->where(function($q) use ($search, $roomGroup) {
             $q->where('participants.name', 'like', $search);
             $q->orWhere('participants.room_number', 'like', $search);
             $q->orWhere('participants.room_group', 'like', $search);
             $q->orWhere('participants.whatsapp', 'like', $search);
-            $q->orWhere('participants.room_group', 'like', $roomGroup);
+            if(!empty($roomGroup) && count($roomGroup) > 0) $q->orWhere('participants.room_group', 'like', $roomGroup);
         });
     }
 }
