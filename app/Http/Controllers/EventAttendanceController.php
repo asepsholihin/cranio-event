@@ -120,7 +120,7 @@ class EventAttendanceController extends Controller
             $query = Attendance::selectRaw("COALESCE(SUM(DISTINCT(CASE WHEN check_in_at_online IS NOT NULL THEN 1 ELSE 0 END)), 0) AS total_checkin, COALESCE(SUM(DISTINCT(CASE WHEN confirm_at IS NOT NULL THEN 1 ELSE 0 END)), 0) AS total_confirm, count(distinct(attendances.participant_id)) AS total_attendance");
             $query->whereNotNull('session');
         } else {
-            $query =  Attendance::selectRaw("COALESCE(SUM(CASE WHEN check_in_at IS NOT NULL THEN 1 ELSE 0 END), 0) AS total_checkin, COALESCE(SUM(DISTINCT(CASE WHEN confirm_at IS NOT NULL THEN 1 ELSE 0 END)), 0) AS total_confirm, count(distinct(attendances.participant_id)) AS total_attendance");
+            $query =  Attendance::join('participants', 'participants.id', 'attendances.participant_id')->whereNull('participants.deleted_at')->selectRaw("COALESCE(SUM(CASE WHEN check_in_at IS NOT NULL THEN 1 ELSE 0 END), 0) AS total_checkin, COALESCE(SUM(DISTINCT(CASE WHEN confirm_at IS NOT NULL THEN 1 ELSE 0 END)), 0) AS total_confirm, count(distinct(attendances.participant_id)) AS total_attendance");
             $query->whereNull('session');
         }
         $attendee = $query->where('event_id', $event_attendance->id)->first()->toArray();

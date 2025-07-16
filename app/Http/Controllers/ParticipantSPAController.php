@@ -946,4 +946,10 @@ class ParticipantSPAController extends Controller
 
         return response()->json($data);
     }
+
+    public function roomGroupSearch(Request $request)
+    {
+        $data = Participant::select('room_group')->groupBy('room_group')->orderBy('room_group', 'ASC')->get();
+        return response()->json($data);
+    }
 }

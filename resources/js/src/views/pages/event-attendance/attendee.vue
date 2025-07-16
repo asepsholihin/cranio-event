@@ -72,7 +72,7 @@
                     <b-col cols="12" md="6" class="d-flex align-items-center justify-content-start mb-1">
                         <b-form-input v-model="searchQuery" debounce="350" class="d-inline-block mr-1" type="search"
                             placeholder="Search..." />
-                        <v-select v-model="roomGroupFilter" :options="roomGroupOptions" :clearable="true" class="w-100" placeholder="Filter by Room Group" />
+                        <v-select v-model="roomGroupFilter" :options="roomGroupOptions" :reduce="label => label.room_group" label="room_group" :clearable="true" class="w-100" placeholder="Filter by Room Group" />
                     </b-col>
                 </b-row>
 
@@ -393,7 +393,7 @@ import checkInBarcodeSidebar from './checkInBarcodeSidebar.vue'
 import { avatarText, formatDateTimeShort, formatDate } from '@core/utils/filter'
 import { ref } from '@vue/composition-api'
 import { downloadTableNumber } from '@/network/equipment'
-import { postAction, exportParticipantRoomList } from '@/network/participant'
+import { postAction, exportParticipantRoomList, getRoomGroups } from '@/network/participant'
 
 export default {
     components: {
@@ -453,8 +453,6 @@ export default {
             { label: 'Rumah', value: 'Rumah' },
             { label: 'Penginapan lainnya', value: 'Penginapan lainnya' }
         ]
-        var arrayRooms = Array.from({ length: 500 }, (_, i) => i + 1)
-        const roomGroupOptions = arrayRooms
         const {
             fetchUsers,
             tableColumns,
@@ -505,11 +503,11 @@ export default {
             statusLinkConfirmFilter,
             roomGroupFilter,
             statusLinkConfirmOptions,
-            hotelOptions,
-            roomGroupOptions
+            hotelOptions
         }
     },
     data() {
+        const roomGroupOptions = []
         const event = {}
         const id = parseInt(this.$route.params.id) || 0
         if (id == 0) this.$router.back()
@@ -526,6 +524,10 @@ export default {
                 this.event = response.data
             }).catch(error => { })
         }
+        getRoomGroups().then(response => {
+            this.roomGroupOptions = response.data;
+        }).catch(error => {  })
+        
         return {
             refreshDataPage,
             isSubmitModal: false,
@@ -547,6 +549,7 @@ export default {
             setMultipleManasikTableModal: false,
             setRoomModal: false,
             isLoading: false,
+            roomGroupOptions
         }
     },
     methods: {

@@ -112,3 +112,7 @@ export const postAction = (...args) => {
 export const exportParticipantRoomList = (args) => {
     return httpService.getHttp().get(resourcePath + '/export-room-list', {responseType: 'blob', params: args})
 }
+
+export const getRoomGroups = (...args) => {
+    return httpService.getHttp().get(resourcePath + '/room-group-search', ...args)
+}

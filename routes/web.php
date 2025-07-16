@@ -80,6 +80,7 @@ Route::prefix('spa')->middleware(['auth'])->group(function () {
     Route::get('participant/medical-record-search', [ParticipantSPAController::class, 'medicalRecordParticipant']);
     Route::post('participant/action', [ParticipantSPAController::class, 'action']);
     Route::get('participant/job-search', [ParticipantSPAController::class, 'jobSearch']);
+    Route::get('participant/room-group-search', [ParticipantSPAController::class, 'roomGroupSearch']);
     Route::get('participant/search', [ParticipantSPAController::class, 'queryParticipant']);
     Route::get('participant/search-for-booking', [ParticipantSPAController::class, 'participantForBooking']);
     Route::get('participant/barcode/{participant}', [ParticipantSPAController::class, 'barcode']);
