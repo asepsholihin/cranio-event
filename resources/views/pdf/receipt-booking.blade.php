@@ -2,6 +2,8 @@
 use App\Support\NumberFormat;
 use Carbon\Carbon;
 
+$nomor = str_replace('Inv', 'KW', $booking->booking_no);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -98,7 +100,6 @@ use Carbon\Carbon;
         th {
             padding: 10px;
             border-collapse: collapse;
-            border: 1px solid #c4c4c4;
         }
 
         table.no-padding td {
@@ -113,6 +114,9 @@ use Carbon\Carbon;
         table.border-0 td,
         table.border-0 th {
             border: none;
+        }
+        table.border-bottom td {
+            border-bottom: 1px solid #000;
         }
         .text-nowrap {
             text-wrap: nowrap;
@@ -141,7 +145,7 @@ use Carbon\Carbon;
             letter-spacing: 3px;
         }
     </style>
-    <title>INVOICE {{ $booking->booking_no }}</title>
+    <title>KWITANSI {{ $nomor }}</title>
 </head>
 
 <body>
@@ -152,82 +156,50 @@ use Carbon\Carbon;
             alt="">
         </div>
         <br />
-        <h2 class="center underline title-doc">INVOICE</h2>
+        <h2 class="center underline title-doc">KWITANSI</h2>
+        <p class="center"><b>Nomor:</b> {{ $nomor }}</p>
         <br />
-        <div>
-            <table width="100%">
+        <br />
+        <div style="margin: 0 24px;">
+            <table class="border-bottom" width="100%">
                 <tr>
-                    <td width="50%">
-                        <p><b>Kepada:</b></p>
-                        <p><b>{{ $booking->account_name }}</b></p>
+                    <td width="40%"><b>Telah diterima dari</b></td>
+                    <td valign="top" width="60%">{{$booking->account_name}}<br><b>{{$booking->account_hospital}}</b></td>
+                </tr>
+                <tr>
+                    <td valign="top"><b>Uang Sejumlah</b></td>
+                    <td valign="top"><b>{{ $currency }} {{ NumberFormat::separatorAmount($booking->total_paid) }}</b></td>
+                </tr>
+                <tr>
+                    <td valign="top"><b>Terbilang</b></td>
+                    <td valign="top">{{NumberFormat::terbilang($booking->total_paid)}} {{NumberFormat::currencyToString($currency)}}</td>
+                </tr>
+                <tr>
+                    <td valign="top"><b>Untuk Pembayaran</b></td>
+                    <td valign="top">
+                        <ol style="margin: 0; padding-left: 16px;">
+                            @foreach($participants as $row)
+                                <li>{{$row->name}}</li>
+                            @endforeach
+                        </ol>
                     </td>
-                    <td width="50%">
-                        <p><b>Nomor:</b> {{ $booking->booking_no }}</p>
-                        <p><b>Tanggal:</b> {{ Carbon::parse($booking->created_at)->isoFormat('D MMMM Y') }}</p>
+                </tr>
+                <tr>
+                    <td valign="top"><b>Sebagai</b></td>
+                    <td valign="top">
+                        <p style="text-align:justify;"><b>Registrasi peserta ({{ $booking->package }})</b> dalam acara Indonesian Neurosurgical Nurses Meeting Symposium & Workshop National dengan tema : <b>“Advanced Neurosurgical Endoscopy for Nurse”</b></p>
                     </td>
+                </tr>
+                <tr>
+                    <td valign="top"><b>Tempat</b></td>
+                    <td valign="top"><b>Prime Plaza Sanur Hotel - Bali</b>, tanggal 18 - 20 Juli 2025</td>
                 </tr>
             </table>
         </div>
-        <br /><br />
-        <table width="100%">
-            <tr class="header">
-                <td width="5" valign="top">No</td>
-                <td>Description</td>
-                <td valign="top">Jumlah</td>
-                <td valign="top">Harga / Orang</td>
-                <td valign="top">Total</td>
-            </tr>
-            
-            <tr>
-                <td valign="top">1.</td>
-                <td valign="top">
-                    <p>Registrasi {{ $booking->total_pax }} orang peserta Symposium & Workshop ({{ $booking->package }})</p>
-                    <ul>
-                        @foreach($participants as $participant)
-                        <li>{{ $participant->name }}</li>
-                        @endforeach
-                    </ul>
-                    <p>Institusi: {{ $booking->account_hospital }} dalam acara Indonesian Neurosurgical Nurses Meeting Symposium & Workshop National dengan tema : “Advanced Neurosurgical Endoscopy for Nurse”</p>
-                </td>
-                <td valign="top" class="center">{{ $booking->total_pax }}</td>
-                <td valign="top"><div class="right text-nowrap">{{ $currency }} {{ NumberFormat::separatorAmount($booking->price_per_pax) }}</div></td>
-                <td valign="top"><div class="right text-nowrap">{{ $currency }} {{ NumberFormat::separatorAmount(($booking->price_per_pax * $booking->total_pax)) }}</div></td>
-            </tr>
-            
-            <tr>
-                <td colspan="5" class="text-nowrap"><b><div class="right">{{ $currency }} {{ number_format($booking->total_price) }}</div></b>
-                </td>
-            </tr>
-            <tr class="due-payment">
-                <td colspan="2"><div class="right fw-bold text-nowrap">Terbilang</div>
-                </td>
-                <td colspan="3" class="text-nowrap"><b><div class="right">{{ NumberFormat::terbilang($booking->total_price) }} Rupiah</div></b>
-                </td>
-            </tr>
-        </table>
         
-        <br /> <br />
-        <div>
-            <p style="padding:0 14px 0 14px;margin:0"><b>Pembayaran melalui transfer ke:</b></p>
-            <table class="border-0 no-padding">
-                <tr>
-                    <td>Bank</td>
-                    <td>:</td>
-                    <td><b>Bank Mandiri Cab. Semarang</b></td>
-                </tr>
-                <tr>
-                    <td>Atas Nama</td>
-                    <td>:</td>
-                    <td><b>PARAMARTA YULI ADMAJA</b></td>
-                </tr>
-                <tr>
-                    <td>Nomor Rekening</td>
-                    <td>:</td>
-                    <td><b>135002 - 065 - 8165</b></td>
-                </tr>
-            </table>
-        </div>
-
+        <br />
+        <br />
+        <br />
         <br />
         <div>
             <div class="signature" style="margin-left: auto;">
@@ -238,12 +210,6 @@ use Carbon\Carbon;
         </div>
         <div style="clear:both"></div>
         
-        <br /> <br />
-        <div style="font-size:10pt">
-            <p><b>Note :</b></p>
-            <p>- Mohon mengirimkan bukti transfer keWA 085294949418 (Paramarta Yuli A.)</p>
-            <p>- Pembayaran diterima jika sudah ada bukti pembayaran yang diterim oleh panitia</p>
-        </div>
 
     </div>
 </body>

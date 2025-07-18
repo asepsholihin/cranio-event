@@ -9,6 +9,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\BookingExport;
 use App\File\PDF\ReceiptGeneralPDF;
 use App\File\PDF\InvoiceBookingPDF;
+use App\File\PDF\ReceiptBookingPDF;
 use Carbon\Carbon;
 
 class BookingSPAController extends Controller
@@ -102,5 +103,11 @@ class BookingSPAController extends Controller
     {
         $booking = Booking::find($bookingId);
         return (new InvoiceBookingPDF($booking))->download();
+    }
+
+    public function downloadReceiptPDF($bookingId)
+    {
+        $booking = Booking::find($bookingId);
+        return (new ReceiptBookingPDF($booking))->download();
     }
 }
